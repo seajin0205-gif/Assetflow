@@ -1,0 +1,2124 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f6f8fc" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#06080f" media="(prefers-color-scheme: dark)" />
+    <title>Assetflow — Design Engineer Portfolio</title>
+    <link rel="icon" href="/logo.png" type="image/png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("theme");
+          var dark =
+            t === "dark" ||
+            (t !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+          if (dark) document.documentElement.classList.add("dark");
+        } catch (e) {}
+      })();
+    </script>
+    <style>
+      :root {
+        --bg: 40 20% 98%;
+        --fg: 222 47% 9%;
+        --card: 0 0% 100%;
+        --muted: 40 10% 96%;
+        --muted-fg: 215 14% 42%;
+        --primary: 224 76% 48%;
+        --destructive: 0 72% 51%;
+        --success: 160 60% 38%;
+        --warning: 38 92% 45%;
+        --border: 220 14% 90%;
+        --accent-line: 224 76% 48%;
+        --text-base: 17px;
+        --text-sm: 15px;
+        --text-xs: 13px;
+        --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      .dark {
+        --bg: 224 71% 4%;
+        --fg: 210 40% 98%;
+        --card: 222 47% 7%;
+        --muted: 222 25% 14%;
+        --muted-fg: 215 16% 57%;
+        --primary: 199 89% 48%;
+        --border: 222 22% 16%;
+        --accent-line: 199 89% 48%;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      body {
+        font-family: Inter, system-ui, sans-serif;
+        font-size: var(--text-base);
+        background: hsl(var(--bg));
+        color: hsl(var(--fg));
+        line-height: 1.65;
+        overflow-x: hidden;
+      }
+
+      .mono {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+      }
+
+      .display {
+        font-family: "Plus Jakarta Sans", Inter, sans-serif;
+      }
+
+      /* Shell — editorial portfolio doc */
+      .shell {
+        min-height: 100dvh;
+        background-color: hsl(var(--bg));
+      }
+
+      .grain {
+        display: none;
+      }
+
+      /* Nav — minimal TOC */
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        border-bottom: 1px solid hsl(var(--border));
+        background: hsl(var(--bg) / 0.92);
+        backdrop-filter: blur(12px);
+      }
+
+      .nav-inner {
+        max-width: 920px;
+        margin: 0 auto;
+        padding: 12px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .nav-brand span {
+        font-size: var(--text-xs);
+        font-weight: 500;
+        color: hsl(var(--muted-fg));
+      }
+
+      .nav-brand strong {
+        display: block;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+
+      .nav-links::-webkit-scrollbar {
+        display: none;
+      }
+
+      .nav-links a {
+        padding: 6px 11px;
+        font-size: var(--text-xs);
+        font-weight: 500;
+        color: hsl(var(--muted-fg));
+        text-decoration: none;
+        border-radius: 6px;
+        white-space: nowrap;
+        transition: color 0.15s;
+      }
+
+      .nav-links a:hover {
+        color: hsl(var(--fg));
+      }
+
+      .nav-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .icon-btn {
+        width: 36px;
+        height: 36px;
+        border: 1px solid hsl(var(--border));
+        border-radius: 8px;
+        background: transparent;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: hsl(var(--fg));
+        transition: background 0.15s;
+      }
+
+      .icon-btn:hover {
+        background: hsl(var(--primary) / 0.06);
+      }
+
+      .icon-btn svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .icon-btn .sun {
+        display: none;
+      }
+
+      .dark .icon-btn .moon {
+        display: none;
+      }
+
+      .dark .icon-btn .sun {
+        display: block;
+      }
+
+      .btn-sm {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: var(--text-xs);
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.15s var(--ease-out), filter 0.15s;
+      }
+
+      .btn-sm:active {
+        transform: scale(0.97);
+      }
+
+      .btn-ghost {
+        background: transparent;
+        color: hsl(var(--fg));
+        border: 1px solid hsl(var(--border));
+      }
+
+      /* Layout */
+      .wrap {
+        max-width: 920px;
+        margin: 0 auto;
+        padding: 0 28px;
+      }
+
+      main {
+        padding-top: 0;
+      }
+
+      /* Hero — resume header */
+      .hero {
+        padding: 56px 0 48px;
+        border-bottom: 1px solid hsl(var(--border));
+        margin-bottom: 8px;
+      }
+
+      .hero-role {
+        font-size: var(--text-sm);
+        font-weight: 500;
+        color: hsl(var(--primary));
+        margin-bottom: 10px;
+        letter-spacing: -0.01em;
+      }
+
+      .hero h1 {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: clamp(40px, 6vw, 52px);
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        line-height: 1.05;
+        margin-bottom: 14px;
+      }
+
+      .hero h1 em {
+        font-family: "Instrument Serif", Georgia, serif;
+        font-style: italic;
+        font-weight: 400;
+        color: hsl(var(--muted-fg));
+        font-size: 0.72em;
+        vertical-align: baseline;
+      }
+
+      .hero-tagline {
+        font-size: 19px;
+        color: hsl(var(--fg) / 0.75);
+        max-width: 42ch;
+        line-height: 1.55;
+        margin-bottom: 24px;
+        font-weight: 500;
+      }
+
+      .meta-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .meta-chip {
+        font-size: var(--text-xs);
+        font-weight: 500;
+        color: hsl(var(--fg) / 0.7);
+        padding: 6px 14px;
+        border-radius: 999px;
+        border: 1px solid hsl(var(--border));
+        background: hsl(var(--card));
+      }
+
+      .meta-chip--accent {
+        color: hsl(var(--primary));
+        border-color: hsl(var(--primary) / 0.2);
+        background: hsl(var(--primary) / 0.05);
+      }
+
+      /* Section */
+      .section {
+        padding: 48px 0;
+        scroll-margin-top: 56px;
+        border-bottom: 1px solid hsl(var(--border) / 0.6);
+      }
+
+      .section:last-of-type {
+        border-bottom: none;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+      }
+
+      .section-num {
+        font-family: "JetBrains Mono", monospace;
+        font-size: var(--text-xs);
+        font-weight: 500;
+        color: hsl(var(--muted-fg));
+        margin-bottom: 6px;
+      }
+
+      .section h2 {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: clamp(26px, 4vw, 34px);
+        font-weight: 700;
+        letter-spacing: -0.035em;
+        line-height: 1.15;
+      }
+
+      .section-desc {
+        color: hsl(var(--muted-fg));
+        font-size: var(--text-sm);
+        max-width: 50ch;
+        line-height: 1.55;
+        margin-top: 8px;
+      }
+
+      /* Compact flow strip */
+      .flow-strip {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 0;
+      }
+
+      @media (max-width: 640px) {
+        .flow-strip {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .flow-strip-item {
+        padding: 18px 20px;
+        border-radius: 12px;
+        border: 1px solid hsl(var(--border));
+        background: hsl(var(--card));
+      }
+
+      .flow-strip-item strong {
+        display: block;
+        font-size: var(--text-xs);
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: hsl(var(--primary));
+        margin-bottom: 6px;
+      }
+
+      .flow-strip-item span {
+        font-size: var(--text-sm);
+        color: hsl(var(--fg) / 0.8);
+        line-height: 1.5;
+      }
+
+      /* Compact spec list */
+      .spec-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .spec-list-item {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: 16px;
+        align-items: start;
+        padding: 16px 20px;
+        border-radius: 12px;
+        border: 1px solid hsl(var(--border));
+        background: hsl(var(--card));
+      }
+
+      @media (max-width: 600px) {
+        .spec-list-item {
+          grid-template-columns: 1fr;
+          gap: 6px;
+        }
+      }
+
+      .spec-list-item dt {
+        font-size: var(--text-sm);
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: hsl(var(--fg));
+      }
+
+      .spec-list-item dd {
+        font-size: var(--text-sm);
+        color: hsl(var(--muted-fg));
+        line-height: 1.55;
+      }
+
+      /* Cards */
+      .panel {
+        border: 1px solid hsl(var(--border));
+        border-radius: 14px;
+        background: hsl(var(--card));
+        box-shadow: none;
+      }
+
+      /* TAF Flow */
+      .taf-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .taf-card {
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .taf-card:hover {
+        transform: none;
+        box-shadow: none;
+      }
+
+      .taf-header {
+        padding: 18px 22px 14px;
+        border-bottom: 1px solid hsl(var(--border));
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .taf-header h3 {
+        font-size: var(--text-sm);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .taf-header p {
+        font-size: var(--text-xs);
+        color: hsl(var(--muted-fg));
+        margin-top: 4px;
+      }
+
+      .tag {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 4px 10px;
+        border-radius: 999px;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .tag-chart {
+        background: hsl(var(--primary) / 0.1);
+        color: hsl(var(--primary));
+      }
+
+      .tag-trade {
+        background: hsl(var(--destructive) / 0.1);
+        color: hsl(var(--destructive));
+      }
+
+      .tag-ui {
+        background: hsl(var(--warning) / 0.12);
+        color: hsl(var(--warning));
+      }
+
+      .tag-motion {
+        background: hsl(262 83% 58% / 0.12);
+        color: hsl(262 83% 58%);
+      }
+
+      /* Status badges — catalog table */
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        padding: 4px 10px;
+        border-radius: 6px;
+        border: 1px solid transparent;
+        white-space: nowrap;
+      }
+
+      .status-badge::before {
+        content: "";
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .status-badge--live {
+        color: hsl(221 83% 42%);
+        background: hsl(221 83% 53% / 0.08);
+        border-color: hsl(221 83% 53% / 0.2);
+      }
+
+      .status-badge--live::before {
+        background: hsl(160 60% 42%);
+        box-shadow: 0 0 6px hsl(160 60% 42% / 0.5);
+      }
+
+      .status-badge--ui {
+        color: hsl(38 70% 38%);
+        background: hsl(38 92% 45% / 0.08);
+        border-color: hsl(38 92% 45% / 0.2);
+      }
+
+      .status-badge--ui::before {
+        background: hsl(38 92% 45%);
+      }
+
+      .dark .status-badge--live {
+        color: hsl(199 89% 58%);
+        background: hsl(199 89% 48% / 0.12);
+        border-color: hsl(199 89% 48% / 0.25);
+      }
+
+      .dark .status-badge--ui {
+        color: hsl(38 80% 55%);
+        background: hsl(38 92% 45% / 0.12);
+        border-color: hsl(38 92% 45% / 0.25);
+      }
+
+      .taf-flow {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr auto 1fr;
+        align-items: stretch;
+        gap: 0;
+        padding: 20px 24px 24px;
+      }
+
+      @media (max-width: 800px) {
+        .taf-flow {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+        .taf-arrow {
+          display: none !important;
+        }
+      }
+
+      .taf-step {
+        padding: 16px;
+        border-radius: 12px;
+        background: hsl(var(--muted) / 0.5);
+        border: 1px solid hsl(var(--border));
+      }
+
+      .taf-step-label {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: hsl(var(--muted-fg));
+        margin-bottom: 8px;
+      }
+
+      .taf-step p {
+        font-size: var(--text-sm);
+        line-height: 1.55;
+        color: hsl(var(--fg) / 0.85);
+      }
+
+      .taf-step .code-chip {
+        vertical-align: baseline;
+      }
+
+      .taf-arrow {
+        display: flex;
+        align-items: center;
+        padding: 0 6px;
+        color: hsl(var(--muted-fg));
+        font-size: 18px;
+      }
+
+      .taf-spec {
+        padding: 12px 24px 20px;
+        border-top: 1px solid hsl(var(--border));
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px 32px;
+      }
+
+      .taf-spec dt {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: hsl(var(--muted-fg));
+      }
+
+      .taf-spec dd {
+        font-family: "JetBrains Mono", monospace;
+        font-size: var(--text-xs);
+        margin-top: 2px;
+      }
+
+      /* Demo area */
+      .demo-split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        align-items: start;
+      }
+
+      @media (max-width: 800px) {
+        .demo-split {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .demo-box {
+        padding: 24px;
+        min-height: 240px;
+        position: relative;
+        overflow: hidden;
+        border-radius: 14px;
+      }
+
+      /* Live Demo — interactive, elevated white card */
+      .demo-box--live {
+        background: #ffffff;
+        border: 1px solid hsl(214 32% 91% / 0.8);
+        box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05);
+        backdrop-filter: none;
+      }
+
+      .dark .demo-box--live {
+        background: hsl(222 47% 9%);
+        border-color: hsl(var(--border));
+        box-shadow: 0 4px 24px -4px hsl(0 0% 0% / 0.4);
+      }
+
+      /* Spec — muted documentation surface */
+      .demo-box--spec {
+        background: hsl(210 40% 98%);
+        border: 1px solid hsl(214 32% 91% / 0.6);
+        box-shadow: none;
+        backdrop-filter: none;
+      }
+
+      .dark .demo-box--spec {
+        background: hsl(222 25% 11%);
+        border-color: hsl(var(--border) / 0.6);
+      }
+
+      .demo-box--spec .taf-step {
+        background: #ffffff;
+        border-color: hsl(214 32% 91% / 0.5);
+      }
+
+      .dark .demo-box--spec .taf-step {
+        background: hsl(222 47% 12%);
+        border-color: hsl(var(--border) / 0.5);
+      }
+
+      .demo-box--spec .taf-flow {
+        padding: 0;
+      }
+
+      .demo-label {
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: hsl(var(--muted-fg));
+        margin-bottom: 16px;
+      }
+
+      .demo-label--live {
+        color: hsl(var(--primary));
+      }
+
+      .demo-label--spec {
+        color: hsl(215 16% 57%);
+      }
+
+      /* Inline code chips */
+      .code-chip {
+        display: inline;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 12px;
+        font-weight: 500;
+        color: hsl(224 76% 42%);
+        background: hsl(224 76% 48% / 0.08);
+        border: 1px solid hsl(224 76% 48% / 0.12);
+        padding: 2px 7px;
+        border-radius: 5px;
+        white-space: nowrap;
+      }
+
+      .dark .code-chip {
+        color: hsl(199 89% 58%);
+        background: hsl(199 89% 48% / 0.12);
+        border-color: hsl(199 89% 48% / 0.2);
+      }
+
+      /* Spec tab layout (trade interactions) */
+      .spec-tabs-layout {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 0;
+        margin-top: 16px;
+        border: 1px solid hsl(214 32% 91% / 0.6);
+        border-radius: 14px;
+        overflow: hidden;
+        background: hsl(210 40% 98%);
+      }
+
+      .dark .spec-tabs-layout {
+        background: hsl(222 25% 11%);
+        border-color: hsl(var(--border) / 0.6);
+      }
+
+      @media (max-width: 700px) {
+        .spec-tabs-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .spec-tab-list {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding: 12px;
+        border-right: 1px solid hsl(214 32% 91% / 0.6);
+        background: hsl(210 40% 96%);
+      }
+
+      .dark .spec-tab-list {
+        background: hsl(222 25% 9%);
+        border-color: hsl(var(--border) / 0.6);
+      }
+
+      @media (max-width: 700px) {
+        .spec-tab-list {
+          flex-direction: row;
+          overflow-x: auto;
+          border-right: none;
+          border-bottom: 1px solid hsl(214 32% 91% / 0.6);
+        }
+      }
+
+      .spec-tab-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+        width: 100%;
+        padding: 12px 14px;
+        border: none;
+        border-radius: 10px;
+        background: transparent;
+        cursor: pointer;
+        text-align: left;
+        transition: background 0.2s var(--ease-out), color 0.2s;
+        color: hsl(var(--muted-fg));
+      }
+
+      .spec-tab-btn strong {
+        font-size: var(--text-sm);
+        font-weight: 600;
+        color: hsl(var(--fg));
+        letter-spacing: -0.01em;
+      }
+
+      .spec-tab-btn span {
+        font-size: 12px;
+        color: hsl(var(--muted-fg));
+      }
+
+      .spec-tab-btn:hover {
+        background: hsl(221 83% 53% / 0.06);
+      }
+
+      .spec-tab-btn[aria-selected="true"] {
+        background: #ffffff;
+        box-shadow: 0 1px 4px hsl(0 0% 0% / 0.06);
+      }
+
+      .dark .spec-tab-btn[aria-selected="true"] {
+        background: hsl(222 47% 14%);
+        box-shadow: 0 1px 4px hsl(0 0% 0% / 0.2);
+      }
+
+      .spec-tab-btn[aria-selected="true"] strong {
+        color: hsl(var(--primary));
+      }
+
+      @media (max-width: 700px) {
+        .spec-tab-btn {
+          min-width: 140px;
+          flex-shrink: 0;
+        }
+      }
+
+      .spec-tab-panels {
+        position: relative;
+        min-height: 200px;
+      }
+
+      .spec-tab-panel {
+        padding: 24px;
+        opacity: 0;
+        visibility: hidden;
+        position: absolute;
+        inset: 0;
+        transition: opacity 0.25s var(--ease-out), visibility 0.25s;
+        pointer-events: none;
+        display: none;
+      }
+
+      .spec-tab-panel.active {
+        opacity: 1;
+        visibility: visible;
+        position: relative;
+        pointer-events: auto;
+        display: block;
+      }
+
+      .spec-tab-panel .taf-flow {
+        padding: 0;
+      }
+
+      .spec-tab-panel .taf-step {
+        background: #ffffff;
+        border-color: hsl(214 32% 91% / 0.5);
+      }
+
+      .dark .spec-tab-panel .taf-step {
+        background: hsl(222 47% 12%);
+        border-color: hsl(var(--border) / 0.5);
+      }
+
+      /* Chart demo */
+      .chart-demo {
+        position: relative;
+        height: 180px;
+        cursor: crosshair;
+      }
+
+      .chart-svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .chart-area {
+        fill: url(#chartGrad);
+        opacity: 0.9;
+      }
+
+      .chart-line {
+        fill: none;
+        stroke: hsl(var(--primary));
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-dasharray: 600;
+        stroke-dashoffset: 600;
+        animation: drawLine 1.2s var(--ease-out) 0.3s forwards;
+      }
+
+      .chart-cursor {
+        stroke: hsl(var(--primary) / 0.5);
+        stroke-width: 1;
+        stroke-dasharray: 4 4;
+        opacity: 0;
+        transition: opacity 0.15s;
+      }
+
+      .chart-demo:hover .chart-cursor {
+        opacity: 1;
+      }
+
+      .chart-dot {
+        fill: hsl(var(--primary));
+        stroke: hsl(var(--card));
+        stroke-width: 2;
+        opacity: 0;
+        transition: opacity 0.15s;
+        filter: drop-shadow(0 0 6px hsl(var(--primary) / 0.5));
+      }
+
+      .chart-demo:hover .chart-dot {
+        opacity: 1;
+      }
+
+      .chart-tooltip-demo {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 180px;
+        padding: 14px;
+        border-radius: 10px;
+        border: 1px solid hsl(var(--border));
+        background: hsl(var(--card) / 0.95);
+        backdrop-filter: blur(12px);
+        font-size: 12px;
+        box-shadow: 0 8px 24px hsl(var(--primary) / 0.1);
+        opacity: 0;
+        transform: translateY(6px);
+        transition: opacity 0.2s var(--ease-out), transform 0.2s var(--ease-out);
+        pointer-events: none;
+      }
+
+      .chart-demo:hover .chart-tooltip-demo {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .chart-tooltip-demo strong {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+      }
+
+      .chart-tooltip-demo .row {
+        display: flex;
+        justify-content: space-between;
+        color: hsl(var(--muted-fg));
+        margin-top: 4px;
+      }
+
+      .chart-tooltip-demo .val {
+        font-weight: 600;
+        color: hsl(var(--fg));
+        font-variant-numeric: tabular-nums;
+      }
+
+      .chart-tooltip-demo .pos {
+        color: hsl(var(--success));
+      }
+
+      .chart-hint {
+        position: absolute;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: var(--text-xs);
+        color: hsl(var(--muted-fg));
+        opacity: 0.7;
+        animation: fadeHint 3s ease infinite;
+      }
+
+      /* Toast demo */
+      .toast-stage {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        min-height: 200px;
+      }
+
+      .toast-btns {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+      }
+
+      .toast-btn {
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-size: var(--text-sm);
+        font-weight: 600;
+        border: 1px solid hsl(var(--border));
+        background: hsl(var(--muted) / 0.5);
+        cursor: pointer;
+        transition: background 0.15s, transform 0.15s;
+        color: hsl(var(--fg));
+      }
+
+      .toast-btn:hover {
+        background: hsl(var(--primary) / 0.08);
+      }
+
+      .toast-btn:active {
+        transform: scale(0.97);
+      }
+
+      .toast-btn.error {
+        border-color: hsl(var(--destructive) / 0.3);
+        color: hsl(var(--destructive));
+      }
+
+      .toast-btn.success {
+        border-color: hsl(var(--success) / 0.3);
+        color: hsl(var(--success));
+      }
+
+      .toast-container {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        pointer-events: none;
+      }
+
+      .toast-item {
+        width: 320px;
+        max-width: calc(100vw - 48px);
+        padding: 14px 16px;
+        border-radius: 12px;
+        border: 1px solid hsl(var(--border));
+        background: hsl(var(--card) / 0.95);
+        backdrop-filter: blur(16px);
+        box-shadow: 0 12px 40px hsl(0 0% 0% / 0.15);
+        pointer-events: auto;
+        animation: toastIn 0.4s var(--ease-spring) both;
+      }
+
+      .toast-item.out {
+        animation: toastOut 0.3s var(--ease-out) forwards;
+      }
+
+      .toast-item.error {
+        border-left: 3px solid hsl(var(--destructive));
+      }
+
+      .toast-item.success {
+        border-left: 3px solid hsl(var(--success));
+      }
+
+      .toast-item strong {
+        display: block;
+        font-size: 13px;
+        margin-bottom: 4px;
+      }
+
+      .toast-item span {
+        font-size: 12px;
+        color: hsl(var(--muted-fg));
+      }
+
+      /* Skeleton demo */
+      .skeleton-demo {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .skel {
+        border-radius: 8px;
+        background: linear-gradient(
+          90deg,
+          hsl(var(--muted)) 0%,
+          hsl(var(--muted) / 0.5) 50%,
+          hsl(var(--muted)) 100%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.4s ease infinite;
+      }
+
+      .skel-score {
+        height: 64px;
+        width: 64px;
+        border-radius: 50%;
+      }
+
+      .skel-bar {
+        height: 12px;
+      }
+
+      .skel-bar.w60 {
+        width: 60%;
+      }
+
+      .skel-bar.w80 {
+        width: 80%;
+      }
+
+      .skel-bar.w40 {
+        width: 40%;
+      }
+
+      .loaded-reveal {
+        opacity: 0;
+        animation: reveal 0.5s var(--ease-out) 1.4s forwards;
+      }
+
+      .score-ring {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        border: 4px solid hsl(var(--primary) / 0.2);
+        border-top-color: hsl(var(--primary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-weight: 800;
+        font-size: 20px;
+        color: hsl(var(--primary));
+        animation: spinOnce 0.8s var(--ease-out) 1.4s both;
+      }
+
+      /* Mood demo */
+      .mood-demo {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .mood-btn {
+        flex: 1;
+        min-width: 64px;
+        padding: 12px 8px;
+        border-radius: 10px;
+        border: 1px solid hsl(var(--border));
+        background: hsl(var(--muted) / 0.3);
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.2s var(--ease-out);
+      }
+
+      .mood-btn:hover {
+        border-color: hsl(var(--primary) / 0.3);
+        background: hsl(var(--primary) / 0.05);
+        transform: translateY(-2px);
+      }
+
+      .mood-btn.active {
+        border-color: hsl(var(--primary) / 0.4);
+        background: hsl(var(--primary) / 0.1);
+        box-shadow: 0 0 20px -6px hsl(var(--primary) / 0.4);
+        transform: scale(1.02);
+      }
+
+      .mood-btn span:first-child {
+        display: block;
+        font-size: 22px;
+        margin-bottom: 4px;
+      }
+
+      .mood-btn span:last-child {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: hsl(var(--muted-fg));
+      }
+
+      .mood-btn.active span:last-child {
+        color: hsl(var(--primary));
+      }
+
+      .mood-feedback {
+        margin-top: 16px;
+        font-size: var(--text-sm);
+        color: hsl(var(--muted-fg));
+        min-height: 20px;
+        transition: color 0.2s;
+      }
+
+      .mood-feedback strong {
+        color: hsl(var(--primary));
+      }
+
+      /* Motion tokens */
+      .token-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+
+      @media (max-width: 700px) {
+        .token-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .token {
+        padding: 20px;
+        border-radius: 14px;
+        border: 1px solid hsl(var(--border));
+        background: hsl(var(--muted) / 0.25);
+      }
+
+      .token-name {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        font-weight: 500;
+        color: hsl(var(--primary));
+        margin-bottom: 6px;
+      }
+
+      .token-val {
+        font-size: 12px;
+        color: hsl(var(--muted-fg));
+        margin-bottom: 12px;
+      }
+
+      .token-preview {
+        height: 36px;
+        border-radius: 8px;
+        background: hsl(var(--primary));
+      }
+
+      .token-preview.ease-out {
+        animation: slideDemo 1.2s var(--ease-out) infinite alternate;
+      }
+
+      .token-preview.spring {
+        animation: slideDemo 1.2s var(--ease-spring) infinite alternate;
+      }
+
+      .token-preview.shimmer {
+        background: linear-gradient(
+          90deg,
+          hsl(var(--muted)) 0%,
+          hsl(var(--primary) / 0.3) 50%,
+          hsl(var(--muted)) 100%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.4s ease infinite;
+      }
+
+      /* Spec table */
+      .spec-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: var(--text-sm);
+      }
+
+      .spec-table th {
+        text-align: left;
+        padding: 14px 20px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: hsl(var(--muted-fg));
+        border-bottom: 1px solid hsl(220 13% 95%);
+        background: hsl(210 40% 98% / 0.8);
+      }
+
+      .dark .spec-table th {
+        border-bottom-color: hsl(var(--border) / 0.5);
+        background: hsl(var(--muted) / 0.2);
+      }
+
+      .spec-table td {
+        padding: 18px 20px;
+        border-bottom: 1px solid hsl(220 13% 95%);
+        vertical-align: top;
+        line-height: 1.6;
+        color: hsl(var(--fg) / 0.88);
+      }
+
+      .dark .spec-table td {
+        border-bottom-color: hsl(var(--border) / 0.4);
+      }
+
+      .spec-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .spec-table td .code-chip {
+        margin: 1px 2px;
+      }
+
+      .spec-table--catalog td:first-child {
+        font-weight: 500;
+        color: hsl(var(--muted-fg));
+        font-size: var(--text-xs);
+      }
+
+      /* Motion tokens — inline row */
+      .token-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .token-pill {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        border-radius: 10px;
+        border: 1px solid hsl(var(--border));
+        background: hsl(var(--card));
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .token-pill-info strong {
+        display: block;
+        font-family: "JetBrains Mono", monospace;
+        font-size: var(--text-xs);
+        font-weight: 500;
+        color: hsl(var(--primary));
+      }
+
+      .token-pill-info span {
+        font-size: 12px;
+        color: hsl(var(--muted-fg));
+      }
+
+      .token-pill-preview {
+        width: 48px;
+        height: 28px;
+        border-radius: 6px;
+        background: hsl(var(--primary));
+        flex-shrink: 0;
+      }
+
+      .token-pill-preview.ease-out {
+        animation: slideDemo 1.2s var(--ease-out) infinite alternate;
+      }
+
+      .token-pill-preview.spring {
+        animation: slideDemo 1.2s var(--ease-spring) infinite alternate;
+      }
+
+      .token-pill-preview.shimmer {
+        background: linear-gradient(
+          90deg,
+          hsl(var(--muted)) 0%,
+          hsl(var(--primary) / 0.3) 50%,
+          hsl(var(--muted)) 100%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.4s ease infinite;
+      }
+
+      /* Footer */
+      footer {
+        border-top: 1px solid hsl(var(--border));
+        padding: 32px 0 48px;
+        margin-top: 0;
+      }
+
+      .footer-inner {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .footer-inner p {
+        font-size: var(--text-sm);
+        color: hsl(var(--muted-fg));
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 16px;
+      }
+
+      .footer-links a {
+        font-size: var(--text-sm);
+        font-weight: 600;
+        color: hsl(var(--primary));
+        text-decoration: none;
+      }
+
+      .footer-links a:hover {
+        text-decoration: underline;
+      }
+
+      /* Animations */
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+
+      @keyframes drawLine {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      @keyframes shimmer {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+
+      @keyframes toastIn {
+        from {
+          opacity: 0;
+          transform: translateX(24px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0) scale(1);
+        }
+      }
+
+      @keyframes toastOut {
+        to {
+          opacity: 0;
+          transform: translateX(24px) scale(0.95);
+        }
+      }
+
+      @keyframes reveal {
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes spinOnce {
+        from {
+          transform: rotate(-90deg);
+          opacity: 0;
+        }
+        to {
+          transform: rotate(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideDemo {
+        from {
+          transform: translateX(0);
+          width: 30%;
+        }
+        to {
+          transform: translateX(calc(100% - 30%));
+          width: 30%;
+        }
+      }
+
+      @keyframes fadeHint {
+        0%,
+        100% {
+          opacity: 0.4;
+        }
+        50% {
+          opacity: 0.9;
+        }
+      }
+
+      .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+      }
+
+      .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="shell">
+      <nav class="nav">
+        <div class="nav-inner">
+          <a class="nav-brand" href="#top">
+            <div>
+              <span>Portfolio</span>
+              <strong>Assetflow</strong>
+            </div>
+          </a>
+          <div class="nav-links">
+            <a href="#system">System</a>
+            <a href="#charts">Charts</a>
+            <a href="#trade">Trade</a>
+            <a href="#motion">Motion</a>
+            <a href="#catalog">Catalog</a>
+            <a href="/retrospective.html">Retrospective</a>
+          </div>
+          <div class="nav-actions">
+            <a href="/" class="btn-sm btn-ghost">Live App</a>
+            <button class="icon-btn" id="themeBtn" aria-label="테마 전환">
+              <svg class="moon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+              <svg class="sun" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="5" />
+                <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <main id="top">
+        <div class="wrap">
+          <!-- Hero -->
+          <header class="hero">
+            <p class="hero-role">Design Engineer · Interaction Portfolio</p>
+            <h1 class="display">Assetflow <em>— Fintech Dashboard</em></h1>
+            <p class="hero-tagline">
+              차트·주문·모션 인터랙션 19건 정의 · 12건 라이브 데모
+            </p>
+            <div class="meta-chips">
+              <span class="meta-chip meta-chip--accent">19 Specs</span>
+              <span class="meta-chip meta-chip--accent">12 Live</span>
+              <span class="meta-chip">React</span>
+              <span class="meta-chip">Recharts</span>
+              <span class="meta-chip">Sonner</span>
+              <span class="meta-chip">2025</span>
+            </div>
+          </header>
+
+          <!-- 01 System -->
+          <section id="system" class="section reveal">
+            <div class="section-head">
+              <div>
+                <div class="section-num mono">01</div>
+                <h2 class="display">Interaction System</h2>
+                <p class="section-desc">Trigger → Action → Feedback 3단계로 모든 인터랙션을 모델링</p>
+              </div>
+            </div>
+
+            <div class="flow-strip">
+              <div class="flow-strip-item">
+                <strong>Trigger</strong>
+                <span>click · hover · input</span>
+              </div>
+              <div class="flow-strip-item">
+                <strong>Action</strong>
+                <span>setState · validate · route</span>
+              </div>
+              <div class="flow-strip-item">
+                <strong>Feedback</strong>
+                <span>toast · tooltip · skeleton</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- 02 Charts -->
+          <section id="charts" class="section reveal">
+            <div class="section-head">
+              <div>
+                <div class="section-num mono">02</div>
+                <h2 class="display">Chart Interactions</h2>
+                <p class="section-desc">커스텀 툴팁 · activeDot · 기간 탭 · auto-flip</p>
+              </div>
+            </div>
+
+            <div class="demo-split">
+              <div class="demo-box demo-box--live">
+                <div class="demo-label demo-label--live">Live · Chart Tooltip</div>
+                <div class="chart-demo" id="chartDemo">
+                  <svg class="chart-svg" viewBox="0 0 400 180" preserveAspectRatio="none">
+                    <defs>
+                      <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="hsl(var(--primary))" stop-opacity="0.25" />
+                        <stop offset="100%" stop-color="hsl(var(--primary))" stop-opacity="0" />
+                      </linearGradient>
+                    </defs>
+                    <path class="chart-area" d="M0,140 C40,130 60,100 100,90 C140,80 160,110 200,70 C240,30 280,50 320,40 C360,30 380,20 400,15 L400,180 L0,180 Z" />
+                    <path class="chart-line" d="M0,140 C40,130 60,100 100,90 C140,80 160,110 200,70 C240,30 280,50 320,40 C360,30 380,20 400,15" />
+                    <line class="chart-cursor" x1="280" y1="10" x2="280" y2="170" />
+                    <circle class="chart-dot" cx="280" cy="48" r="6" />
+                  </svg>
+                  <div class="chart-tooltip-demo">
+                    <strong>Sep 2025</strong>
+                    <div class="row"><span>Portfolio value</span><span class="val">$2.41M</span></div>
+                    <div class="row"><span>Return</span><span class="val pos">+18.4%</span></div>
+                  </div>
+                  <span class="chart-hint">호버하여 확인</span>
+                </div>
+              </div>
+
+              <div class="demo-box demo-box--spec">
+                <div class="demo-label demo-label--spec">Interaction Spec</div>
+                <div class="taf-flow" style="padding: 0">
+                  <div class="taf-step">
+                    <div class="taf-step-label">Trigger</div>
+                    <p>차트 영역 <code class="code-chip">mouseenter</code> <code class="code-chip">mousemove</code></p>
+                  </div>
+                  <div class="taf-arrow">→</div>
+                  <div class="taf-step">
+                    <div class="taf-step-label">Action</div>
+                    <p><code class="code-chip">activeDot</code> r=8 · dashed cursor · payload 조회</p>
+                  </div>
+                  <div class="taf-arrow">→</div>
+                  <div class="taf-step">
+                    <div class="taf-step-label">Feedback</div>
+                    <p><code class="code-chip">.chart-tooltip</code> glass 패널 · 수치 tabular-nums</p>
+                  </div>
+                </div>
+                <div class="taf-spec" style="padding-left: 0; padding-right: 0">
+                  <div><dt>Animation</dt><dd>400ms ease-out</dd></div>
+                  <div><dt>Cursor</dt><dd>stroke-dasharray 4 4</dd></div>
+                  <div><dt>Tooltip</dt><dd>208×112 · auto-flip</dd></div>
+                </div>
+              </div>
+            </div>
+
+            <dl class="spec-list">
+              <div class="spec-list-item">
+                <dt>기간 탭 전환</dt>
+                <dd><code class="code-chip">onClick</code> → <code class="code-chip">setPeriod</code> · 차트 리마운트 · 400ms draw-in</dd>
+              </div>
+              <div class="spec-list-item">
+                <dt>ROTA 복합 호버</dt>
+                <dd><code class="code-chip">hover</code> → 월별 payload · <code class="code-chip">RotaTooltip</code> · ROA % / Net $M</dd>
+              </div>
+            </dl>
+          </section>
+
+          <!-- 03 Trade -->
+          <section id="trade" class="section reveal">
+            <div class="section-head">
+              <div>
+                <div class="section-num mono">03</div>
+                <h2 class="display">Trade & Toast</h2>
+                <p class="section-desc">주문 검증 3단계 · Sonner 피드백 · 한국형 매수/매도 UX</p>
+              </div>
+            </div>
+
+            <div class="demo-split">
+              <div class="demo-box demo-box--live">
+                <div class="demo-label demo-label--live">Live · Order Toast</div>
+                <div class="toast-stage">
+                  <p style="font-size: var(--text-sm); color: hsl(var(--muted-fg)); text-align: center">
+                    <code class="code-chip">handleSubmit()</code> 동일 로직
+                  </p>
+                  <div class="toast-btns">
+                    <button class="toast-btn success" data-toast="success">NVDA 매수 10주 접수</button>
+                    <button class="toast-btn error" data-toast="qty">수량 미입력</button>
+                    <button class="toast-btn error" data-toast="shares">보유 수량 초과</button>
+                    <button class="toast-btn error" data-toast="limit">지정가 오류</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="demo-box demo-box--spec">
+                <div class="demo-label demo-label--spec">Validation Flow</div>
+                <table class="spec-table">
+                  <thead>
+                    <tr>
+                      <th>조건</th>
+                      <th>Trigger</th>
+                      <th>Toast</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code class="code-chip">qty ≤ 0</code></td>
+                      <td>주문하기 tap</td>
+                      <td style="color: hsl(var(--destructive))">수량을 입력해 주세요.</td>
+                    </tr>
+                    <tr>
+                      <td><code class="code-chip">sell qty &gt; holdings</code></td>
+                      <td>매도 제출</td>
+                      <td style="color: hsl(var(--destructive))">보유 수량(N주) 초과</td>
+                    </tr>
+                    <tr>
+                      <td><code class="code-chip">limit ≤ 0</code></td>
+                      <td>지정가 주문</td>
+                      <td style="color: hsl(var(--destructive))">지정가를 입력해 주세요.</td>
+                    </tr>
+                    <tr>
+                      <td>통과</td>
+                      <td>유효 주문</td>
+                      <td style="color: hsl(var(--success))">접수 + description</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="spec-tabs-layout" id="tradeSpecTabs">
+              <div class="spec-tab-list" role="tablist" aria-label="거래 인터랙션 스펙">
+                <button class="spec-tab-btn" role="tab" aria-selected="true" aria-controls="tab-buy-sell" id="tab-btn-buy-sell" data-tab="buy-sell">
+                  <strong>매수 / 매도 토글</strong>
+                  <span>한국 증권 UX</span>
+                </button>
+                <button class="spec-tab-btn" role="tab" aria-selected="false" aria-controls="tab-presets" id="tab-btn-presets" data-tab="presets">
+                  <strong>수량 프리셋</strong>
+                  <span>25% · 50% · 75% · 100%</span>
+                </button>
+                <button class="spec-tab-btn" role="tab" aria-selected="false" aria-controls="tab-cross-nav" id="tab-btn-cross-nav" data-tab="cross-nav">
+                  <strong>내역 크로스 네비</strong>
+                  <span>보유 종목 행 클릭</span>
+                </button>
+              </div>
+              <div class="spec-tab-panels">
+                <div class="spec-tab-panel active" role="tabpanel" id="tab-buy-sell" aria-labelledby="tab-btn-buy-sell">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px">
+                    <div>
+                      <h3 style="font-size: 15px; font-weight: 700; letter-spacing: -0.02em">매수 / 매도 토글</h3>
+                      <p style="font-size: 12px; color: hsl(var(--muted-fg)); margin-top: 2px">매수 빨강 · 매도 파랑</p>
+                    </div>
+                    <span class="tag tag-trade">Trade</span>
+                  </div>
+                  <div class="taf-flow">
+                    <div class="taf-step">
+                      <div class="taf-step-label">Trigger</div>
+                      <p>매수/매도 버튼 tap</p>
+                    </div>
+                    <div class="taf-arrow">→</div>
+                    <div class="taf-step">
+                      <div class="taf-step-label">Action</div>
+                      <p><code class="code-chip">setSide('buy'|'sell')</code> · CTA 색상·라벨 변경</p>
+                    </div>
+                    <div class="taf-arrow">→</div>
+                    <div class="taf-step">
+                      <div class="taf-step-label">Feedback</div>
+                      <p><code class="code-chip">.trade-buy</code> <code class="code-chip">.trade-sell</code> · sticky submit bar 색상 전환</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="spec-tab-panel" role="tabpanel" id="tab-presets" aria-labelledby="tab-btn-presets">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px">
+                    <div>
+                      <h3 style="font-size: 15px; font-weight: 700; letter-spacing: -0.02em">수량 프리셋 · 전량 링크</h3>
+                      <p style="font-size: 12px; color: hsl(var(--muted-fg)); margin-top: 2px">25% · 50% · 75% · 100%</p>
+                    </div>
+                    <span class="tag tag-trade">Trade</span>
+                  </div>
+                  <div class="taf-flow">
+                    <div class="taf-step">
+                      <div class="taf-step-label">Trigger</div>
+                      <p>프리셋 버튼 · "전량 N주" tap</p>
+                    </div>
+                    <div class="taf-arrow">→</div>
+                    <div class="taf-step">
+                      <div class="taf-step-label">Action</div>
+                      <p>보유 수량 기준 계산 · <code class="code-chip">setQuantity</code></p>
+                    </div>
+                    <div class="taf-arrow">→</div>
+                    <div class="taf-step">
+                      <div class="taf-step-label">Feedback</div>
+                      <p>input 즉시 반영 · 예상 금액 실시간 업데이트</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="spec-tab-panel" role="tabpanel" id="tab-cross-nav" aria-labelledby="tab-btn-cross-nav">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px">
+                    <div>
+                      <h3 style="font-size: 15px; font-weight: 700; letter-spacing: -0.02em">내역 → 주문 크로스 네비게이션</h3>
+                      <p style="font-size: 12px; color: hsl(var(--muted-fg)); margin-top: 2px">보유 종목 행 클릭</p>
+                    </div>
+                    <span class="tag tag-trade">Trade</span>
+                  </div>
+                  <div class="taf-flow">
+                    <div class="taf-step">
+                      <div class="taf-step-label">Trigger</div>
+                      <p>내역 탭 보유 행 <code class="code-chip">onClick</code></p>
+                    </div>
+                    <div class="taf-arrow">→</div>
+                    <div class="taf-step">
+                      <div class="taf-step-label">Action</div>
+                      <p><code class="code-chip">setSymbolId</code> + <code class="code-chip">setTab('order')</code></p>
+                    </div>
+                    <div class="taf-arrow">→</div>
+                    <div class="taf-step">
+                      <div class="taf-step-label">Feedback</div>
+                      <p>헤더 가격 스트립 갱신 · 지정가 자동 세팅 · 주문 탭 활성</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 04 Motion -->
+          <section id="motion" class="section reveal">
+            <div class="section-head">
+              <div>
+                <div class="section-num mono">04</div>
+                <h2 class="display">Motion & Loading</h2>
+                <p class="section-desc">스켈레톤 shimmer · Mood ring/glow · CSS 변수 테마 전환</p>
+              </div>
+            </div>
+
+            <div class="demo-split">
+              <div class="demo-box demo-box--live">
+                <div class="demo-label demo-label--live">Live · Skeleton</div>
+                <div class="skeleton-demo" id="skelDemo">
+                  <div style="display: flex; gap: 16px; align-items: center">
+                    <div class="skel skel-score" id="skelCircle"></div>
+                    <div style="flex: 1">
+                      <div class="skel skel-bar w60" style="margin-bottom: 8px"></div>
+                      <div class="skel skel-bar w80"></div>
+                    </div>
+                  </div>
+                  <div class="skel skel-bar w40"></div>
+                  <div class="skel skel-bar" style="height: 80px; border-radius: 12px"></div>
+                </div>
+                <button class="btn-sm btn-ghost" id="replaySkel" style="margin-top: 16px">Replay</button>
+              </div>
+
+              <div class="demo-box demo-box--live">
+                <div class="demo-label demo-label--live">Live · Mood</div>
+                <div class="mood-demo" id="moodDemo">
+                  <button class="mood-btn" data-mood="Scared"><span>😰</span><span>Scared</span></button>
+                  <button class="mood-btn" data-mood="Anxious"><span>😟</span><span>Anxious</span></button>
+                  <button class="mood-btn" data-mood="Neutral"><span>😐</span><span>Neutral</span></button>
+                  <button class="mood-btn" data-mood="Calm"><span>😌</span><span>Calm</span></button>
+                  <button class="mood-btn" data-mood="Confident"><span>😎</span><span>Confident</span></button>
+                </div>
+                <p class="mood-feedback" id="moodFeedback">감정 선택 → 리스크 차트 마커 갱신</p>
+              </div>
+            </div>
+
+            <div class="token-row">
+              <div class="token-pill">
+                <div class="token-pill-preview ease-out"></div>
+                <div class="token-pill-info">
+                  <strong>--ease-out</strong>
+                  <span>cubic-bezier(0.16, 1, 0.3, 1)</span>
+                </div>
+              </div>
+              <div class="token-pill">
+                <div class="token-pill-preview spring"></div>
+                <div class="token-pill-info">
+                  <strong>--ease-spring</strong>
+                  <span>cubic-bezier(0.34, 1.56, 0.64, 1)</span>
+                </div>
+              </div>
+              <div class="token-pill">
+                <div class="token-pill-preview shimmer"></div>
+                <div class="token-pill-info">
+                  <strong>shimmer</strong>
+                  <span>1.4s skeleton</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 05 Catalog -->
+          <section id="catalog" class="section reveal">
+            <div class="section-head">
+              <div>
+                <div class="section-num mono">05</div>
+                <h2 class="display">Full Catalog</h2>
+                <p class="section-desc">대시보드 · 거래 · 공통 — Trigger / Action / Feedback</p>
+              </div>
+            </div>
+
+            <div class="panel" style="overflow: hidden; padding: 0; border-color: hsl(214 32% 91% / 0.6)">
+              <table class="spec-table spec-table--catalog">
+                <thead>
+                  <tr>
+                    <th>영역</th>
+                    <th>Trigger</th>
+                    <th>Action</th>
+                    <th>Feedback</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Header</td>
+                    <td>Theme toggle <code class="code-chip">click</code></td>
+                    <td><code class="code-chip">setTheme</code> · <code class="code-chip">localStorage</code></td>
+                    <td>CSS vars 전환 · 아이콘 swap</td>
+                    <td><span class="status-badge status-badge--live">Live</span></td>
+                  </tr>
+                  <tr>
+                    <td>Header</td>
+                    <td>New trade <code class="code-chip">click</code></td>
+                    <td><code class="code-chip">navigate('/trade')</code></td>
+                    <td>거래 화면 전환</td>
+                    <td><span class="status-badge status-badge--live">Live</span></td>
+                  </tr>
+                  <tr>
+                    <td>Revenue</td>
+                    <td>Period tab <code class="code-chip">click</code></td>
+                    <td><code class="code-chip">setPeriod</code></td>
+                    <td>차트 리마운트 · metric 갱신</td>
+                    <td><span class="status-badge status-badge--live">Live</span></td>
+                  </tr>
+                  <tr>
+                    <td>Revenue</td>
+                    <td>Chart <code class="code-chip">hover</code></td>
+                    <td><code class="code-chip">Tooltip</code> payload</td>
+                    <td>Portfolio value · Return %</td>
+                    <td><span class="status-badge status-badge--live">Live</span></td>
+                  </tr>
+                  <tr>
+                    <td>Risk</td>
+                    <td>Page <code class="code-chip">mount</code></td>
+                    <td><code class="code-chip">fetchRiskScoreData</code></td>
+                    <td>Skeleton 1.2s → 차트 reveal</td>
+                    <td><span class="status-badge status-badge--live">Live</span></td>
+                  </tr>
+                  <tr>
+                    <td>Risk</td>
+                    <td>ROTA bar <code class="code-chip">hover</code></td>
+                    <td>Month payload</td>
+                    <td><code class="code-chip">RotaTooltip</code> · Net income</td>
+                    <td><span class="status-badge status-badge--live">Live</span></td>
+                  </tr>
+                  <tr>
+                    <td>Mood</td>
+                    <td>Emoji button <code class="code-chip">click</code></td>
+                    <td><code class="code-chip">setSelectedMood</code></td>
+                    <td>ring · glow · footer text</td>
+                    <td><span class="status-badge status-badge--live">Live</span></td>
+                  </tr>
+                  <tr>
+                    <td>Trade</td>
+                    <td>Submit order</td>
+                    <td><code class="code-chip">validate</code> → toast</td>
+                    <td>Sonner success/error</td>
+                    <td><span class="status-badge status-badge--live">Live</span></td>
+                  </tr>
+                  <tr>
+                    <td>Trade</td>
+                    <td>Symbol select</td>
+                    <td><code class="code-chip">setSymbolId</code></td>
+                    <td>가격·차트·호가 갱신</td>
+                    <td><span class="status-badge status-badge--live">Live</span></td>
+                  </tr>
+                  <tr>
+                    <td>Trade</td>
+                    <td>Bottom tab tap</td>
+                    <td><code class="code-chip">setTab</code></td>
+                    <td>콘텐츠 스왑 · nav active</td>
+                    <td><span class="status-badge status-badge--live">Live</span></td>
+                  </tr>
+                  <tr>
+                    <td>Trade</td>
+                    <td>Chart <code class="code-chip">hover</code></td>
+                    <td><code class="code-chip">Recharts Tooltip</code></td>
+                    <td>가격 포맷 USD</td>
+                    <td><span class="status-badge status-badge--live">Live</span></td>
+                  </tr>
+                  <tr>
+                    <td>Global</td>
+                    <td>Search · Import · Bell</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td><span class="status-badge status-badge--ui">UI only</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+
+        <footer>
+          <div class="wrap footer-inner">
+            <p>Assetflow · Design Engineer Portfolio · 2025</p>
+            <div class="footer-links">
+              <a href="/">대시보드</a>
+              <a href="/trade">거래 화면</a>
+              <a href="/interactions.html">기술 가이드</a>
+              <a href="/retrospective.html">회고</a>
+            </div>
+          </div>
+        </footer>
+      </main>
+    </div>
+
+    <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+    <script>
+      (function () {
+        /* Theme */
+        document.getElementById("themeBtn").addEventListener("click", function () {
+          var dark = document.documentElement.classList.toggle("dark");
+          try {
+            localStorage.setItem("theme", dark ? "dark" : "light");
+          } catch (e) {}
+        });
+
+        /* Scroll reveal */
+        var reveals = document.querySelectorAll(".reveal");
+        var observer = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (e) {
+              if (e.isIntersecting) e.target.classList.add("visible");
+            });
+          },
+          { threshold: 0.08 }
+        );
+        reveals.forEach(function (el) {
+          observer.observe(el);
+        });
+
+        /* Toast demo */
+        var toasts = {
+          success: {
+            type: "success",
+            title: "NVDA 매수 10주 접수",
+            desc: "지정가 · $8,924.00",
+          },
+          qty: { type: "error", title: "수량을 입력해 주세요.", desc: "" },
+          shares: {
+            type: "error",
+            title: "보유 수량(12주)을 초과할 수 없습니다.",
+            desc: "",
+          },
+          limit: { type: "error", title: "지정가를 입력해 주세요.", desc: "" },
+        };
+
+        document.querySelectorAll("[data-toast]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var key = btn.getAttribute("data-toast");
+            var t = toasts[key];
+            if (!t) return;
+            var container = document.getElementById("toastContainer");
+            var el = document.createElement("div");
+            el.className = "toast-item " + t.type;
+            el.innerHTML =
+              "<strong>" +
+              t.title +
+              "</strong>" +
+              (t.desc ? "<span>" + t.desc + "</span>" : "");
+            container.appendChild(el);
+            setTimeout(function () {
+              el.classList.add("out");
+              setTimeout(function () {
+                el.remove();
+              }, 300);
+            }, 3200);
+          });
+        });
+
+        /* Mood demo */
+        var moodBtns = document.querySelectorAll("#moodDemo .mood-btn");
+        var moodFeedback = document.getElementById("moodFeedback");
+        moodBtns.forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            moodBtns.forEach(function (b) {
+              b.classList.remove("active");
+            });
+            btn.classList.add("active");
+            var mood = btn.getAttribute("data-mood");
+            moodFeedback.innerHTML =
+              'Blue markers on your risk chart. · <strong>' + mood + "</strong>";
+          });
+        });
+
+        /* Skeleton replay */
+        var skelDemo = document.getElementById("skelDemo");
+        var skelCircle = document.getElementById("skelCircle");
+        document.getElementById("replaySkel").addEventListener("click", function () {
+          skelCircle.className = "skel skel-score";
+          skelCircle.innerHTML = "";
+          skelDemo.querySelectorAll(".skel-bar").forEach(function (b) {
+            b.style.display = "";
+          });
+          setTimeout(function () {
+            skelCircle.className = "score-ring loaded-reveal";
+            skelCircle.textContent = "78";
+            skelDemo.querySelectorAll(".skel-bar").forEach(function (b) {
+              b.style.display = "none";
+            });
+          }, 1400);
+        });
+
+        /* Auto-play skeleton on first view */
+        setTimeout(function () {
+          document.getElementById("replaySkel").click();
+        }, 800);
+
+        /* Trade spec tabs */
+        var tabBtns = document.querySelectorAll("#tradeSpecTabs .spec-tab-btn");
+        var tabPanels = document.querySelectorAll("#tradeSpecTabs .spec-tab-panel");
+        tabBtns.forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var target = btn.getAttribute("data-tab");
+            tabBtns.forEach(function (b) {
+              b.setAttribute("aria-selected", "false");
+            });
+            btn.setAttribute("aria-selected", "true");
+            tabPanels.forEach(function (panel) {
+              panel.classList.toggle("active", panel.id === "tab-" + target);
+            });
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

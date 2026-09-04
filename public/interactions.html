@@ -1,0 +1,1674 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Assetflow — Interaction Engineering</title>
+    <link rel="icon" href="/logo.png" type="image/png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        /* 8pt grid tokens — use for all layout spacing */
+        --space-1: 4px;
+        --space-2: 8px;
+        --space-3: 16px;
+        --space-4: 24px;
+        --space-5: 32px;
+        --space-6: 40px;
+        --space-7: 48px;
+        --space-8: 64px;
+        --space-9: 80px;
+        --space-10: 96px;
+        --text-xs: 12px;
+        --text-sm: 14px;
+        --text-base: 16px;
+        --text-lg: 20px;
+        --text-xl: 24px;
+        --leading-tight: 1.25;
+        --leading-normal: 1.5;
+        --leading-relaxed: 1.75;
+        --bg: 0 0% 99%;
+        --fg: 220 20% 10%;
+        --card: 0 0% 100%;
+        --muted: 220 14% 96%;
+        --muted-fg: 220 9% 46%;
+        --primary: 224 76% 48%;
+        --destructive: 0 72% 51%;
+        --success: 160 60% 38%;
+        --warning: 38 92% 45%;
+        --border: 220 13% 91%;
+        --accent-glow: hsl(224 76% 48% / 0.12);
+        --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        --phone-w: 200px;
+        --phone-h: 400px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      body {
+        font-family: Inter, system-ui, sans-serif;
+        background: hsl(var(--bg));
+        color: hsl(var(--fg));
+        overflow-x: auto;
+        overflow-y: hidden;
+        height: 100dvh;
+      }
+
+      .display {
+        font-family: "Plus Jakarta Sans", Inter, sans-serif;
+      }
+
+      .mono {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+      }
+
+      /* ── Deck ── */
+      .deck {
+        display: flex;
+        height: 100dvh;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+        position: relative;
+        z-index: 1;
+      }
+
+      .deck::-webkit-scrollbar {
+        display: none;
+      }
+
+      .slide {
+        flex: 0 0 100vw;
+        width: 100vw;
+        height: 100dvh;
+        min-height: 640px;
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-9) clamp(var(--space-5), 6vw, var(--space-10)) var(--space-10);
+      }
+
+      .slide-inner {
+        width: 100%;
+        max-width: 1080px;
+        display: flex;
+        flex-direction: column;
+        gap: clamp(var(--space-5), 4.5vh, var(--space-7));
+        min-height: 0;
+      }
+
+      /* ── Nav ── */
+      .top-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--space-3) clamp(var(--space-5), 4vw, var(--space-6));
+        pointer-events: none;
+      }
+
+      .top-bar > * {
+        pointer-events: auto;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .brand img {
+        height: var(--space-3);
+        opacity: 0.9;
+      }
+
+      .brand span {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-weight: 700;
+        font-size: var(--text-xs);
+        letter-spacing: -0.03em;
+      }
+
+      .top-actions {
+        display: flex;
+        gap: var(--space-2);
+        align-items: center;
+      }
+
+      .pill-nav {
+        display: flex;
+        gap: var(--space-1);
+        padding: var(--space-1);
+        border-radius: var(--space-2);
+        background: hsl(var(--card) / 0.85);
+        backdrop-filter: blur(var(--space-3));
+        border: 1px solid hsl(var(--border));
+      }
+
+      .pill-nav a {
+        padding: var(--space-2) var(--space-3);
+        border-radius: var(--space-2);
+        font-size: var(--text-xs);
+        font-weight: 500;
+        color: hsl(var(--muted-fg));
+        text-decoration: none;
+        transition: color 0.2s var(--ease-out), background 0.2s var(--ease-out);
+        white-space: nowrap;
+      }
+
+      .pill-nav a:hover {
+        color: hsl(var(--fg));
+      }
+
+      .pill-nav a.active {
+        background: hsl(var(--fg));
+        color: hsl(var(--bg));
+      }
+
+      .btn-link {
+        padding: var(--space-2) var(--space-3);
+        border-radius: var(--space-2);
+        font-size: var(--text-xs);
+        font-weight: 600;
+        text-decoration: none;
+        background: hsl(var(--fg));
+        color: hsl(var(--bg));
+        transition: opacity 0.15s;
+      }
+
+      .btn-link:hover {
+        opacity: 0.88;
+      }
+
+      .btn-ghost {
+        background: transparent;
+        color: hsl(var(--fg));
+        border: 1px solid hsl(var(--border));
+      }
+
+      .progress {
+        position: fixed;
+        bottom: var(--space-5);
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100;
+        display: flex;
+        gap: var(--space-2);
+      }
+
+      .progress button {
+        width: var(--space-2);
+        height: var(--space-2);
+        border-radius: 50%;
+        border: none;
+        background: hsl(var(--border));
+        cursor: pointer;
+        padding: 0;
+        transition: all 0.35s var(--ease-out);
+      }
+
+      .progress button.active {
+        background: hsl(var(--fg));
+        width: var(--space-4);
+        border-radius: var(--space-1);
+      }
+
+      /* ── Cover ── */
+      .slide-cover {
+        padding: 0;
+        align-items: stretch;
+      }
+
+      .cover-layout {
+        width: 100%;
+        min-height: 100dvh;
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+      }
+
+      .cover-main {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: var(--space-10) clamp(var(--space-6), 6vw, var(--space-10)) var(--space-9);
+        max-width: 624px;
+      }
+
+      .cover-eyebrow {
+        font-family: "JetBrains Mono", monospace;
+        font-size: var(--text-xs);
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: hsl(var(--muted-fg));
+        margin-bottom: var(--space-5);
+      }
+
+      .cover-title {
+        font-size: clamp(48px, 5vw, 64px);
+        font-weight: 800;
+        letter-spacing: -0.045em;
+        line-height: var(--leading-tight);
+        margin-bottom: var(--space-4);
+      }
+
+      .cover-title em {
+        font-family: "Instrument Serif", Georgia, serif;
+        font-style: italic;
+        font-weight: 400;
+        color: hsl(var(--muted-fg));
+      }
+
+      .cover-lead {
+        font-size: var(--text-base);
+        line-height: var(--leading-relaxed);
+        color: hsl(var(--muted-fg));
+        max-width: 36ch;
+        margin-bottom: var(--space-7);
+        letter-spacing: -0.01em;
+      }
+
+      .cover-lead strong {
+        color: hsl(var(--fg));
+        font-weight: 600;
+      }
+
+      .framework {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        margin-bottom: var(--space-7);
+      }
+
+      .framework-step {
+        display: grid;
+        grid-template-columns: 88px 1fr;
+        gap: var(--space-4);
+        padding: var(--space-4) 0;
+        border-top: 1px solid hsl(var(--border));
+      }
+
+      .framework-step:last-child {
+        border-bottom: 1px solid hsl(var(--border));
+      }
+
+      .framework-label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: var(--text-xs);
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: hsl(var(--muted-fg));
+        padding-top: var(--space-1);
+      }
+
+      .framework-body strong {
+        display: block;
+        font-size: var(--text-base);
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        margin-bottom: var(--space-1);
+      }
+
+      .framework-body span {
+        font-size: var(--text-sm);
+        line-height: var(--leading-normal);
+        color: hsl(var(--muted-fg));
+      }
+
+      .cover-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+      }
+
+      .cover-meta span {
+        font-size: var(--text-xs);
+        color: hsl(var(--muted-fg));
+        padding: var(--space-2) var(--space-3);
+        border-radius: 999px;
+        border: 1px solid hsl(var(--border));
+      }
+
+      .cover-aside {
+        background: hsl(var(--fg));
+        color: hsl(0 0% 96%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: var(--space-10) clamp(var(--space-6), 5vw, 72px) var(--space-9);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .cover-aside::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 60% 50% at 70% 20%, hsl(224 76% 48% / 0.35), transparent 60%);
+        pointer-events: none;
+      }
+
+      .cover-aside-label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: var(--text-xs);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: hsl(0 0% 100% / 0.45);
+        margin-bottom: var(--space-5);
+        position: relative;
+      }
+
+      .cover-case-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-5);
+        position: relative;
+      }
+
+      .cover-case {
+        display: grid;
+        grid-template-columns: 40px 1fr;
+        gap: var(--space-3);
+        align-items: start;
+      }
+
+      .cover-case-num {
+        font-family: "JetBrains Mono", monospace;
+        font-size: var(--text-xs);
+        color: hsl(0 0% 100% / 0.35);
+        padding-top: var(--space-1);
+      }
+
+      .cover-case h3 {
+        font-size: var(--text-lg);
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        margin-bottom: var(--space-2);
+      }
+
+      .cover-case p {
+        font-size: var(--text-sm);
+        line-height: var(--leading-normal);
+        color: hsl(0 0% 100% / 0.55);
+      }
+
+      .cover-hint {
+        position: absolute;
+        bottom: var(--space-5);
+        right: var(--space-6);
+        font-size: var(--text-xs);
+        font-weight: 500;
+        color: hsl(var(--muted-fg));
+        animation: hintPulse 2.8s ease-in-out infinite;
+      }
+
+      @keyframes hintPulse {
+        0%,
+        100% {
+          opacity: 0.4;
+          transform: translateX(0);
+        }
+        50% {
+          opacity: 1;
+          transform: translateX(var(--space-2));
+        }
+      }
+
+      /* ── Case study slides ── */
+      .case-header {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+        max-width: 720px;
+      }
+
+      .case-eyebrow {
+        font-family: "JetBrains Mono", monospace;
+        font-size: var(--text-xs);
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: hsl(var(--muted-fg));
+      }
+
+      .case-purpose {
+        font-size: clamp(var(--space-5), 3.2vw, 40px);
+        font-weight: 700;
+        letter-spacing: -0.035em;
+        line-height: var(--leading-tight);
+      }
+
+      .case-purpose strong {
+        font-weight: 700;
+        color: hsl(var(--fg));
+      }
+
+      /* Problem → Decision → Outcome */
+      .pdo-flow {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: clamp(var(--space-5), 4vw, var(--space-7));
+      }
+
+      .pdo-cell {
+        padding: 0;
+        padding-left: clamp(var(--space-3), 2.5vw, var(--space-5));
+        border-left: 1px solid hsl(var(--border) / 0.45);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .pdo-cell:first-child {
+        padding-left: 0;
+        border-left: none;
+      }
+
+      .pdo-label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: var(--text-xs);
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: hsl(var(--muted-fg));
+      }
+
+      .pdo-cell p {
+        font-size: var(--text-sm);
+        line-height: var(--leading-normal);
+        color: hsl(var(--fg) / 0.72);
+        letter-spacing: -0.01em;
+      }
+
+      .pdo-cell p strong {
+        color: hsl(var(--fg));
+        font-weight: 600;
+      }
+
+      /* Showcase: 1 mockup + text flow */
+      .case-showcase {
+        display: grid;
+        grid-template-columns: minmax(184px, 240px) 1fr;
+        gap: clamp(var(--space-6), 6vw, 72px);
+        align-items: center;
+        padding: clamp(var(--space-5), 5vw, 56px) 0;
+        border-top: 1px solid hsl(var(--border) / 0.4);
+        border-bottom: 1px solid hsl(var(--border) / 0.4);
+      }
+
+      .showcase-visual {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-2);
+      }
+
+      .showcase-label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: var(--text-xs);
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: hsl(var(--muted-fg));
+      }
+
+      .showcase-visual .phone {
+        transform: scale(1);
+      }
+
+      .showcase-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .flow-step {
+        display: grid;
+        grid-template-columns: 40px 1fr;
+        gap: var(--space-3);
+        padding: var(--space-3) 0;
+        border-top: 1px solid hsl(var(--border) / 0.35);
+      }
+
+      .flow-step:first-child {
+        border-top: none;
+        padding-top: 0;
+      }
+
+      .flow-step:last-child {
+        padding-bottom: 0;
+      }
+
+      .flow-num {
+        font-family: "JetBrains Mono", monospace;
+        font-size: var(--text-xs);
+        font-weight: 500;
+        color: hsl(var(--muted-fg));
+        letter-spacing: 0.02em;
+        padding-top: var(--space-1);
+        flex-shrink: 0;
+      }
+
+      .flow-body strong {
+        display: block;
+        font-size: var(--text-base);
+        font-weight: 600;
+        letter-spacing: -0.025em;
+        margin-bottom: var(--space-1);
+        color: hsl(var(--fg));
+      }
+
+      .flow-body p {
+        font-size: var(--text-xs);
+        line-height: var(--leading-normal);
+        color: hsl(var(--muted-fg));
+      }
+
+      .flow-body p strong {
+        display: inline;
+        color: hsl(var(--fg) / 0.88);
+        font-weight: 500;
+      }
+
+      /* Engineering notes — unified */
+      .eng-notes {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+        padding-top: var(--space-1);
+      }
+
+      .eng-notes-title {
+        font-family: "JetBrains Mono", monospace;
+        font-size: var(--text-xs);
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: hsl(var(--muted-fg));
+      }
+
+      .eng-notes-grid {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .eng-notes-row {
+        display: grid;
+        grid-template-columns: 96px 1fr;
+        gap: var(--space-3);
+        align-items: baseline;
+        font-size: var(--text-xs);
+        line-height: var(--leading-normal);
+      }
+
+      .eng-notes-label {
+        font-size: var(--text-xs);
+        font-weight: 500;
+        color: hsl(var(--muted-fg));
+        letter-spacing: -0.01em;
+      }
+
+      .eng-notes-value {
+        color: hsl(var(--fg) / 0.78);
+        font-size: var(--text-xs);
+      }
+
+      .eng-notes-value strong,
+      .eng-notes-value code {
+        color: hsl(var(--fg));
+        font-weight: 500;
+      }
+
+      .eng-notes-value code {
+        font-family: "JetBrains Mono", monospace;
+        font-size: var(--text-xs);
+      }
+
+      /* Implementation footer */
+      .impl-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--space-2) var(--space-4);
+        padding-top: var(--space-4);
+        border-top: 1px solid hsl(var(--border) / 0.4);
+      }
+
+      .impl-label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: var(--text-xs);
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: hsl(var(--muted-fg));
+        flex-shrink: 0;
+      }
+
+      .impl-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+      }
+
+      .impl-tag {
+        font-family: "JetBrains Mono", monospace;
+        font-size: var(--text-xs);
+        font-weight: 500;
+        color: hsl(var(--fg) / 0.7);
+        padding: var(--space-2) var(--space-3);
+        border-radius: var(--space-2);
+        background: hsl(var(--card));
+        border: 1px solid hsl(var(--border));
+      }
+
+      /* ── Mini phone UI ── */
+      .phone {
+        width: var(--phone-w);
+        height: var(--phone-h);
+        border-radius: var(--space-5);
+        background: #0f172a;
+        padding: var(--space-2);
+        box-shadow:
+          0 0 0 1px hsl(220 20% 10% / 0.06),
+          0 1px 2px hsl(220 20% 10% / 0.04),
+          0 var(--space-2) var(--space-3) hsl(220 20% 10% / 0.06),
+          0 var(--space-4) var(--space-7) hsl(220 20% 10% / 0.1),
+          0 var(--space-7) var(--space-10) hsl(220 20% 10% / 0.08);
+        position: relative;
+        transform: scale(0.96);
+      }
+
+      .phone-notch {
+        position: absolute;
+        top: var(--space-2);
+        left: 50%;
+        transform: translateX(-50%);
+        width: var(--space-8);
+        height: var(--space-3);
+        background: #0f172a;
+        border-radius: 0 0 var(--space-2) var(--space-2);
+        z-index: 10;
+      }
+
+      .phone-screen {
+        width: 100%;
+        height: 100%;
+        border-radius: var(--space-4);
+        background: #f8fafc;
+        overflow: hidden;
+      }
+
+      .phone-screen.dark-ui {
+        background: #0b1220;
+      }
+
+      .ui-dash-header {
+        padding: var(--space-3) var(--space-3) var(--space-2);
+      }
+
+      .ui-dash-logo {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: var(--text-xs);
+        font-weight: 800;
+      }
+
+      .ui-card {
+        margin: var(--space-2);
+        padding: var(--space-3);
+        border-radius: var(--space-2);
+        background: #fff;
+        border: 1px solid #e2e8f0;
+      }
+
+      .ui-card-title {
+        font-size: var(--space-2);
+        font-weight: 600;
+        color: #64748b;
+        margin-bottom: var(--space-1);
+      }
+
+      .ui-period-tabs {
+        display: flex;
+        gap: var(--space-1);
+        padding: var(--space-1);
+        background: #f1f5f9;
+        border-radius: var(--space-2);
+      }
+
+      .ui-period-tab {
+        padding: var(--space-1) var(--space-2);
+        font-size: var(--space-2);
+        font-weight: 700;
+        border-radius: var(--space-1);
+        color: #94a3b8;
+      }
+
+      .ui-period-tab.on {
+        background: hsl(var(--primary));
+        color: #fff;
+      }
+
+      .ui-chart-area {
+        height: 56px;
+        margin-top: var(--space-2);
+        border-radius: var(--space-2);
+        background: linear-gradient(180deg, hsl(var(--primary) / 0.08), transparent);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .ui-chart-area svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .ui-header {
+        padding: var(--space-5) var(--space-3) var(--space-2);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .ui-back {
+        width: var(--space-4);
+        height: var(--space-4);
+        border-radius: var(--space-2);
+        background: rgba(255, 255, 255, 0.06);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--text-xs);
+        color: #e2e8f0;
+      }
+
+      .ui-symbol {
+        font-size: var(--text-xs);
+        font-weight: 700;
+        color: #e2e8f0;
+      }
+
+      .ui-tabs {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-1);
+        margin: var(--space-2);
+        padding: var(--space-1);
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: var(--space-2);
+      }
+
+      .ui-tab {
+        padding: var(--space-2) var(--space-1);
+        text-align: center;
+        font-size: var(--space-2);
+        font-weight: 600;
+        color: #94a3b8;
+        border-radius: var(--space-2);
+      }
+
+      .ui-tab.on {
+        background: hsl(var(--primary));
+        color: #fff;
+      }
+
+      .ui-buy-sell {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-2);
+        margin: var(--space-2);
+      }
+
+      .ui-bs-btn {
+        padding: var(--space-2);
+        text-align: center;
+        border-radius: var(--space-2);
+        font-size: var(--text-xs);
+        font-weight: 700;
+      }
+
+      .ui-bs-btn.buy {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border: 2px solid #ef4444;
+      }
+
+      .ui-bs-btn.sell {
+        background: #1e293b;
+        color: #94a3b8;
+      }
+
+      .ui-input-row {
+        margin: var(--space-2);
+      }
+
+      .ui-input-label {
+        font-size: var(--space-2);
+        color: #64748b;
+        margin-bottom: var(--space-1);
+      }
+
+      .ui-input {
+        width: 100%;
+        padding: var(--space-2) var(--space-3);
+        border-radius: var(--space-2);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        font-size: var(--text-xs);
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.04);
+        color: #e2e8f0;
+      }
+
+      .ui-submit {
+        margin: var(--space-2);
+        padding: var(--space-3);
+        border-radius: var(--space-2);
+        text-align: center;
+        font-size: var(--text-xs);
+        font-weight: 700;
+        color: #fff;
+        background: #ef4444;
+      }
+
+      .ui-mood-row {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-1);
+        margin-top: var(--space-2);
+      }
+
+      .ui-mood-btn {
+        width: var(--space-5);
+        height: var(--space-5);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--text-sm);
+        background: #f1f5f9;
+        border: 2px solid transparent;
+      }
+
+      .ui-mood-btn.on {
+        border-color: hsl(var(--primary));
+        background: hsl(var(--primary) / 0.1);
+        box-shadow: 0 0 0 var(--space-1) var(--accent-glow);
+        transform: scale(1.08);
+      }
+
+      .ui-feedback {
+        margin-top: var(--space-2);
+        padding: var(--space-2);
+        border-radius: var(--space-2);
+        background: hsl(var(--muted));
+        font-size: var(--space-2);
+        font-weight: 600;
+        color: hsl(var(--fg) / 0.65);
+        text-align: center;
+      }
+
+      .mini-toast {
+        position: absolute;
+        bottom: var(--space-3);
+        left: var(--space-2);
+        right: var(--space-2);
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-2);
+        padding: var(--space-2);
+        border-radius: var(--space-2);
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 var(--space-2) var(--space-4) hsl(220 20% 10% / 0.1);
+        animation: toastIn 0.3s var(--ease-out);
+      }
+
+      .mini-toast.err {
+        border-color: hsl(var(--destructive) / 0.2);
+      }
+
+      @keyframes toastIn {
+        from {
+          opacity: 0;
+          transform: translateY(var(--space-2));
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .mini-toast-icon {
+        width: var(--space-4);
+        height: var(--space-4);
+        border-radius: var(--space-1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--text-xs);
+        flex-shrink: 0;
+      }
+
+      .mini-toast-icon.ok {
+        background: hsl(var(--success) / 0.15);
+        color: hsl(var(--success));
+      }
+
+      .mini-toast-icon.bad {
+        background: hsl(var(--destructive) / 0.12);
+        color: hsl(var(--destructive));
+      }
+
+      .mini-toast-text strong {
+        display: block;
+        font-size: var(--space-2);
+        font-weight: 700;
+        margin-bottom: var(--space-1);
+      }
+
+      .mini-toast-text span {
+        font-size: var(--space-2);
+        color: hsl(var(--muted-fg));
+      }
+
+      .mini-tooltip {
+        position: absolute;
+        top: 50%;
+        right: var(--space-2);
+        transform: translateY(-50%);
+        padding: var(--space-2);
+        border-radius: var(--space-2);
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 var(--space-1) var(--space-3) hsl(220 20% 10% / 0.08);
+        min-width: 72px;
+      }
+
+      .mini-tooltip strong {
+        display: block;
+        font-size: var(--space-2);
+        margin-bottom: var(--space-1);
+      }
+
+      .mini-tooltip .row {
+        display: flex;
+        justify-content: space-between;
+        font-size: var(--space-2);
+        gap: var(--space-2);
+      }
+
+      .mini-tooltip .pos {
+        color: hsl(var(--success));
+        font-weight: 700;
+      }
+
+      .chart-cursor {
+        position: absolute;
+        top: var(--space-2);
+        bottom: var(--space-2);
+        width: 1px;
+        background: hsl(var(--primary));
+        opacity: 0.5;
+        border-left: 1px dashed hsl(var(--primary));
+      }
+
+      .chart-dot {
+        position: absolute;
+        width: var(--space-2);
+        height: var(--space-2);
+        border-radius: 50%;
+        background: hsl(var(--primary));
+        border: 2px solid #fff;
+        transform: translate(-50%, -50%);
+      }
+
+      @media (max-width: 960px) {
+        body {
+          overflow-y: auto;
+          height: auto;
+        }
+
+        .deck {
+          flex-direction: column;
+          height: auto;
+          scroll-snap-type: y mandatory;
+          overflow-x: hidden;
+        }
+
+        .slide {
+          flex: none;
+          width: 100%;
+          height: auto;
+          min-height: auto;
+          padding: var(--space-9) var(--space-4) 104px;
+        }
+
+        .cover-layout {
+          grid-template-columns: 1fr;
+        }
+
+        .cover-aside {
+          padding: var(--space-7) var(--space-5) var(--space-8);
+        }
+
+        .pdo-flow,
+        .case-showcase {
+          grid-template-columns: 1fr;
+        }
+
+        .pdo-cell {
+          padding-left: 0;
+          border-left: none;
+          padding-top: var(--space-4);
+          border-top: 1px solid hsl(var(--border) / 0.35);
+        }
+
+        .pdo-cell:first-child {
+          padding-top: 0;
+          border-top: none;
+        }
+
+        .case-showcase {
+          padding: var(--space-5) 0;
+          gap: var(--space-5);
+        }
+
+        .eng-notes-row {
+          grid-template-columns: 1fr;
+          gap: var(--space-1);
+        }
+
+        .pill-nav {
+          display: none;
+        }
+
+        .cover-hint {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <a class="brand" href="/">
+        <img src="/Union.svg" alt="" onerror="this.style.display='none'" />
+        <span>Assetflow</span>
+      </a>
+      <div class="top-actions">
+        <nav class="pill-nav" aria-label="슬라이드">
+          <a href="#slide-0" class="active" data-slide="0">소개</a>
+          <a href="#slide-1" data-slide="1">차트</a>
+          <a href="#slide-2" data-slide="2">주문</a>
+          <a href="#slide-3" data-slide="3">무드</a>
+        </nav>
+        <a href="/portfolio.html" class="btn-link btn-ghost">Portfolio</a>
+        <a href="/retrospective.html" class="btn-link btn-ghost">Retrospective</a>
+        <a href="/trade" class="btn-link">Live App</a>
+      </div>
+    </div>
+
+    <div class="progress" id="progress" aria-label="슬라이드 진행">
+      <button type="button" class="active" data-slide="0" aria-label="1"></button>
+      <button type="button" data-slide="1" aria-label="2"></button>
+      <button type="button" data-slide="2" aria-label="3"></button>
+      <button type="button" data-slide="3" aria-label="4"></button>
+    </div>
+
+    <div class="deck" id="deck">
+      <!-- Cover -->
+      <section class="slide slide-cover" id="slide-0">
+        <div class="cover-layout">
+          <div class="cover-main">
+            <p class="cover-eyebrow">Design Engineer · Interaction Case Study</p>
+            <h1 class="cover-title display">
+              Behavior-first
+              <em>interaction engineering</em>
+            </h1>
+            <p class="cover-lead">
+              UI를 예쁘게 만드는 것이 아니라,
+              <strong>사용자 문제 → 인터랙션 결정 → 구현 가능한 결과</strong>를
+              한 흐름으로 설계합니다.
+            </p>
+
+            <div class="framework" aria-label="분석 프레임워크">
+              <div class="framework-step">
+                <span class="framework-label">Problem</span>
+                <div class="framework-body">
+                  <strong>사용자가 겪는 마찰</strong>
+                  <span>복잡한 금융 데이터, 불확실한 주문 결과, 감정 기록의 맥락 부재</span>
+                </div>
+              </div>
+              <div class="framework-step">
+                <span class="framework-label">Decision</span>
+                <div class="framework-body">
+                  <strong>왜 이 인터랙션인가</strong>
+                  <span>점진적 노출, 즉각적 피드백, 상태 동기화 — 각 문제에 맞는 패턴 선택</span>
+                </div>
+              </div>
+              <div class="framework-step">
+                <span class="framework-label">Outcome</span>
+                <div class="framework-body">
+                  <strong>측정 가능한 경험 개선</strong>
+                  <span>인지 부하 감소, 오류 복구 시간 단축, 리스크 차트와 감정 데이터 연결</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cover-meta">
+              <span>React · Recharts · Sonner</span>
+              <span>3 Case Studies</span>
+              <span>2026</span>
+            </div>
+          </div>
+
+          <aside class="cover-aside">
+            <p class="cover-aside-label">Featured interactions</p>
+            <div class="cover-case-list">
+              <div class="cover-case">
+                <span class="cover-case-num">01</span>
+                <div>
+                  <h3>Progressive Chart Disclosure</h3>
+                  <p>기간 탭과 호버 툴팁으로 데이터 탐색 부담을 단계적으로 분산</p>
+                </div>
+              </div>
+              <div class="cover-case">
+                <span class="cover-case-num">02</span>
+                <div>
+                  <h3>Order Validation Feedback</h3>
+                  <p>3단 검증 후 Sonner 토스트로 주문 결과를 명확히 전달</p>
+                </div>
+              </div>
+              <div class="cover-case">
+                <span class="cover-case-num">03</span>
+                <div>
+                  <h3>Sentiment State Sync</h3>
+                  <p>5단계 무드 선택이 리스크 차트 마커와 UI 상태로 동기화</p>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+        <div class="cover-hint">스크롤하여 탐색 →</div>
+      </section>
+
+      <!-- Case 01: Chart -->
+      <section class="slide" id="slide-1">
+        <div class="slide-inner">
+          <header class="case-header">
+            <span class="case-eyebrow mono">Case 01 · Dashboard Chart</span>
+            <h2 class="case-purpose display">
+              복잡한 투자 데이터를 빠르게 이해하도록
+              <strong>점진적 정보 노출</strong> 적용
+            </h2>
+          </header>
+
+          <div class="pdo-flow">
+            <div class="pdo-cell">
+              <span class="pdo-label">User Problem</span>
+              <p>
+                수익·기간·상세 수치가 동시에 보이면 첫 화면에서 핵심을 읽기 어렵고,
+                모바일에서는 차트 탐색 부담이 큽니다.
+              </p>
+            </div>
+            <div class="pdo-cell">
+              <span class="pdo-label">Interaction Decision</span>
+              <p>
+                초기에는 핵심 지표만 노출하고, 기간 선택 시 차트 데이터를 동기화해
+                탐색 부담을 줄였습니다.
+              </p>
+            </div>
+            <div class="pdo-cell">
+              <span class="pdo-label">Expected Outcome</span>
+              <p>
+                첫 화면은 YTD 한 숫자로 요약되고, 관심 시점의 정확한 수치는
+                필요할 때만 확인합니다.
+              </p>
+            </div>
+          </div>
+
+          <div class="case-showcase" aria-label="인터랙션 흐름">
+            <div class="showcase-visual">
+              <span class="showcase-label">핵심 화면</span>
+              <div class="phone" style="--phone-w: 168px; --phone-h: 336px">
+                <div class="phone-notch"></div>
+                <div class="phone-screen" style="position:relative">
+                  <div class="ui-card" style="margin-top:32px">
+                    <div class="ui-card-title">Portfolio Performance</div>
+                    <div class="ui-chart-area" style="height:72px;position:relative">
+                      <svg viewBox="0 0 200 72" preserveAspectRatio="none" style="position:absolute;inset:0">
+                        <path d="M0,60 C40,50 80,40 120,35 C140,32 160,28 200,20" fill="none" stroke="hsl(224 76% 48%)" stroke-width="2" />
+                      </svg>
+                      <div class="chart-cursor" style="left:62%"></div>
+                      <div class="chart-dot" style="left:62%;top:38%"></div>
+                    </div>
+                  </div>
+                  <div class="mini-tooltip">
+                    <strong>Sep 2025</strong>
+                    <div class="row"><span>Value</span><span>$2.41M</span></div>
+                    <div class="row"><span>Return</span><span class="pos">+18.4%</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="showcase-steps">
+              <div class="flow-step">
+                <span class="flow-num">01</span>
+                <div class="flow-body">
+                  <strong>Context — 기간 탭으로 탐색 범위 축소</strong>
+                  <p>진입 시 YTD 수익률만 보여주고, 기간 탭으로 비교 맥락을 먼저 좁힙니다.</p>
+                </div>
+              </div>
+              <div class="flow-step">
+                <span class="flow-num">02</span>
+                <div class="flow-body">
+                  <strong>Update — 차트 데이터 동기화</strong>
+                  <p>기간을 바꾸면 수익률과 차트 형태가 함께 갱신되어 한 흐름으로 읽힙니다.</p>
+                </div>
+              </div>
+              <div class="flow-step">
+                <span class="flow-num">03</span>
+                <div class="flow-body">
+                  <strong>Explore — Hover / Touch로 상세 정보 확인</strong>
+                  <p>관심 시점을 스크럽하면 해당 날짜의 가치와 수익률을 즉시 확인합니다.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="eng-notes">
+            <span class="eng-notes-title">Engineering Notes</span>
+            <div class="eng-notes-grid">
+              <div class="eng-notes-row">
+                <span class="eng-notes-label">Component</span>
+                <span class="eng-notes-value"><strong>RevenueGrowthChart</strong></span>
+              </div>
+              <div class="eng-notes-row">
+                <span class="eng-notes-label">State</span>
+                <span class="eng-notes-value">idle → period-selected → hover-scrub</span>
+              </div>
+              <div class="eng-notes-row">
+                <span class="eng-notes-label">Motion</span>
+                <span class="eng-notes-value">400ms ease-out / 150ms fade-in</span>
+              </div>
+              <div class="eng-notes-row">
+                <span class="eng-notes-label">Responsive</span>
+                <span class="eng-notes-value">Desktop mouse interaction / Mobile touch interaction</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="impl-bar">
+            <span class="impl-label">Implementation</span>
+            <div class="impl-tags">
+              <span class="impl-tag">setPeriod() → key remount</span>
+              <span class="impl-tag">animationDuration: 400</span>
+              <span class="impl-tag">activeDot r=8</span>
+              <span class="impl-tag">RevenueGrowthTooltip</span>
+              <span class="impl-tag">allowEscapeViewBox flip</span>
+              <span class="impl-tag">no-op on same tab</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Case 02: Order Toast -->
+      <section class="slide" id="slide-2">
+        <div class="slide-inner">
+          <header class="case-header">
+            <span class="case-eyebrow mono">Case 02 · Trade Order</span>
+            <h2 class="case-purpose display">
+              주문 불확실성을 줄이기 위해
+              <strong>검증-피드백 루프</strong>를 설계
+            </h2>
+          </header>
+
+          <div class="pdo-flow">
+            <div class="pdo-cell">
+              <span class="pdo-label">User Problem</span>
+              <p>
+                주문 후 접수 여부를 알기 어렵고, 입력 오류 시
+                어디를 고쳐야 하는지 즉시 파악하기 힘듭니다.
+              </p>
+            </div>
+            <div class="pdo-cell">
+              <span class="pdo-label">Interaction Decision</span>
+              <p>
+                제출 전 검증을 단계화하고, 실패·성공을 각각 다른 토스트로
+                즉시 전달해 불확실성을 줄였습니다.
+              </p>
+            </div>
+            <div class="pdo-cell">
+              <span class="pdo-label">Expected Outcome</span>
+              <p>
+                오류는 원인 메시지로 바로 복구하고, 성공 시
+                종목·수량·금액을 한눈에 확인합니다.
+              </p>
+            </div>
+          </div>
+
+          <div class="case-showcase" aria-label="인터랙션 흐름">
+            <div class="showcase-visual">
+              <span class="showcase-label">핵심 화면</span>
+              <div class="phone" style="--phone-w: 168px; --phone-h: 336px">
+                <div class="phone-notch"></div>
+                <div class="phone-screen dark-ui" style="position:relative">
+                  <div class="ui-header">
+                    <div class="ui-back">←</div>
+                    <div class="ui-symbol">NVDA</div>
+                  </div>
+                  <div class="ui-tabs">
+                    <div class="ui-tab">차트</div>
+                    <div class="ui-tab">호가</div>
+                    <div class="ui-tab on">주문</div>
+                    <div class="ui-tab">내역</div>
+                  </div>
+                  <div class="ui-buy-sell">
+                    <div class="ui-bs-btn buy">매수</div>
+                    <div class="ui-bs-btn sell">매도</div>
+                  </div>
+                  <div class="ui-input-row">
+                    <div class="ui-input-label">수량</div>
+                    <div class="ui-input">10</div>
+                  </div>
+                  <div class="ui-submit">주문하기</div>
+                  <div class="mini-toast">
+                    <div class="mini-toast-icon ok">✓</div>
+                    <div class="mini-toast-text">
+                      <strong>NVDA 매수 10주 접수</strong>
+                      <span>지정가 · $8,924.00</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="showcase-steps">
+              <div class="flow-step">
+                <span class="flow-num">01</span>
+                <div class="flow-body">
+                  <strong>Input — 매수·매도와 수량 입력</strong>
+                  <p>거래 방향과 수량을 먼저 정하고, 미입력 시 CTA를 비활성화해 실수 클릭을 줄입니다.</p>
+                </div>
+              </div>
+              <div class="flow-step">
+                <span class="flow-num">02</span>
+                <div class="flow-body">
+                  <strong>Validate — 3단 검증 후 즉각 피드백</strong>
+                  <p>수량·보유량·지정가를 순서대로 검증하고, 실패 시 짧은 에러 토스트로 원인을 알립니다.</p>
+                </div>
+              </div>
+              <div class="flow-step">
+                <span class="flow-num">03</span>
+                <div class="flow-body">
+                  <strong>Confirm — 접수 완료 확인</strong>
+                  <p>성공 시 종목·수량·예상 금액을 한 토스트에 정리해 접수 결과를 명확히 전달합니다.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="eng-notes">
+            <span class="eng-notes-title">Engineering Notes</span>
+            <div class="eng-notes-grid">
+              <div class="eng-notes-row">
+                <span class="eng-notes-label">Component</span>
+                <span class="eng-notes-value"><strong>Trade.tsx handleSubmit</strong></span>
+              </div>
+              <div class="eng-notes-row">
+                <span class="eng-notes-label">State</span>
+                <span class="eng-notes-value">idle → validating → error | success</span>
+              </div>
+              <div class="eng-notes-row">
+                <span class="eng-notes-label">Motion</span>
+                <span class="eng-notes-value">slide-up + fade 300ms / error 2s · success 4s</span>
+              </div>
+              <div class="eng-notes-row">
+                <span class="eng-notes-label">Responsive</span>
+                <span class="eng-notes-value">Viewport bottom-fixed toast / thumb-zone placement</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="impl-bar">
+            <span class="impl-label">Implementation</span>
+            <div class="impl-tags">
+              <span class="impl-tag">sonner toast.error/success</span>
+              <span class="impl-tag">qty → holdings → limitPrice</span>
+              <span class="impl-tag">qty ≤ 0 guard</span>
+              <span class="impl-tag">sell &gt; holdings guard</span>
+              <span class="impl-tag">queue replace · 1 toast</span>
+              <span class="impl-tag">formatUsd() description</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Case 03: Mood -->
+      <section class="slide" id="slide-3">
+        <div class="slide-inner">
+          <header class="case-header">
+            <span class="case-eyebrow mono">Case 03 · Mood Tracker</span>
+            <h2 class="case-purpose display">
+              감정 데이터를 리스크 분석과 연결하는
+              <strong>상태 동기화 인터랙션</strong>
+            </h2>
+          </header>
+
+          <div class="pdo-flow">
+            <div class="pdo-cell">
+              <span class="pdo-label">User Problem</span>
+              <p>
+                투자 결정 당시의 시장 심리를 기록할 방법이 없어,
+                이후 리스크 차트에서 맥락이 사라집니다.
+              </p>
+            </div>
+            <div class="pdo-cell">
+              <span class="pdo-label">Interaction Decision</span>
+              <p>
+                5단계 무드 선택에 즉각적인 선택 피드백을 주고,
+                리스크 차트 마커와 UI 상태를 동기화했습니다.
+              </p>
+            </div>
+            <div class="pdo-cell">
+              <span class="pdo-label">Expected Outcome</span>
+              <p>
+                한 번의 탭으로 감정이 기록되고,
+                차트에서 당시 심리를 역추적할 수 있습니다.
+              </p>
+            </div>
+          </div>
+
+          <div class="case-showcase" aria-label="인터랙션 흐름">
+            <div class="showcase-visual">
+              <span class="showcase-label">핵심 화면</span>
+              <div class="phone" style="--phone-w: 168px; --phone-h: 336px">
+                <div class="phone-notch"></div>
+                <div class="phone-screen">
+                  <div class="ui-dash-header"><div class="ui-dash-logo">Sentiment</div></div>
+                  <div class="ui-card">
+                    <div class="ui-card-title">How are you feeling?</div>
+                    <div class="ui-mood-row">
+                      <div class="ui-mood-btn">😰</div>
+                      <div class="ui-mood-btn">😟</div>
+                      <div class="ui-mood-btn">😐</div>
+                      <div class="ui-mood-btn">😌</div>
+                      <div class="ui-mood-btn on">😎</div>
+                    </div>
+                    <div class="ui-feedback">Confident — Risk appetite elevated</div>
+                  </div>
+                  <div class="ui-card" style="margin-top:0">
+                    <div class="ui-card-title">Risk factor analysis</div>
+                    <div class="ui-chart-area" style="height:48px">
+                      <svg viewBox="0 0 200 48" preserveAspectRatio="none">
+                        <path d="M0,36 C50,30 100,24 150,20 C170,18 190,14 200,12" fill="none" stroke="#94a3b8" stroke-width="1.5" />
+                        <circle cx="130" cy="22" r="4" fill="hsl(224 76% 48%)" stroke="#fff" stroke-width="2" />
+                        <circle cx="170" cy="14" r="4" fill="hsl(224 76% 48%)" stroke="#fff" stroke-width="2" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="showcase-steps">
+              <div class="flow-step">
+                <span class="flow-num">01</span>
+                <div class="flow-body">
+                  <strong>Select — 5단계 무드 선택</strong>
+                  <p>이모지 버튼을 탭하면 ring·glow·scale로 선택 상태를 즉시 표시합니다.</p>
+                </div>
+              </div>
+              <div class="flow-step">
+                <span class="flow-num">02</span>
+                <div class="flow-body">
+                  <strong>Feedback — 감정 라벨 즉시 반영</strong>
+                  <p>선택과 동시에 하단에 감정 라벨과 리스크 성향 카피가 나타납니다.</p>
+                </div>
+              </div>
+              <div class="flow-step">
+                <span class="flow-num">03</span>
+                <div class="flow-body">
+                  <strong>Sync — 리스크 차트 마커 연동</strong>
+                  <p>기록된 감정이 차트 마커로 표시되어 이후 맥락을 역추적할 수 있습니다.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="eng-notes">
+            <span class="eng-notes-title">Engineering Notes</span>
+            <div class="eng-notes-grid">
+              <div class="eng-notes-row">
+                <span class="eng-notes-label">Component</span>
+                <span class="eng-notes-value"><strong>MoodOption</strong> · controlled <code>selectedMood</code></span>
+              </div>
+              <div class="eng-notes-row">
+                <span class="eng-notes-label">State</span>
+                <span class="eng-notes-value">unselected → selected → synced</span>
+              </div>
+              <div class="eng-notes-row">
+                <span class="eng-notes-label">Motion</span>
+                <span class="eng-notes-value">scale 1.08 + ring pulse / duration-200</span>
+              </div>
+              <div class="eng-notes-row">
+                <span class="eng-notes-label">Responsive</span>
+                <span class="eng-notes-value">grid-cols-5 fixed / sm gap·padding scale-up</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="impl-bar">
+            <span class="impl-label">Implementation</span>
+            <div class="impl-tags">
+              <span class="impl-tag">useState selectedMood</span>
+              <span class="impl-tag">aria-pressed</span>
+              <span class="impl-tag">ring-inset ring-blue-400/25</span>
+              <span class="impl-tag">mood-panel-glow re-pulse</span>
+              <span class="impl-tag">MOOD_OPTIONS × 5</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      (function () {
+        var deck = document.getElementById("deck");
+        var slides = deck.querySelectorAll(".slide");
+        var navLinks = document.querySelectorAll(".pill-nav a");
+        var dots = document.querySelectorAll(".progress button");
+
+        function goToSlide(index) {
+          var slide = slides[index];
+          if (!slide) return;
+          var isVertical = window.matchMedia("(max-width: 960px)").matches;
+          slide.scrollIntoView({
+            behavior: "smooth",
+            inline: isVertical ? "nearest" : "start",
+            block: isVertical ? "start" : "nearest",
+          });
+          updateActive(index);
+        }
+
+        function updateActive(index) {
+          navLinks.forEach(function (link, i) {
+            link.classList.toggle("active", i === index);
+          });
+          dots.forEach(function (dot, i) {
+            dot.classList.toggle("active", i === index);
+          });
+        }
+
+        function getCurrentIndex() {
+          var isVertical = window.matchMedia("(max-width: 960px)").matches;
+          if (isVertical) {
+            var scrollTop = deck.scrollTop;
+            var closest = 0;
+            var minDist = Infinity;
+            slides.forEach(function (slide, i) {
+              var dist = Math.abs(slide.offsetTop - scrollTop);
+              if (dist < minDist) {
+                minDist = dist;
+                closest = i;
+              }
+            });
+            return closest;
+          }
+          return Math.round(deck.scrollLeft / window.innerWidth);
+        }
+
+        navLinks.forEach(function (link) {
+          link.addEventListener("click", function (e) {
+            e.preventDefault();
+            goToSlide(Number(link.dataset.slide));
+          });
+        });
+
+        dots.forEach(function (dot) {
+          dot.addEventListener("click", function () {
+            goToSlide(Number(dot.dataset.slide));
+          });
+        });
+
+        var scrollTimer;
+        deck.addEventListener("scroll", function () {
+          clearTimeout(scrollTimer);
+          scrollTimer = setTimeout(function () {
+            updateActive(getCurrentIndex());
+          }, 80);
+        });
+
+        document.addEventListener("keydown", function (e) {
+          var current = getCurrentIndex();
+          if (e.key === "ArrowRight" && current < slides.length - 1) goToSlide(current + 1);
+          else if (e.key === "ArrowLeft" && current > 0) goToSlide(current - 1);
+        });
+      })();
+    </script>
+  </body>
+</html>
