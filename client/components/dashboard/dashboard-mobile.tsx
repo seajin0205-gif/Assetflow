@@ -15,7 +15,7 @@ import { MoodTracker } from "@/components/dashboard/mood-tracker";
 import { RiskFactorAnalysis } from "@/components/dashboard/risk-factor-analysis";
 import { RiskScoreCard } from "@/components/dashboard/risk-score-card";
 import { StockList } from "@/components/dashboard/stock-list";
-import { RiskScoreCardSkeleton } from "@/components/risk-score-skeleton";
+import { RiskScoreCardSkeleton } from "@/components/dashboard/risk-score-skeleton";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ALERT_ITEMS, ASSET_FILTER_OPTIONS } from "@/data/dashboard";
 import { useRiskScoreLoading } from "@/hooks/use-risk-score-loading";

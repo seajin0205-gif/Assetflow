@@ -20,7 +20,7 @@ import {
   RiskFactorCardSkeleton,
   RiskScoreChartSkeleton,
   RiskScoreNumberSkeleton,
-} from "@/components/risk-score-skeleton";
+} from "@/components/dashboard/risk-score-skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   equityBetaData,

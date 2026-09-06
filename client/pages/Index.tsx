@@ -7,7 +7,7 @@ import { MatchedColumn } from "@/components/dashboard/matched-column";
 import { RightSidebar } from "@/components/dashboard/right-sidebar";
 import { RiskFactorAnalysis } from "@/components/dashboard/risk-factor-analysis";
 import { RiskScoreCard } from "@/components/dashboard/risk-score-card";
-import { RiskScoreCardSkeleton } from "@/components/risk-score-skeleton";
+import { RiskScoreCardSkeleton } from "@/components/dashboard/risk-score-skeleton";
 import { useLeftColumnHeight } from "@/hooks/use-left-column-height";
 import { useRiskScoreLoading } from "@/hooks/use-risk-score-loading";
 import { getDashboardChartTheme } from "@/lib/dashboard-theme";
