@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Bell,
@@ -8,38 +8,40 @@ import {
   ShieldAlert,
   TrendingUp,
 } from "lucide-react";
-import { useTheme } from "next-themes";
-import { RevenueGrowthChart } from "@/components/dashboard/revenue-growth-chart";
+import { AccountMetrics } from "@/components/dashboard/account-metrics";
+import { AlertsPanel } from "@/components/dashboard/alerts-panel";
+import { AssetFiltersPanel } from "@/components/dashboard/asset-filters-panel";
 import { MarketBriefPanel } from "@/components/dashboard/market-brief-panel";
 import { MoodTracker } from "@/components/dashboard/mood-tracker";
+import { RevenueGrowthChart } from "@/components/dashboard/revenue-growth-chart";
 import { RiskFactorAnalysis } from "@/components/dashboard/risk-factor-analysis";
 import { RiskScoreCard } from "@/components/dashboard/risk-score-card";
-import { StockList } from "@/components/dashboard/stock-list";
 import { RiskScoreCardSkeleton } from "@/components/dashboard/risk-score-skeleton";
+import { HoldingsList } from "@/components/dashboard/holdings-list";
+import {
+  MobileTabNav,
+  type MobileTabItem,
+} from "@/components/mobile-tab-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { ALERT_ITEMS, ASSET_FILTER_OPTIONS } from "@/data/dashboard";
-import { useRiskScoreLoading } from "@/hooks/use-risk-score-loading";
-import { getDashboardChartTheme } from "@/lib/dashboard-theme";
-import { cn } from "@/lib/utils";
+import { useDashboardChartTheme } from "@/hooks/use-dashboard-chart-theme";
 
 type MobileTab = "home" | "risk" | "stocks" | "feed";
 
-const NAV_ITEMS: { id: MobileTab; label: string; icon: typeof LayoutDashboard }[] =
-  [
-    { id: "home", label: "Home", icon: LayoutDashboard },
-    { id: "risk", label: "Risk", icon: ShieldAlert },
-    { id: "stocks", label: "Stocks", icon: TrendingUp },
-    { id: "feed", label: "Feed", icon: Newspaper },
-  ];
+const NAV_ITEMS: MobileTabItem<MobileTab>[] = [
+  { id: "home", label: "Home", icon: LayoutDashboard },
+  { id: "risk", label: "Risk", icon: ShieldAlert },
+  { id: "stocks", label: "Stocks", icon: TrendingUp },
+  { id: "feed", label: "Feed", icon: Newspaper },
+];
 
-export function DashboardMobile() {
-  const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme !== "light";
-  const chartTheme = useMemo(
-    () => getDashboardChartTheme(isDark),
-    [isDark],
-  );
-  const isRiskScoreLoading = useRiskScoreLoading();
+type DashboardMobileProps = {
+  isRiskScoreLoading: boolean;
+};
+
+export function DashboardMobile({
+  isRiskScoreLoading,
+}: DashboardMobileProps) {
+  const { isDark, chartTheme } = useDashboardChartTheme();
   const [tab, setTab] = useState<MobileTab>("home");
 
   return (
@@ -97,56 +99,12 @@ export function DashboardMobile() {
               )}
 
               <div className="glass-panel space-y-4 p-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="font-display text-lg font-bold">My account</h2>
-                  <span className="rounded-lg border border-subtle bg-subtle px-2 py-1 text-xs text-muted-foreground">
-                    ID 78241
-                  </span>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="glass-panel-sm flex flex-col gap-1 px-3 py-3">
-                    <div className="section-label">Net worth</div>
-                    <div className="metric-value text-lg sm:text-xl">$1,262,480</div>
-                  </div>
-                  <div className="glass-panel-sm flex flex-col gap-1 px-3 py-3">
-                    <div className="section-label">Cash</div>
-                    <div className="metric-value text-lg sm:text-xl">$120,540</div>
-                  </div>
-                </div>
+                <AccountMetrics compact />
                 <RevenueGrowthChart chartTheme={chartTheme} isDark={isDark} />
               </div>
 
               <div className="glass-panel space-y-4 p-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-display text-base font-bold">Quick filters</h3>
-                  <button
-                    type="button"
-                    className="text-xs font-medium text-primary"
-                  >
-                    Reset
-                  </button>
-                </div>
-                <div className="flex flex-wrap justify-center gap-2">
-                  {ASSET_FILTER_OPTIONS.map((label, i) => (
-                    <label
-                      key={label}
-                      className={cn(
-                        "cursor-pointer rounded-full border px-3 py-1.5 text-xs font-medium transition",
-                        i === 0
-                          ? "border-primary/40 bg-primary/10 text-primary"
-                          : "border-subtle bg-subtle text-muted-foreground",
-                      )}
-                    >
-                      <input
-                        type="radio"
-                        name="asset-mobile"
-                        defaultChecked={i === 0}
-                        className="sr-only"
-                      />
-                      {label}
-                    </label>
-                  ))}
-                </div>
+                <AssetFiltersPanel variant="chips" inputName="asset-mobile" />
               </div>
             </div>
           )}
@@ -163,29 +121,14 @@ export function DashboardMobile() {
 
           {tab === "stocks" && (
             <div className="animate-fade-in">
-              <StockList />
+              <HoldingsList />
             </div>
           )}
 
           {tab === "feed" && (
             <div className="animate-fade-in space-y-4">
               <div className="glass-panel space-y-3 p-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-display text-base font-bold">Alerts</h3>
-                  <span className="rounded-full bg-red-500/15 px-2 py-0.5 text-xs font-semibold text-red-400">
-                    3 unread
-                  </span>
-                </div>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  {ALERT_ITEMS.map((alert) => (
-                    <li
-                      key={alert}
-                      className="rounded-lg border border-subtle bg-subtle-muted px-3 py-2"
-                    >
-                      {alert}
-                    </li>
-                  ))}
-                </ul>
+                <AlertsPanel compact />
               </div>
               <MoodTracker />
               <MarketBriefPanel />
@@ -193,29 +136,12 @@ export function DashboardMobile() {
           )}
         </main>
 
-        <nav className="dashboard-mobile-nav" aria-label="Dashboard menu">
-          <div className="grid grid-cols-4 px-2 pt-2">
-            {NAV_ITEMS.map(({ id, label, icon: Icon }) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => setTab(id)}
-                className={cn(
-                  "flex flex-col items-center gap-1.5 py-2 text-xs font-medium leading-4 transition",
-                  tab === id ? "text-foreground" : "text-muted-foreground",
-                )}
-              >
-                <Icon
-                  className={cn(
-                    "h-4 w-4",
-                    tab === id && "text-primary",
-                  )}
-                />
-                {label}
-              </button>
-            ))}
-          </div>
-        </nav>
+        <MobileTabNav<MobileTab>
+          items={NAV_ITEMS}
+          activeId={tab}
+          onChange={setTab}
+          ariaLabel="Dashboard menu"
+        />
       </div>
     </div>
   );

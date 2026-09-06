@@ -10,10 +10,8 @@ import {
   ListOrdered,
   Wallet,
 } from "lucide-react";
-import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { getDashboardChartTheme } from "@/lib/dashboard-theme";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,132 +33,41 @@ import {
   YAxis,
 } from "recharts";
 
-type SymbolInfo = {
-  id: string;
-  name: string;
-  price: number;
-  change: number;
-  changePct: number;
-};
+import {
+  MobileTabNav,
+  type MobileTabItem,
+} from "@/components/mobile-tab-nav";
+import {
+  TRADE_CHART_BY_SYMBOL,
+  TRADE_HOLDINGS,
+  TRADE_RECENT_ORDERS,
+  TRADE_SYMBOLS,
+  buildOrderBook,
+} from "@/data/trade";
+import { useDashboardChartTheme } from "@/hooks/use-dashboard-chart-theme";
+import { formatKrw, formatUsd, formatUsdCompact } from "@/lib/format-currency";
 
 type MobileTab = "chart" | "book" | "order" | "history";
 
-const SYMBOLS: SymbolInfo[] = [
-  { id: "NVDA", name: "NVIDIA", price: 892.4, change: 12.8, changePct: 1.46 },
-  { id: "AAPL", name: "Apple", price: 198.32, change: -1.24, changePct: -0.62 },
-  { id: "TSLA", name: "Tesla", price: 248.91, change: 5.12, changePct: 2.1 },
-  { id: "MSFT", name: "Microsoft", price: 428.15, change: 2.44, changePct: 0.57 },
-];
-
-const CHART_BY_SYMBOL: Record<string, { time: string; price: number }[]> = {
-  NVDA: [
-    { time: "09:30", price: 878 },
-    { time: "10:00", price: 881 },
-    { time: "10:30", price: 879 },
-    { time: "11:00", price: 885 },
-    { time: "11:30", price: 888 },
-    { time: "12:00", price: 886 },
-    { time: "12:30", price: 890 },
-    { time: "13:00", price: 892 },
-  ],
-  AAPL: [
-    { time: "09:30", price: 199.8 },
-    { time: "10:00", price: 199.2 },
-    { time: "10:30", price: 198.9 },
-    { time: "11:00", price: 198.5 },
-    { time: "11:30", price: 198.1 },
-    { time: "12:00", price: 198.4 },
-    { time: "12:30", price: 198.0 },
-    { time: "13:00", price: 198.32 },
-  ],
-  TSLA: [
-    { time: "09:30", price: 242 },
-    { time: "10:00", price: 244 },
-    { time: "10:30", price: 243 },
-    { time: "11:00", price: 246 },
-    { time: "11:30", price: 247 },
-    { time: "12:00", price: 245 },
-    { time: "12:30", price: 248 },
-    { time: "13:00", price: 248.91 },
-  ],
-  MSFT: [
-    { time: "09:30", price: 425 },
-    { time: "10:00", price: 426 },
-    { time: "10:30", price: 427 },
-    { time: "11:00", price: 426.5 },
-    { time: "11:30", price: 427.8 },
-    { time: "12:00", price: 427.2 },
-    { time: "12:30", price: 428 },
-    { time: "13:00", price: 428.15 },
-  ],
-};
-
-type OrderBookRow = { price: number; size: number };
-
-function buildOrderBook(mid: number): { asks: OrderBookRow[]; bids: OrderBookRow[] } {
-  const asks: OrderBookRow[] = [];
-  const bids: OrderBookRow[] = [];
-  for (let i = 1; i <= 5; i++) {
-    asks.push({ price: mid + i * 0.05, size: Math.round(120 + Math.random() * 400) });
-    bids.push({ price: mid - i * 0.05, size: Math.round(120 + Math.random() * 400) });
-  }
-  return { asks: asks.reverse(), bids };
-}
-
-const HOLDINGS = [
-  { symbol: "NVDA", qty: 12, avg: 720.5, value: 10708.8, pnl: 12.4 },
-  { symbol: "AAPL", qty: 40, avg: 182.1, value: 7932.8, pnl: -2.1 },
-  { symbol: "MSFT", qty: 8, avg: 410.0, value: 3425.2, pnl: 4.3 },
-];
-
-const RECENT_ORDERS = [
-  { id: "ORD-2841", side: "buy" as const, symbol: "NVDA", qty: 5, price: 885.2, status: "체결" },
-  { id: "ORD-2839", side: "sell" as const, symbol: "AAPL", qty: 10, price: 199.1, status: "체결" },
-  { id: "ORD-2835", side: "buy" as const, symbol: "MSFT", qty: 3, price: 426.0, status: "대기" },
-];
-
-const NAV_ITEMS: { id: MobileTab; label: string; icon: typeof BarChart3 }[] = [
+const NAV_ITEMS: MobileTabItem<MobileTab>[] = [
   { id: "chart", label: "차트", icon: BarChart3 },
   { id: "book", label: "호가", icon: Layers },
   { id: "order", label: "주문", icon: ListOrdered },
   { id: "history", label: "내역", icon: Clock },
 ];
 
-function formatKrw(n: number) {
-  return new Intl.NumberFormat("ko-KR", {
-    style: "currency",
-    currency: "KRW",
-    maximumFractionDigits: 0,
-  }).format(n);
-}
-
-function formatUsd(n: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  }).format(n);
-}
-
-function formatUsdCompact(n: number) {
-  if (n >= 1000) return `$${(n / 1000).toFixed(1)}k`;
-  return formatUsd(n);
-}
-
 export default function Trade() {
-  const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
-  const chartTheme = getDashboardChartTheme(isDark);
+  const { isDark, chartTheme } = useDashboardChartTheme();
 
   const [tab, setTab] = useState<MobileTab>("order");
   const [symbolId, setSymbolId] = useState("NVDA");
   const [side, setSide] = useState<"buy" | "sell">("buy");
   const [orderType, setOrderType] = useState<"market" | "limit">("limit");
   const [quantity, setQuantity] = useState("10");
-  const [limitPrice, setLimitPrice] = useState(SYMBOLS[0].price.toFixed(2));
+  const [limitPrice, setLimitPrice] = useState(TRADE_SYMBOLS[0].price.toFixed(2));
 
-  const symbol = SYMBOLS.find((s) => s.id === symbolId) ?? SYMBOLS[0];
-  const chartData = CHART_BY_SYMBOL[symbolId] ?? CHART_BY_SYMBOL.NVDA;
+  const symbol = TRADE_SYMBOLS.find((s) => s.id === symbolId) ?? TRADE_SYMBOLS[0];
+  const chartData = TRADE_CHART_BY_SYMBOL[symbolId] ?? TRADE_CHART_BY_SYMBOL.NVDA;
   const orderBook = useMemo(() => buildOrderBook(symbol.price), [symbolId, symbol.price]);
 
   const qtyNum = Math.max(0, Number(quantity) || 0);
@@ -170,12 +77,12 @@ export default function Trade() {
       : Math.max(0, Number(limitPrice) || symbol.price);
   const estimatedTotal = qtyNum * priceNum;
   const buyingPower = 124_580_000;
-  const availableShares = HOLDINGS.find((h) => h.symbol === symbolId)?.qty ?? 0;
+  const availableShares = TRADE_HOLDINGS.find((h) => h.symbol === symbolId)?.qty ?? 0;
   const isUp = symbol.change >= 0;
 
   const handleSymbolChange = (id: string) => {
     setSymbolId(id);
-    const next = SYMBOLS.find((s) => s.id === id);
+    const next = TRADE_SYMBOLS.find((s) => s.id === id);
     if (next) setLimitPrice(next.price.toFixed(2));
   };
 
@@ -224,7 +131,7 @@ export default function Trade() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {SYMBOLS.map((s) => (
+                {TRADE_SYMBOLS.map((s) => (
                   <SelectItem key={s.id} value={s.id}>
                     {s.id} · {s.name}
                   </SelectItem>
@@ -537,7 +444,7 @@ export default function Trade() {
               <div>
                 <p className="section-label mb-2 px-0">보유 종목</p>
                 <div className="flex gap-2 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                  {HOLDINGS.map((h) => (
+                  {TRADE_HOLDINGS.map((h) => (
                     <button
                       key={h.symbol}
                       type="button"
@@ -561,7 +468,7 @@ export default function Trade() {
           {tab === "history" && (
             <div className="space-y-4">
               <p className="section-label px-0">최근 주문</p>
-              {RECENT_ORDERS.map((o) => (
+              {TRADE_RECENT_ORDERS.map((o) => (
                 <div
                   key={o.id}
                   className="glass-panel-sm flex items-center gap-4 p-4"
@@ -591,7 +498,7 @@ export default function Trade() {
               ))}
 
               <p className="section-label mt-4 px-0">보유 현황</p>
-              {HOLDINGS.map((h) => (
+              {TRADE_HOLDINGS.map((h) => (
                 <button
                   key={h.symbol}
                   type="button"
@@ -645,31 +552,12 @@ export default function Trade() {
         )}
 
         {/* Bottom navigation */}
-        <nav className="trade-mobile-nav" aria-label="거래 메뉴">
-          <div className="grid grid-cols-4 px-2 pt-2">
-            {NAV_ITEMS.map(({ id, label, icon: Icon }) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => setTab(id)}
-                className={cn(
-                  "flex flex-col items-center gap-2 py-2 text-xs font-medium leading-4 transition",
-                  tab === id ? "text-foreground" : "text-muted-foreground",
-                )}
-              >
-                <Icon
-                  className={cn(
-                    "h-4 w-4",
-                    tab === id && id === "order" && side === "buy" && "text-destructive",
-                    tab === id && id === "order" && side === "sell" && "text-primary",
-                    tab === id && id !== "order" && "text-primary",
-                  )}
-                />
-                {label}
-              </button>
-            ))}
-          </div>
-        </nav>
+        <MobileTabNav<MobileTab>
+          items={NAV_ITEMS}
+          activeId={tab}
+          onChange={setTab}
+          ariaLabel="거래 메뉴"
+        />
       </div>
     </div>
   );

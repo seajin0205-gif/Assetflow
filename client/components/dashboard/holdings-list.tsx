@@ -1,7 +1,7 @@
 import { stockHoldings } from "@/data/dashboard";
 import { cn } from "@/lib/utils";
 
-export function StockList() {
+export function HoldingsList() {
   return (
     <div className="glass-panel flex shrink-0 flex-col space-y-4 px-6 py-6">
       <div className="space-y-2">

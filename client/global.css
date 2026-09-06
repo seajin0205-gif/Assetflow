@@ -220,18 +220,14 @@
   }
 
   /* Korean trading UI — 매수 red, 매도 blue */
-  .dashboard-mobile-shell {
-    @apply mx-auto flex min-h-[100dvh] max-w-trade flex-col bg-background;
-  }
-
-  .dashboard-mobile-nav {
-    @apply fixed bottom-0 left-1/2 z-50 w-full max-w-trade -translate-x-1/2 border-t border-subtle bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl
-      dark:bg-background/95;
-  }
-
+  .mobile-app-shell,
+  .dashboard-mobile-shell,
   .trade-mobile-shell {
     @apply mx-auto flex min-h-[100dvh] max-w-trade flex-col bg-background;
   }
+
+  .mobile-tab-nav,
+  .dashboard-mobile-nav,
 
   .trade-buy {
     @apply text-destructive;
