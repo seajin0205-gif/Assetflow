@@ -19,11 +19,18 @@ app.get("*", (req, res) => {
     return res.status(404).json({ error: "API endpoint not found" });
   }
 
-  res.sendFile(path.join(distPath, "index.html"));
+  const indexHtml = path.join(distPath, "index.html");
+  res.sendFile(indexHtml, (err) => {
+    if (err) {
+      res.status(500).json({
+        error: "Client build not found. Run the production build first.",
+      });
+    }
+  });
 });
 
 app.listen(port, () => {
-  console.log(`🚀 Fusion Starter server running on port ${port}`);
+  console.log(`🚀 Assetflow server running on port ${port}`);
   console.log(`📱 Frontend: http://localhost:${port}`);
   console.log(`🔧 API: http://localhost:${port}/api`);
 });

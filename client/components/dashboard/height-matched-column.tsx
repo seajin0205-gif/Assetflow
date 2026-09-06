@@ -1,17 +1,17 @@
 import type { CSSProperties, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-type MatchedColumnProps = {
+type HeightMatchedColumnProps = {
   height: number | null;
   className?: string;
   children: ReactNode;
 };
 
-export function MatchedColumn({
+export function HeightMatchedColumn({
   height,
   className,
   children,
-}: MatchedColumnProps) {
+}: HeightMatchedColumnProps) {
   const style: CSSProperties | undefined =
     height != null ? { height } : undefined;
 

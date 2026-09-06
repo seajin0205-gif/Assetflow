@@ -1,6 +1,6 @@
 import { useEffect, useState, type RefObject } from "react";
 
-export function useLeftColumnHeight(
+export function useHeightMatchedColumn(
   ref: RefObject<HTMLElement | null>,
 ): number | null {
   const [height, setHeight] = useState<number | null>(null);

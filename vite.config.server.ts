@@ -3,7 +3,9 @@ import path from "node:path";
 
 // Server build configuration
 export default defineConfig({
+  publicDir: false,
   build: {
+    emptyOutDir: true,
     lib: {
       entry: path.resolve(__dirname, "server/node-build.ts"),
       name: "server",
@@ -32,13 +34,15 @@ export default defineConfig({
         // External dependencies that should not be bundled
         "express",
         "cors",
+        "dotenv",
       ],
       output: {
         format: "es",
-        entryFileNames: "[name].mjs",
+        // Keep start script path stable: dist/server/node-build.mjs
+        entryFileNames: "node-build.mjs",
       },
     },
-    minify: false, // Keep readable for debugging
+    minify: false,
     sourcemap: true,
   },
   resolve: {

@@ -144,12 +144,17 @@ export const stockHoldings: StockHolding[] = [
 ];
 
 export const MOOD_OPTIONS = [
-  { label: "Scare", emoji: "😨" },
+  { label: "Scared", emoji: "😨" },
   { label: "Anxious", emoji: "😰" },
   { label: "Neutral", emoji: "😐" },
   { label: "Calm", emoji: "😌" },
   { label: "Confident", emoji: "😊" },
 ] as const;
+
+export const ACCOUNT_ID = "78241";
+export const ACCOUNT_NET_WORTH_LABEL = "$1,262,480";
+export const ACCOUNT_CASH_LABEL = "$120,540";
+export const ALERT_UNREAD_COUNT = 3;
 
 export const ASSET_FILTER_OPTIONS = ["All Assets", "Equities", "Fixed Income"];
 

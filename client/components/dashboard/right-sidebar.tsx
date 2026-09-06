@@ -1,7 +1,7 @@
 import { MarketBriefPanel } from "@/components/dashboard/market-brief-panel";
-import { MatchedColumn } from "@/components/dashboard/matched-column";
+import { HeightMatchedColumn } from "@/components/dashboard/height-matched-column";
 import { MoodTracker } from "@/components/dashboard/mood-tracker";
-import { StockList } from "@/components/dashboard/stock-list";
+import { HoldingsList } from "@/components/dashboard/holdings-list";
 
 type RightSidebarProps = {
   columnHeight: number | null;
@@ -9,13 +9,13 @@ type RightSidebarProps = {
 
 export function RightSidebar({ columnHeight }: RightSidebarProps) {
   return (
-    <MatchedColumn height={columnHeight} className="w-full shrink-0 lg:w-80">
-      <StockList />
+    <HeightMatchedColumn height={columnHeight} className="w-full shrink-0 lg:w-80">
+      <HoldingsList />
 
       <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden">
         <MarketBriefPanel />
         <MoodTracker />
       </div>
-    </MatchedColumn>
+    </HeightMatchedColumn>
   );
 }
