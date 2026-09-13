@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import { Bell, Search, User } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useEmbedMode } from "@/hooks/use-embed-mode";
 
 export function DashboardHeader() {
+  const isEmbed = useEmbedMode();
+
   return (
     <header className="sticky top-0 z-50 border-b border-subtle bg-white/80 backdrop-blur-xl dark:bg-background/75">
       <div className="mx-auto flex max-w-dashboard flex-wrap items-center justify-between gap-4 px-6 py-4 lg:px-8 lg:py-6">
@@ -31,6 +34,11 @@ export function DashboardHeader() {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-4">
+          {!isEmbed && (
+            <Link to="/portfolio" className="btn-ghost hidden sm:inline-flex">
+              Portfolio
+            </Link>
+          )}
           <button type="button" className="btn-ghost hidden sm:inline-flex">
             Import
           </button>

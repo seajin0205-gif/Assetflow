@@ -20,6 +20,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { ALERT_ITEMS, ASSET_FILTER_OPTIONS } from "@/data/dashboard";
 import { useRiskScoreLoading } from "@/hooks/use-risk-score-loading";
 import { getDashboardChartTheme } from "@/lib/dashboard-theme";
+import { useEmbedMode } from "@/hooks/use-embed-mode";
 import { cn } from "@/lib/utils";
 
 type MobileTab = "home" | "risk" | "stocks" | "feed";
@@ -40,6 +41,7 @@ export function DashboardMobile() {
     [isDark],
   );
   const isRiskScoreLoading = useRiskScoreLoading();
+  const isEmbed = useEmbedMode();
   const [tab, setTab] = useState<MobileTab>("home");
 
   return (
@@ -58,6 +60,14 @@ export function DashboardMobile() {
               </span>
             </div>
             <div className="flex shrink-0 items-center gap-1">
+              {!isEmbed && (
+                <Link
+                  to="/portfolio"
+                  className="btn-ghost px-3 py-2 text-xs leading-4"
+                >
+                  Portfolio
+                </Link>
+              )}
               <Link
                 to="/trade"
                 className="btn-primary px-3 py-2 text-xs leading-4"
