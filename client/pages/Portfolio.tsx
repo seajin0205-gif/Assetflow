@@ -116,6 +116,22 @@ export default function Portfolio() {
         </section>
 
         <section className="mx-auto max-w-dashboard px-6 pb-16 lg:px-8">
+          <div className="mb-4">
+            <p className="section-label mb-2">Product still</p>
+            <h2 className="font-display text-2xl font-bold leading-8 tracking-tight">
+              iMac · 실제 대시보드
+            </h2>
+          </div>
+          <figure className="overflow-hidden rounded-2xl border border-subtle bg-card shadow-card">
+            <img
+              src="/imac-dashboard.png"
+              alt="Assetflow 실제 대시보드가 열린 iMac"
+              className="h-auto w-full"
+            />
+          </figure>
+        </section>
+
+        <section className="mx-auto max-w-dashboard px-6 pb-16 lg:px-8">
           <div className="mb-4 flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="section-label mb-2">Desktop dashboard</p>
