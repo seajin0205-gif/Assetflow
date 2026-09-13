@@ -1498,6 +1498,153 @@
         opacity: 1;
         transform: translateY(0);
       }
+
+      /* Final output stage */
+      .output-browser {
+        overflow: hidden;
+        border: 1px solid hsl(var(--border));
+        border-radius: 16px;
+        background: hsl(var(--card));
+      }
+
+      .output-chrome {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 8px 16px;
+        border-bottom: 1px solid hsl(var(--border));
+      }
+
+      .output-dots {
+        display: flex;
+        gap: 8px;
+      }
+
+      .output-dots span {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+      }
+
+      .output-url {
+        flex: 1;
+        padding: 8px 16px;
+        border-radius: 8px;
+        background: hsl(var(--muted) / 0.7);
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 12px;
+        color: hsl(var(--muted-fg));
+        text-align: center;
+      }
+
+      .output-stage {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        background: hsl(var(--bg));
+        height: 560px;
+      }
+
+      .output-stage iframe {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1440px;
+        height: 980px;
+        border: 0;
+        transform-origin: top left;
+        transform: scale(0.64);
+      }
+
+      .output-phones {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+        margin-top: 32px;
+      }
+
+      @media (max-width: 800px) {
+        .output-phones {
+          grid-template-columns: 1fr;
+        }
+
+        .output-stage {
+          height: 360px;
+        }
+
+        .output-stage iframe {
+          transform: scale(0.4);
+        }
+      }
+
+      .output-phone {
+        max-width: 360px;
+        margin: 0 auto;
+      }
+
+      .output-phone-frame {
+        overflow: hidden;
+        border: 8px solid #18181b;
+        border-radius: 32px;
+        background: #18181b;
+      }
+
+      .output-phone-notch {
+        display: flex;
+        justify-content: center;
+        padding: 8px 0;
+        background: #27272a;
+      }
+
+      .output-phone-notch span {
+        width: 64px;
+        height: 8px;
+        border-radius: 999px;
+        background: #52525b;
+      }
+
+      .output-phone-screen {
+        position: relative;
+        width: 100%;
+        height: 620px;
+        overflow: hidden;
+        background: hsl(var(--bg));
+      }
+
+      .output-phone-screen iframe {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 390px;
+        height: 844px;
+        border: 0;
+        transform-origin: top left;
+        transform: scale(0.735);
+      }
+
+      .output-phone figcaption {
+        margin-top: 16px;
+        text-align: center;
+      }
+
+      .output-phone figcaption strong {
+        display: block;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: 16px;
+        margin-bottom: 4px;
+      }
+
+      .output-phone figcaption span {
+        font-size: 13px;
+        color: hsl(var(--muted-fg));
+      }
+
+      .output-cta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 32px;
+      }
     </style>
   </head>
   <body>
@@ -1517,9 +1664,11 @@
             <a href="#trade">Trade</a>
             <a href="#motion">Motion</a>
             <a href="#catalog">Catalog</a>
+            <a href="#output">Output</a>
             <a href="/retrospective.html">Retrospective</a>
           </div>
           <div class="nav-actions">
+            <a href="/portfolio" class="btn-sm btn-ghost">Final Output</a>
             <a href="/" class="btn-sm btn-ghost">Live App</a>
             <button class="icon-btn" id="themeBtn" aria-label="테마 전환">
               <svg class="moon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -1984,12 +2133,75 @@
               </table>
             </div>
           </section>
+
+          <!-- 06 Final Output -->
+          <section id="output" class="section reveal">
+            <div class="section-head">
+              <div>
+                <div class="section-num mono">06</div>
+                <h2 class="display">Final Output</h2>
+                <p class="section-desc">라이브 대시보드와 거래 화면을 마지막 산출물로 구성</p>
+              </div>
+            </div>
+
+            <figure class="output-browser" style="margin-bottom: 32px">
+              <img src="/imac-dashboard.png" alt="Assetflow 실제 대시보드가 열린 iMac" style="display:block;width:100%;height:auto" />
+            </figure>
+
+            <div class="output-browser">
+              <div class="output-chrome">
+                <div class="output-dots" aria-hidden="true">
+                  <span style="background:#f87171"></span>
+                  <span style="background:#fbbf24"></span>
+                  <span style="background:#34d399"></span>
+                </div>
+                <div class="output-url">assetflow.app /</div>
+              </div>
+              <div class="output-stage">
+                <iframe src="/?embed=1" title="Assetflow desktop dashboard"></iframe>
+              </div>
+            </div>
+
+            <div class="output-phones">
+              <figure class="output-phone">
+                <div class="output-phone-frame">
+                  <div class="output-phone-notch"><span></span></div>
+                  <div class="output-phone-screen">
+                    <iframe src="/?embed=1" title="Assetflow mobile dashboard"></iframe>
+                  </div>
+                </div>
+                <figcaption>
+                  <strong>Mobile dashboard</strong>
+                  <span>Home · Risk · Stocks · Feed</span>
+                </figcaption>
+              </figure>
+              <figure class="output-phone">
+                <div class="output-phone-frame">
+                  <div class="output-phone-notch"><span></span></div>
+                  <div class="output-phone-screen">
+                    <iframe src="/trade?embed=1" title="Assetflow trade screen"></iframe>
+                  </div>
+                </div>
+                <figcaption>
+                  <strong>Trade last screen</strong>
+                  <span>한국형 매수/매도 · 주문 접수</span>
+                </figcaption>
+              </figure>
+            </div>
+
+            <div class="output-cta">
+              <a href="/portfolio" class="btn-sm" style="background:hsl(var(--primary));color:#fff">Final Output 화면</a>
+              <a href="/" class="btn-sm btn-ghost">Live Dashboard</a>
+              <a href="/trade" class="btn-sm btn-ghost">Trade</a>
+            </div>
+          </section>
         </div>
 
         <footer>
           <div class="wrap footer-inner">
             <p>Assetflow · Design Engineer Portfolio · 2025</p>
             <div class="footer-links">
+              <a href="/portfolio">Final Output</a>
               <a href="/">대시보드</a>
               <a href="/trade">거래 화면</a>
               <a href="/interactions.html">기술 가이드</a>
