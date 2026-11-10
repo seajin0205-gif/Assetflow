@@ -70,7 +70,10 @@ export function getSharedDatabase(): DatabaseSync {
   return shared;
 }
 
-export function transact<T>(db: DatabaseSync, fn: () => Promise<T> | T): Promise<T> {
+export function transact<T>(
+  db: DatabaseSync,
+  fn: () => Promise<T> | T,
+): Promise<T> {
   const previous = queues.get(db) ?? Promise.resolve();
   const run = previous.then(async () => {
     db.exec("BEGIN IMMEDIATE");
@@ -97,7 +100,10 @@ export function transact<T>(db: DatabaseSync, fn: () => Promise<T> | T): Promise
   return run;
 }
 
-export function loadAccount(db: DatabaseSync, accountId: string): AccountRow | null {
+export function loadAccount(
+  db: DatabaseSync,
+  accountId: string,
+): AccountRow | null {
   const row = db
     .prepare(
       `SELECT id, cash_cents, reserved_cash_cents, version
@@ -157,7 +163,12 @@ export function saveAccount(db: DatabaseSync, account: AccountRow): boolean {
         WHERE id = ?
           AND version = ?`,
     )
-    .run(account.cashCents, account.reservedCashCents, account.id, account.version);
+    .run(
+      account.cashCents,
+      account.reservedCashCents,
+      account.id,
+      account.version,
+    );
 
   if (Number(updated.changes) !== 1) return false;
 
@@ -353,7 +364,9 @@ function migrate(db: DatabaseSync): void {
 }
 
 function seedDemo(db: DatabaseSync): void {
-  const existing = db.prepare(`SELECT id FROM accounts WHERE id = ?`).get("demo");
+  const existing = db
+    .prepare(`SELECT id FROM accounts WHERE id = ?`)
+    .get("demo");
   if (existing) return;
 
   db.prepare(

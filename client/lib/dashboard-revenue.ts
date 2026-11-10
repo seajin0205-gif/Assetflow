@@ -19,7 +19,10 @@ function buildRevenueSeries(
 }
 
 /** Tighter Y scale so intraday / monthly moves read clearly on a small chart */
-export function revenueChartDomain([min, max]: [number, number]): [number, number] {
+export function revenueChartDomain([min, max]: [number, number]): [
+  number,
+  number,
+] {
   const span = Math.max(max - min, 1);
   const pad = span * 0.12;
   return [min - pad, max + pad];

@@ -3,8 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f6f8fc" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#06080f" media="(prefers-color-scheme: dark)" />
+    <meta
+      name="theme-color"
+      content="#f6f8fc"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#06080f"
+      media="(prefers-color-scheme: dark)"
+    />
     <title>Assetflow — Design Engineer Portfolio</title>
     <link rel="icon" href="/logo.png" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -18,7 +26,8 @@
           var t = localStorage.getItem("theme");
           var dark =
             t === "dark" ||
-            (t !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+            (t !== "light" &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
           if (dark) document.documentElement.classList.add("dark");
         } catch (e) {}
       })();
@@ -211,7 +220,9 @@
         text-decoration: none;
         border: none;
         cursor: pointer;
-        transition: transform 0.15s var(--ease-out), filter 0.15s;
+        transition:
+          transform 0.15s var(--ease-out),
+          filter 0.15s;
       }
 
       .btn-sm:active {
@@ -784,7 +795,9 @@
         background: transparent;
         cursor: pointer;
         text-align: left;
-        transition: background 0.2s var(--ease-out), color 0.2s;
+        transition:
+          background 0.2s var(--ease-out),
+          color 0.2s;
         color: hsl(var(--muted-fg));
       }
 
@@ -836,7 +849,9 @@
         visibility: hidden;
         position: absolute;
         inset: 0;
-        transition: opacity 0.25s var(--ease-out), visibility 0.25s;
+        transition:
+          opacity 0.25s var(--ease-out),
+          visibility 0.25s;
         pointer-events: none;
         display: none;
       }
@@ -929,7 +944,9 @@
         box-shadow: 0 8px 24px hsl(var(--primary) / 0.1);
         opacity: 0;
         transform: translateY(6px);
-        transition: opacity 0.2s var(--ease-out), transform 0.2s var(--ease-out);
+        transition:
+          opacity 0.2s var(--ease-out),
+          transform 0.2s var(--ease-out);
         pointer-events: none;
       }
 
@@ -997,7 +1014,9 @@
         border: 1px solid hsl(var(--border));
         background: hsl(var(--muted) / 0.5);
         cursor: pointer;
-        transition: background 0.15s, transform 0.15s;
+        transition:
+          background 0.15s,
+          transform 0.15s;
         color: hsl(var(--fg));
       }
 
@@ -1491,7 +1510,9 @@
       .reveal {
         opacity: 0;
         transform: translateY(24px);
-        transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+        transition:
+          opacity 0.6s var(--ease-out),
+          transform 0.6s var(--ease-out);
       }
 
       .reveal.visible {
@@ -1522,12 +1543,26 @@
           <div class="nav-actions">
             <a href="/" class="btn-sm btn-ghost">Live App</a>
             <button class="icon-btn" id="themeBtn" aria-label="테마 전환">
-              <svg class="moon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <svg
+                class="moon"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
               </svg>
-              <svg class="sun" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <svg
+                class="sun"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
                 <circle cx="12" cy="12" r="5" />
-                <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2" />
+                <path
+                  d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2"
+                />
               </svg>
             </button>
           </div>
@@ -1559,7 +1594,9 @@
               <div>
                 <div class="section-num mono">01</div>
                 <h2 class="display">Interaction System</h2>
-                <p class="section-desc">Trigger → Action → Feedback 3단계로 모든 인터랙션을 모델링</p>
+                <p class="section-desc">
+                  Trigger → Action → Feedback 3단계로 모든 인터랙션을 모델링
+                </p>
               </div>
             </div>
 
@@ -1585,30 +1622,69 @@
               <div>
                 <div class="section-num mono">02</div>
                 <h2 class="display">Chart Interactions</h2>
-                <p class="section-desc">커스텀 툴팁 · activeDot · 기간 탭 · auto-flip</p>
+                <p class="section-desc">
+                  커스텀 툴팁 · activeDot · 기간 탭 · auto-flip
+                </p>
               </div>
             </div>
 
             <div class="demo-split">
               <div class="demo-box demo-box--live">
-                <div class="demo-label demo-label--live">Live · Chart Tooltip</div>
+                <div class="demo-label demo-label--live">
+                  Live · Chart Tooltip
+                </div>
                 <div class="chart-demo" id="chartDemo">
-                  <svg class="chart-svg" viewBox="0 0 400 180" preserveAspectRatio="none">
+                  <svg
+                    class="chart-svg"
+                    viewBox="0 0 400 180"
+                    preserveAspectRatio="none"
+                  >
                     <defs>
-                      <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="hsl(var(--primary))" stop-opacity="0.25" />
-                        <stop offset="100%" stop-color="hsl(var(--primary))" stop-opacity="0" />
+                      <linearGradient
+                        id="chartGrad"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="0%"
+                          stop-color="hsl(var(--primary))"
+                          stop-opacity="0.25"
+                        />
+                        <stop
+                          offset="100%"
+                          stop-color="hsl(var(--primary))"
+                          stop-opacity="0"
+                        />
                       </linearGradient>
                     </defs>
-                    <path class="chart-area" d="M0,140 C40,130 60,100 100,90 C140,80 160,110 200,70 C240,30 280,50 320,40 C360,30 380,20 400,15 L400,180 L0,180 Z" />
-                    <path class="chart-line" d="M0,140 C40,130 60,100 100,90 C140,80 160,110 200,70 C240,30 280,50 320,40 C360,30 380,20 400,15" />
-                    <line class="chart-cursor" x1="280" y1="10" x2="280" y2="170" />
+                    <path
+                      class="chart-area"
+                      d="M0,140 C40,130 60,100 100,90 C140,80 160,110 200,70 C240,30 280,50 320,40 C360,30 380,20 400,15 L400,180 L0,180 Z"
+                    />
+                    <path
+                      class="chart-line"
+                      d="M0,140 C40,130 60,100 100,90 C140,80 160,110 200,70 C240,30 280,50 320,40 C360,30 380,20 400,15"
+                    />
+                    <line
+                      class="chart-cursor"
+                      x1="280"
+                      y1="10"
+                      x2="280"
+                      y2="170"
+                    />
                     <circle class="chart-dot" cx="280" cy="48" r="6" />
                   </svg>
                   <div class="chart-tooltip-demo">
                     <strong>Sep 2025</strong>
-                    <div class="row"><span>Portfolio value</span><span class="val">$2.41M</span></div>
-                    <div class="row"><span>Return</span><span class="val pos">+18.4%</span></div>
+                    <div class="row">
+                      <span>Portfolio value</span
+                      ><span class="val">$2.41M</span>
+                    </div>
+                    <div class="row">
+                      <span>Return</span><span class="val pos">+18.4%</span>
+                    </div>
                   </div>
                   <span class="chart-hint">호버하여 확인</span>
                 </div>
@@ -1619,23 +1695,41 @@
                 <div class="taf-flow" style="padding: 0">
                   <div class="taf-step">
                     <div class="taf-step-label">Trigger</div>
-                    <p>차트 영역 <code class="code-chip">mouseenter</code> <code class="code-chip">mousemove</code></p>
+                    <p>
+                      차트 영역 <code class="code-chip">mouseenter</code>
+                      <code class="code-chip">mousemove</code>
+                    </p>
                   </div>
                   <div class="taf-arrow">→</div>
                   <div class="taf-step">
                     <div class="taf-step-label">Action</div>
-                    <p><code class="code-chip">activeDot</code> r=8 · dashed cursor · payload 조회</p>
+                    <p>
+                      <code class="code-chip">activeDot</code> r=8 · dashed
+                      cursor · payload 조회
+                    </p>
                   </div>
                   <div class="taf-arrow">→</div>
                   <div class="taf-step">
                     <div class="taf-step-label">Feedback</div>
-                    <p><code class="code-chip">.chart-tooltip</code> glass 패널 · 수치 tabular-nums</p>
+                    <p>
+                      <code class="code-chip">.chart-tooltip</code> glass 패널 ·
+                      수치 tabular-nums
+                    </p>
                   </div>
                 </div>
                 <div class="taf-spec" style="padding-left: 0; padding-right: 0">
-                  <div><dt>Animation</dt><dd>400ms ease-out</dd></div>
-                  <div><dt>Cursor</dt><dd>stroke-dasharray 4 4</dd></div>
-                  <div><dt>Tooltip</dt><dd>208×112 · auto-flip</dd></div>
+                  <div>
+                    <dt>Animation</dt>
+                    <dd>400ms ease-out</dd>
+                  </div>
+                  <div>
+                    <dt>Cursor</dt>
+                    <dd>stroke-dasharray 4 4</dd>
+                  </div>
+                  <div>
+                    <dt>Tooltip</dt>
+                    <dd>208×112 · auto-flip</dd>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1643,11 +1737,18 @@
             <dl class="spec-list">
               <div class="spec-list-item">
                 <dt>기간 탭 전환</dt>
-                <dd><code class="code-chip">onClick</code> → <code class="code-chip">setPeriod</code> · 차트 리마운트 · 400ms draw-in</dd>
+                <dd>
+                  <code class="code-chip">onClick</code> →
+                  <code class="code-chip">setPeriod</code> · 차트 리마운트 ·
+                  400ms draw-in
+                </dd>
               </div>
               <div class="spec-list-item">
                 <dt>ROTA 복합 호버</dt>
-                <dd><code class="code-chip">hover</code> → 월별 payload · <code class="code-chip">RotaTooltip</code> · ROA % / Net $M</dd>
+                <dd>
+                  <code class="code-chip">hover</code> → 월별 payload ·
+                  <code class="code-chip">RotaTooltip</code> · ROA % / Net $M
+                </dd>
               </div>
             </dl>
           </section>
@@ -1658,22 +1759,40 @@
               <div>
                 <div class="section-num mono">03</div>
                 <h2 class="display">Trade & Toast</h2>
-                <p class="section-desc">주문 검증 3단계 · Sonner 피드백 · 한국형 매수/매도 UX</p>
+                <p class="section-desc">
+                  주문 검증 3단계 · Sonner 피드백 · 한국형 매수/매도 UX
+                </p>
               </div>
             </div>
 
             <div class="demo-split">
               <div class="demo-box demo-box--live">
-                <div class="demo-label demo-label--live">Live · Order Toast</div>
+                <div class="demo-label demo-label--live">
+                  Live · Order Toast
+                </div>
                 <div class="toast-stage">
-                  <p style="font-size: var(--text-sm); color: hsl(var(--muted-fg)); text-align: center">
+                  <p
+                    style="
+                      font-size: var(--text-sm);
+                      color: hsl(var(--muted-fg));
+                      text-align: center;
+                    "
+                  >
                     <code class="code-chip">handleSubmit()</code> 동일 로직
                   </p>
                   <div class="toast-btns">
-                    <button class="toast-btn success" data-toast="success">NVDA 매수 10주 접수</button>
-                    <button class="toast-btn error" data-toast="qty">수량 미입력</button>
-                    <button class="toast-btn error" data-toast="shares">보유 수량 초과</button>
-                    <button class="toast-btn error" data-toast="limit">지정가 오류</button>
+                    <button class="toast-btn success" data-toast="success">
+                      NVDA 매수 10주 접수
+                    </button>
+                    <button class="toast-btn error" data-toast="qty">
+                      수량 미입력
+                    </button>
+                    <button class="toast-btn error" data-toast="shares">
+                      보유 수량 초과
+                    </button>
+                    <button class="toast-btn error" data-toast="limit">
+                      지정가 오류
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1692,22 +1811,32 @@
                     <tr>
                       <td><code class="code-chip">qty ≤ 0</code></td>
                       <td>주문하기 tap</td>
-                      <td style="color: hsl(var(--destructive))">수량을 입력해 주세요.</td>
+                      <td style="color: hsl(var(--destructive))">
+                        수량을 입력해 주세요.
+                      </td>
                     </tr>
                     <tr>
-                      <td><code class="code-chip">sell qty &gt; holdings</code></td>
+                      <td>
+                        <code class="code-chip">sell qty &gt; holdings</code>
+                      </td>
                       <td>매도 제출</td>
-                      <td style="color: hsl(var(--destructive))">보유 수량(N주) 초과</td>
+                      <td style="color: hsl(var(--destructive))">
+                        보유 수량(N주) 초과
+                      </td>
                     </tr>
                     <tr>
                       <td><code class="code-chip">limit ≤ 0</code></td>
                       <td>지정가 주문</td>
-                      <td style="color: hsl(var(--destructive))">지정가를 입력해 주세요.</td>
+                      <td style="color: hsl(var(--destructive))">
+                        지정가를 입력해 주세요.
+                      </td>
                     </tr>
                     <tr>
                       <td>통과</td>
                       <td>유효 주문</td>
-                      <td style="color: hsl(var(--success))">접수 + description</td>
+                      <td style="color: hsl(var(--success))">
+                        접수 + description
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -1715,26 +1844,79 @@
             </div>
 
             <div class="spec-tabs-layout" id="tradeSpecTabs">
-              <div class="spec-tab-list" role="tablist" aria-label="거래 인터랙션 스펙">
-                <button class="spec-tab-btn" role="tab" aria-selected="true" aria-controls="tab-buy-sell" id="tab-btn-buy-sell" data-tab="buy-sell">
+              <div
+                class="spec-tab-list"
+                role="tablist"
+                aria-label="거래 인터랙션 스펙"
+              >
+                <button
+                  class="spec-tab-btn"
+                  role="tab"
+                  aria-selected="true"
+                  aria-controls="tab-buy-sell"
+                  id="tab-btn-buy-sell"
+                  data-tab="buy-sell"
+                >
                   <strong>매수 / 매도 토글</strong>
                   <span>한국 증권 UX</span>
                 </button>
-                <button class="spec-tab-btn" role="tab" aria-selected="false" aria-controls="tab-presets" id="tab-btn-presets" data-tab="presets">
+                <button
+                  class="spec-tab-btn"
+                  role="tab"
+                  aria-selected="false"
+                  aria-controls="tab-presets"
+                  id="tab-btn-presets"
+                  data-tab="presets"
+                >
                   <strong>수량 프리셋</strong>
                   <span>25% · 50% · 75% · 100%</span>
                 </button>
-                <button class="spec-tab-btn" role="tab" aria-selected="false" aria-controls="tab-cross-nav" id="tab-btn-cross-nav" data-tab="cross-nav">
+                <button
+                  class="spec-tab-btn"
+                  role="tab"
+                  aria-selected="false"
+                  aria-controls="tab-cross-nav"
+                  id="tab-btn-cross-nav"
+                  data-tab="cross-nav"
+                >
                   <strong>내역 크로스 네비</strong>
                   <span>보유 종목 행 클릭</span>
                 </button>
               </div>
               <div class="spec-tab-panels">
-                <div class="spec-tab-panel active" role="tabpanel" id="tab-buy-sell" aria-labelledby="tab-btn-buy-sell">
-                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px">
+                <div
+                  class="spec-tab-panel active"
+                  role="tabpanel"
+                  id="tab-buy-sell"
+                  aria-labelledby="tab-btn-buy-sell"
+                >
+                  <div
+                    style="
+                      display: flex;
+                      align-items: center;
+                      justify-content: space-between;
+                      margin-bottom: 16px;
+                    "
+                  >
                     <div>
-                      <h3 style="font-size: 15px; font-weight: 700; letter-spacing: -0.02em">매수 / 매도 토글</h3>
-                      <p style="font-size: 12px; color: hsl(var(--muted-fg)); margin-top: 2px">매수 빨강 · 매도 파랑</p>
+                      <h3
+                        style="
+                          font-size: 15px;
+                          font-weight: 700;
+                          letter-spacing: -0.02em;
+                        "
+                      >
+                        매수 / 매도 토글
+                      </h3>
+                      <p
+                        style="
+                          font-size: 12px;
+                          color: hsl(var(--muted-fg));
+                          margin-top: 2px;
+                        "
+                      >
+                        매수 빨강 · 매도 파랑
+                      </p>
                     </div>
                     <span class="tag tag-trade">Trade</span>
                   </div>
@@ -1746,20 +1928,55 @@
                     <div class="taf-arrow">→</div>
                     <div class="taf-step">
                       <div class="taf-step-label">Action</div>
-                      <p><code class="code-chip">setSide('buy'|'sell')</code> · CTA 색상·라벨 변경</p>
+                      <p>
+                        <code class="code-chip">setSide('buy'|'sell')</code> ·
+                        CTA 색상·라벨 변경
+                      </p>
                     </div>
                     <div class="taf-arrow">→</div>
                     <div class="taf-step">
                       <div class="taf-step-label">Feedback</div>
-                      <p><code class="code-chip">.trade-buy</code> <code class="code-chip">.trade-sell</code> · sticky submit bar 색상 전환</p>
+                      <p>
+                        <code class="code-chip">.trade-buy</code>
+                        <code class="code-chip">.trade-sell</code> · sticky
+                        submit bar 색상 전환
+                      </p>
                     </div>
                   </div>
                 </div>
-                <div class="spec-tab-panel" role="tabpanel" id="tab-presets" aria-labelledby="tab-btn-presets">
-                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px">
+                <div
+                  class="spec-tab-panel"
+                  role="tabpanel"
+                  id="tab-presets"
+                  aria-labelledby="tab-btn-presets"
+                >
+                  <div
+                    style="
+                      display: flex;
+                      align-items: center;
+                      justify-content: space-between;
+                      margin-bottom: 16px;
+                    "
+                  >
                     <div>
-                      <h3 style="font-size: 15px; font-weight: 700; letter-spacing: -0.02em">수량 프리셋 · 전량 링크</h3>
-                      <p style="font-size: 12px; color: hsl(var(--muted-fg)); margin-top: 2px">25% · 50% · 75% · 100%</p>
+                      <h3
+                        style="
+                          font-size: 15px;
+                          font-weight: 700;
+                          letter-spacing: -0.02em;
+                        "
+                      >
+                        수량 프리셋 · 전량 링크
+                      </h3>
+                      <p
+                        style="
+                          font-size: 12px;
+                          color: hsl(var(--muted-fg));
+                          margin-top: 2px;
+                        "
+                      >
+                        25% · 50% · 75% · 100%
+                      </p>
                     </div>
                     <span class="tag tag-trade">Trade</span>
                   </div>
@@ -1771,7 +1988,10 @@
                     <div class="taf-arrow">→</div>
                     <div class="taf-step">
                       <div class="taf-step-label">Action</div>
-                      <p>보유 수량 기준 계산 · <code class="code-chip">setQuantity</code></p>
+                      <p>
+                        보유 수량 기준 계산 ·
+                        <code class="code-chip">setQuantity</code>
+                      </p>
                     </div>
                     <div class="taf-arrow">→</div>
                     <div class="taf-step">
@@ -1780,28 +2000,63 @@
                     </div>
                   </div>
                 </div>
-                <div class="spec-tab-panel" role="tabpanel" id="tab-cross-nav" aria-labelledby="tab-btn-cross-nav">
-                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px">
+                <div
+                  class="spec-tab-panel"
+                  role="tabpanel"
+                  id="tab-cross-nav"
+                  aria-labelledby="tab-btn-cross-nav"
+                >
+                  <div
+                    style="
+                      display: flex;
+                      align-items: center;
+                      justify-content: space-between;
+                      margin-bottom: 16px;
+                    "
+                  >
                     <div>
-                      <h3 style="font-size: 15px; font-weight: 700; letter-spacing: -0.02em">내역 → 주문 크로스 네비게이션</h3>
-                      <p style="font-size: 12px; color: hsl(var(--muted-fg)); margin-top: 2px">보유 종목 행 클릭</p>
+                      <h3
+                        style="
+                          font-size: 15px;
+                          font-weight: 700;
+                          letter-spacing: -0.02em;
+                        "
+                      >
+                        내역 → 주문 크로스 네비게이션
+                      </h3>
+                      <p
+                        style="
+                          font-size: 12px;
+                          color: hsl(var(--muted-fg));
+                          margin-top: 2px;
+                        "
+                      >
+                        보유 종목 행 클릭
+                      </p>
                     </div>
                     <span class="tag tag-trade">Trade</span>
                   </div>
                   <div class="taf-flow">
                     <div class="taf-step">
                       <div class="taf-step-label">Trigger</div>
-                      <p>내역 탭 보유 행 <code class="code-chip">onClick</code></p>
+                      <p>
+                        내역 탭 보유 행 <code class="code-chip">onClick</code>
+                      </p>
                     </div>
                     <div class="taf-arrow">→</div>
                     <div class="taf-step">
                       <div class="taf-step-label">Action</div>
-                      <p><code class="code-chip">setSymbolId</code> + <code class="code-chip">setTab('order')</code></p>
+                      <p>
+                        <code class="code-chip">setSymbolId</code> +
+                        <code class="code-chip">setTab('order')</code>
+                      </p>
                     </div>
                     <div class="taf-arrow">→</div>
                     <div class="taf-step">
                       <div class="taf-step-label">Feedback</div>
-                      <p>헤더 가격 스트립 갱신 · 지정가 자동 세팅 · 주문 탭 활성</p>
+                      <p>
+                        헤더 가격 스트립 갱신 · 지정가 자동 세팅 · 주문 탭 활성
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -1815,7 +2070,9 @@
               <div>
                 <div class="section-num mono">04</div>
                 <h2 class="display">Motion & Loading</h2>
-                <p class="section-desc">스켈레톤 shimmer · Mood ring/glow · CSS 변수 테마 전환</p>
+                <p class="section-desc">
+                  스켈레톤 shimmer · Mood ring/glow · CSS 변수 테마 전환
+                </p>
               </div>
             </div>
 
@@ -1826,26 +2083,50 @@
                   <div style="display: flex; gap: 16px; align-items: center">
                     <div class="skel skel-score" id="skelCircle"></div>
                     <div style="flex: 1">
-                      <div class="skel skel-bar w60" style="margin-bottom: 8px"></div>
+                      <div
+                        class="skel skel-bar w60"
+                        style="margin-bottom: 8px"
+                      ></div>
                       <div class="skel skel-bar w80"></div>
                     </div>
                   </div>
                   <div class="skel skel-bar w40"></div>
-                  <div class="skel skel-bar" style="height: 80px; border-radius: 12px"></div>
+                  <div
+                    class="skel skel-bar"
+                    style="height: 80px; border-radius: 12px"
+                  ></div>
                 </div>
-                <button class="btn-sm btn-ghost" id="replaySkel" style="margin-top: 16px">Replay</button>
+                <button
+                  class="btn-sm btn-ghost"
+                  id="replaySkel"
+                  style="margin-top: 16px"
+                >
+                  Replay
+                </button>
               </div>
 
               <div class="demo-box demo-box--live">
                 <div class="demo-label demo-label--live">Live · Mood</div>
                 <div class="mood-demo" id="moodDemo">
-                  <button class="mood-btn" data-mood="Scared"><span>😰</span><span>Scared</span></button>
-                  <button class="mood-btn" data-mood="Anxious"><span>😟</span><span>Anxious</span></button>
-                  <button class="mood-btn" data-mood="Neutral"><span>😐</span><span>Neutral</span></button>
-                  <button class="mood-btn" data-mood="Calm"><span>😌</span><span>Calm</span></button>
-                  <button class="mood-btn" data-mood="Confident"><span>😎</span><span>Confident</span></button>
+                  <button class="mood-btn" data-mood="Scared">
+                    <span>😰</span><span>Scared</span>
+                  </button>
+                  <button class="mood-btn" data-mood="Anxious">
+                    <span>😟</span><span>Anxious</span>
+                  </button>
+                  <button class="mood-btn" data-mood="Neutral">
+                    <span>😐</span><span>Neutral</span>
+                  </button>
+                  <button class="mood-btn" data-mood="Calm">
+                    <span>😌</span><span>Calm</span>
+                  </button>
+                  <button class="mood-btn" data-mood="Confident">
+                    <span>😎</span><span>Confident</span>
+                  </button>
                 </div>
-                <p class="mood-feedback" id="moodFeedback">감정 선택 → 리스크 차트 마커 갱신</p>
+                <p class="mood-feedback" id="moodFeedback">
+                  감정 선택 → 리스크 차트 마커 갱신
+                </p>
               </div>
             </div>
 
@@ -1880,11 +2161,20 @@
               <div>
                 <div class="section-num mono">05</div>
                 <h2 class="display">Full Catalog</h2>
-                <p class="section-desc">대시보드 · 거래 · 공통 — Trigger / Action / Feedback</p>
+                <p class="section-desc">
+                  대시보드 · 거래 · 공통 — Trigger / Action / Feedback
+                </p>
               </div>
             </div>
 
-            <div class="panel" style="overflow: hidden; padding: 0; border-color: hsl(214 32% 91% / 0.6)">
+            <div
+              class="panel"
+              style="
+                overflow: hidden;
+                padding: 0;
+                border-color: hsl(214 32% 91% / 0.6);
+              "
+            >
               <table class="spec-table spec-table--catalog">
                 <thead>
                   <tr>
@@ -1899,86 +2189,115 @@
                   <tr>
                     <td>Header</td>
                     <td>Theme toggle <code class="code-chip">click</code></td>
-                    <td><code class="code-chip">setTheme</code> · <code class="code-chip">localStorage</code></td>
+                    <td>
+                      <code class="code-chip">setTheme</code> ·
+                      <code class="code-chip">localStorage</code>
+                    </td>
                     <td>CSS vars 전환 · 아이콘 swap</td>
-                    <td><span class="status-badge status-badge--live">Live</span></td>
+                    <td>
+                      <span class="status-badge status-badge--live">Live</span>
+                    </td>
                   </tr>
                   <tr>
                     <td>Header</td>
                     <td>New trade <code class="code-chip">click</code></td>
                     <td><code class="code-chip">navigate('/trade')</code></td>
                     <td>거래 화면 전환</td>
-                    <td><span class="status-badge status-badge--live">Live</span></td>
+                    <td>
+                      <span class="status-badge status-badge--live">Live</span>
+                    </td>
                   </tr>
                   <tr>
                     <td>Revenue</td>
                     <td>Period tab <code class="code-chip">click</code></td>
                     <td><code class="code-chip">setPeriod</code></td>
                     <td>차트 리마운트 · metric 갱신</td>
-                    <td><span class="status-badge status-badge--live">Live</span></td>
+                    <td>
+                      <span class="status-badge status-badge--live">Live</span>
+                    </td>
                   </tr>
                   <tr>
                     <td>Revenue</td>
                     <td>Chart <code class="code-chip">hover</code></td>
                     <td><code class="code-chip">Tooltip</code> payload</td>
                     <td>Portfolio value · Return %</td>
-                    <td><span class="status-badge status-badge--live">Live</span></td>
+                    <td>
+                      <span class="status-badge status-badge--live">Live</span>
+                    </td>
                   </tr>
                   <tr>
                     <td>Risk</td>
                     <td>Page <code class="code-chip">mount</code></td>
                     <td><code class="code-chip">fetchRiskScoreData</code></td>
                     <td>Skeleton 1.2s → 차트 reveal</td>
-                    <td><span class="status-badge status-badge--live">Live</span></td>
+                    <td>
+                      <span class="status-badge status-badge--live">Live</span>
+                    </td>
                   </tr>
                   <tr>
                     <td>Risk</td>
                     <td>ROTA bar <code class="code-chip">hover</code></td>
                     <td>Month payload</td>
-                    <td><code class="code-chip">RotaTooltip</code> · Net income</td>
-                    <td><span class="status-badge status-badge--live">Live</span></td>
+                    <td>
+                      <code class="code-chip">RotaTooltip</code> · Net income
+                    </td>
+                    <td>
+                      <span class="status-badge status-badge--live">Live</span>
+                    </td>
                   </tr>
                   <tr>
                     <td>Mood</td>
                     <td>Emoji button <code class="code-chip">click</code></td>
                     <td><code class="code-chip">setSelectedMood</code></td>
                     <td>ring · glow · footer text</td>
-                    <td><span class="status-badge status-badge--live">Live</span></td>
+                    <td>
+                      <span class="status-badge status-badge--live">Live</span>
+                    </td>
                   </tr>
                   <tr>
                     <td>Trade</td>
                     <td>Submit order</td>
                     <td><code class="code-chip">validate</code> → toast</td>
                     <td>Sonner success/error</td>
-                    <td><span class="status-badge status-badge--live">Live</span></td>
+                    <td>
+                      <span class="status-badge status-badge--live">Live</span>
+                    </td>
                   </tr>
                   <tr>
                     <td>Trade</td>
                     <td>Symbol select</td>
                     <td><code class="code-chip">setSymbolId</code></td>
                     <td>가격·차트·호가 갱신</td>
-                    <td><span class="status-badge status-badge--live">Live</span></td>
+                    <td>
+                      <span class="status-badge status-badge--live">Live</span>
+                    </td>
                   </tr>
                   <tr>
                     <td>Trade</td>
                     <td>Bottom tab tap</td>
                     <td><code class="code-chip">setTab</code></td>
                     <td>콘텐츠 스왑 · nav active</td>
-                    <td><span class="status-badge status-badge--live">Live</span></td>
+                    <td>
+                      <span class="status-badge status-badge--live">Live</span>
+                    </td>
                   </tr>
                   <tr>
                     <td>Trade</td>
                     <td>Chart <code class="code-chip">hover</code></td>
                     <td><code class="code-chip">Recharts Tooltip</code></td>
                     <td>가격 포맷 USD</td>
-                    <td><span class="status-badge status-badge--live">Live</span></td>
+                    <td>
+                      <span class="status-badge status-badge--live">Live</span>
+                    </td>
                   </tr>
                   <tr>
                     <td>Global</td>
                     <td>Search · Import · Bell</td>
                     <td>—</td>
                     <td>—</td>
-                    <td><span class="status-badge status-badge--ui">UI only</span></td>
+                    <td>
+                      <span class="status-badge status-badge--ui">UI only</span>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -2005,12 +2324,14 @@
     <script>
       (function () {
         /* Theme */
-        document.getElementById("themeBtn").addEventListener("click", function () {
-          var dark = document.documentElement.classList.toggle("dark");
-          try {
-            localStorage.setItem("theme", dark ? "dark" : "light");
-          } catch (e) {}
-        });
+        document
+          .getElementById("themeBtn")
+          .addEventListener("click", function () {
+            var dark = document.documentElement.classList.toggle("dark");
+            try {
+              localStorage.setItem("theme", dark ? "dark" : "light");
+            } catch (e) {}
+          });
 
         /* Scroll reveal */
         var reveals = document.querySelectorAll(".reveal");
@@ -2020,7 +2341,7 @@
               if (e.isIntersecting) e.target.classList.add("visible");
             });
           },
-          { threshold: 0.08 }
+          { threshold: 0.08 },
         );
         reveals.forEach(function (el) {
           observer.observe(el);
@@ -2076,27 +2397,31 @@
             btn.classList.add("active");
             var mood = btn.getAttribute("data-mood");
             moodFeedback.innerHTML =
-              'Blue markers on your risk chart. · <strong>' + mood + "</strong>";
+              "Blue markers on your risk chart. · <strong>" +
+              mood +
+              "</strong>";
           });
         });
 
         /* Skeleton replay */
         var skelDemo = document.getElementById("skelDemo");
         var skelCircle = document.getElementById("skelCircle");
-        document.getElementById("replaySkel").addEventListener("click", function () {
-          skelCircle.className = "skel skel-score";
-          skelCircle.innerHTML = "";
-          skelDemo.querySelectorAll(".skel-bar").forEach(function (b) {
-            b.style.display = "";
-          });
-          setTimeout(function () {
-            skelCircle.className = "score-ring loaded-reveal";
-            skelCircle.textContent = "78";
+        document
+          .getElementById("replaySkel")
+          .addEventListener("click", function () {
+            skelCircle.className = "skel skel-score";
+            skelCircle.innerHTML = "";
             skelDemo.querySelectorAll(".skel-bar").forEach(function (b) {
-              b.style.display = "none";
+              b.style.display = "";
             });
-          }, 1400);
-        });
+            setTimeout(function () {
+              skelCircle.className = "score-ring loaded-reveal";
+              skelCircle.textContent = "78";
+              skelDemo.querySelectorAll(".skel-bar").forEach(function (b) {
+                b.style.display = "none";
+              });
+            }, 1400);
+          });
 
         /* Auto-play skeleton on first view */
         setTimeout(function () {
@@ -2105,7 +2430,9 @@
 
         /* Trade spec tabs */
         var tabBtns = document.querySelectorAll("#tradeSpecTabs .spec-tab-btn");
-        var tabPanels = document.querySelectorAll("#tradeSpecTabs .spec-tab-panel");
+        var tabPanels = document.querySelectorAll(
+          "#tradeSpecTabs .spec-tab-panel",
+        );
         tabBtns.forEach(function (btn) {
           btn.addEventListener("click", function () {
             var target = btn.getAttribute("data-tab");

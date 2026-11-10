@@ -4,7 +4,12 @@ import type { DatabaseSync } from "node:sqlite";
 import { z } from "zod";
 import type { OrderResponse, ProblemDetails } from "@shared/api";
 import { ProblemError, problem, sendProblem } from "../http/problem";
-import { cancelOrder, getOrder, placeOrder, type OrderOutcome } from "./order-service";
+import {
+  cancelOrder,
+  getOrder,
+  placeOrder,
+  type OrderOutcome,
+} from "./order-service";
 
 const placeBody = z.object({
   symbol: z.string().trim().min(1).max(8),
@@ -21,58 +26,90 @@ const ORDER_ID_PATTERN = /^[A-Za-z0-9-]{1,64}$/;
 export function createOrderRouter(db: DatabaseSync): Router {
   const router = Router();
 
-  router.post("/", asyncHandler(async (req, res) => {
-    const instance = req.originalUrl;
-    const accountId = readAccountId(req, instance);
-    const idempotencyKey = readIdempotencyKey(req, instance);
-    const parsed = placeBody.safeParse(req.body);
-    if (!parsed.success) {
-      throw new ProblemError(
-        problem(400, "validation-error", "Validation Error", parsed.error.issues.map((issue) => issue.message).join(" "), instance),
-      );
-    }
+  router.post(
+    "/",
+    asyncHandler(async (req, res) => {
+      const instance = req.originalUrl;
+      const accountId = readAccountId(req, instance);
+      const idempotencyKey = readIdempotencyKey(req, instance);
+      const parsed = placeBody.safeParse(req.body);
+      if (!parsed.success) {
+        throw new ProblemError(
+          problem(
+            400,
+            "validation-error",
+            "Validation Error",
+            parsed.error.issues.map((issue) => issue.message).join(" "),
+            instance,
+          ),
+        );
+      }
 
-    const command = parsed.data;
-    if (command.type === "limit" && command.limitPrice == null) {
-      throw new ProblemError(
-        problem(400, "validation-error", "Validation Error", "Limit orders require a limit price.", instance),
-      );
-    }
+      const command = parsed.data;
+      if (command.type === "limit" && command.limitPrice == null) {
+        throw new ProblemError(
+          problem(
+            400,
+            "validation-error",
+            "Validation Error",
+            "Limit orders require a limit price.",
+            instance,
+          ),
+        );
+      }
 
-    const outcome = await placeOrder(db, {
-      accountId,
-      idempotencyKey,
-      symbol: command.symbol.toUpperCase(),
-      side: command.side,
-      type: command.type,
-      quantity: command.quantity,
-      limitPriceCents: command.type === "limit" ? dollarsToCents(command.limitPrice!, instance) : null,
-      instance,
-    });
-    sendOutcome(res, outcome);
-  }));
+      const outcome = await placeOrder(db, {
+        accountId,
+        idempotencyKey,
+        symbol: command.symbol.toUpperCase(),
+        side: command.side,
+        type: command.type,
+        quantity: command.quantity,
+        limitPriceCents:
+          command.type === "limit"
+            ? dollarsToCents(command.limitPrice!, instance)
+            : null,
+        instance,
+      });
+      sendOutcome(res, outcome);
+    }),
+  );
 
-  router.get("/:id", asyncHandler(async (req, res) => {
-    const instance = req.originalUrl;
-    const accountId = readAccountId(req, instance);
-    const orderId = readOrderId(req.params.id, instance);
-    const outcome = await getOrder(db, accountId, orderId, instance);
-    sendOutcome(res, outcome);
-  }));
+  router.get(
+    "/:id",
+    asyncHandler(async (req, res) => {
+      const instance = req.originalUrl;
+      const accountId = readAccountId(req, instance);
+      const orderId = readOrderId(req.params.id, instance);
+      const outcome = await getOrder(db, accountId, orderId, instance);
+      sendOutcome(res, outcome);
+    }),
+  );
 
-  router.delete("/:id", asyncHandler(async (req, res) => {
-    const instance = req.originalUrl;
-    const accountId = readAccountId(req, instance);
-    const idempotencyKey = readIdempotencyKey(req, instance);
-    const orderId = readOrderId(req.params.id, instance);
-    const outcome = await cancelOrder(db, { accountId, idempotencyKey, orderId, instance });
-    sendOutcome(res, outcome);
-  }));
+  router.delete(
+    "/:id",
+    asyncHandler(async (req, res) => {
+      const instance = req.originalUrl;
+      const accountId = readAccountId(req, instance);
+      const idempotencyKey = readIdempotencyKey(req, instance);
+      const orderId = readOrderId(req.params.id, instance);
+      const outcome = await cancelOrder(db, {
+        accountId,
+        idempotencyKey,
+        orderId,
+        instance,
+      });
+      sendOutcome(res, outcome);
+    }),
+  );
 
   return router;
 }
 
-function sendOutcome(res: Parameters<RequestHandler>[1], outcome: OrderOutcome): void {
+function sendOutcome(
+  res: Parameters<RequestHandler>[1],
+  outcome: OrderOutcome,
+): void {
   if (outcome.replayed) res.setHeader("Idempotent-Replayed", "true");
   if (outcome.status >= 400) {
     sendProblem(res, outcome.body as ProblemDetails);
@@ -124,10 +161,21 @@ function readIdempotencyKey(req: Request, instance: string): string {
   return key;
 }
 
-function readOrderId(value: string | string[] | undefined, instance: string): string {
+function readOrderId(
+  value: string | string[] | undefined,
+  instance: string,
+): string {
   const orderId = Array.isArray(value) ? value[0] : value;
   if (!orderId || !ORDER_ID_PATTERN.test(orderId)) {
-    throw new ProblemError(problem(404, "order-not-found", "Order Not Found", "No order exists for that id.", instance));
+    throw new ProblemError(
+      problem(
+        404,
+        "order-not-found",
+        "Order Not Found",
+        "No order exists for that id.",
+        instance,
+      ),
+    );
   }
   return orderId;
 }
@@ -136,7 +184,13 @@ function dollarsToCents(dollars: number, instance: string): number {
   const cents = Math.round(dollars * 100);
   if (!Number.isSafeInteger(cents) || cents <= 0) {
     throw new ProblemError(
-      problem(400, "validation-error", "Validation Error", "Limit price must convert to a positive cent amount.", instance),
+      problem(
+        400,
+        "validation-error",
+        "Validation Error",
+        "Limit price must convert to a positive cent amount.",
+        instance,
+      ),
     );
   }
   return cents;

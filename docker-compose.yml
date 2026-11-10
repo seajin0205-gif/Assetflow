@@ -1,0 +1,27 @@
+# The ledger is the SQLite file on order-data. The API does not connect to PostgreSQL or Redis.
+services:
+  api:
+    build:
+      context: .
+      target: api
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3000
+      ORDER_DB_PATH: /data/orders.sqlite
+    volumes:
+      - order-data:/data
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      target: web
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  order-data:

@@ -179,7 +179,9 @@ export function RiskScoreCard({ isDark }: RiskScoreCardProps) {
             </div>
           </div>
           <div className="mt-2 flex justify-center lg:mt-0 lg:justify-end">
-            <span className="text-xs leading-4 text-muted-foreground">Target: below 40</span>
+            <span className="text-xs leading-4 text-muted-foreground">
+              Target: below 40
+            </span>
           </div>
         </div>
       </div>

@@ -78,7 +78,14 @@ export async function placeOrder(
   });
 
   return transact(db, async () => {
-    const replay = readReplay(db, command.accountId, command.idempotencyKey, PLACE_SCOPE, requestHash, command.instance);
+    const replay = readReplay(
+      db,
+      command.accountId,
+      command.idempotencyKey,
+      PLACE_SCOPE,
+      requestHash,
+      command.instance,
+    );
     if (replay) return replay;
 
     const account = loadAccount(db, command.accountId);
@@ -88,7 +95,13 @@ export async function placeOrder(
         command,
         PLACE_SCOPE,
         requestHash,
-        problem(404, "account-not-found", "Account Not Found", `No account exists for ${command.accountId}.`, command.instance),
+        problem(
+          404,
+          "account-not-found",
+          "Account Not Found",
+          `No account exists for ${command.accountId}.`,
+          command.instance,
+        ),
       );
     }
 
@@ -96,14 +109,28 @@ export async function placeOrder(
 
     const applied = applyPlace(account, command);
     if (applied.ok === false) {
-      return persistProblem(db, command, PLACE_SCOPE, requestHash, applied.problem);
+      return persistProblem(
+        db,
+        command,
+        PLACE_SCOPE,
+        requestHash,
+        applied.problem,
+      );
     }
 
     if (!saveAccount(db, applied.account)) {
       throw concurrentUpdate(command.instance);
     }
     insertOrder(db, applied.order);
-    return persistSuccess(db, command.accountId, command.idempotencyKey, PLACE_SCOPE, requestHash, 201, applied.response);
+    return persistSuccess(
+      db,
+      command.accountId,
+      command.idempotencyKey,
+      PLACE_SCOPE,
+      requestHash,
+      201,
+      applied.response,
+    );
   });
 }
 
@@ -115,7 +142,14 @@ export async function cancelOrder(
   const requestHash = hashPayload({ op: "cancel", orderId: command.orderId });
 
   return transact(db, async () => {
-    const replay = readReplay(db, command.accountId, command.idempotencyKey, CANCEL_SCOPE, requestHash, command.instance);
+    const replay = readReplay(
+      db,
+      command.accountId,
+      command.idempotencyKey,
+      CANCEL_SCOPE,
+      requestHash,
+      command.instance,
+    );
     if (replay) return replay;
 
     const account = loadAccount(db, command.accountId);
@@ -125,7 +159,13 @@ export async function cancelOrder(
         command,
         CANCEL_SCOPE,
         requestHash,
-        problem(404, "account-not-found", "Account Not Found", `No account exists for ${command.accountId}.`, command.instance),
+        problem(
+          404,
+          "account-not-found",
+          "Account Not Found",
+          `No account exists for ${command.accountId}.`,
+          command.instance,
+        ),
       );
     }
 
@@ -138,12 +178,26 @@ export async function cancelOrder(
         command,
         CANCEL_SCOPE,
         requestHash,
-        problem(404, "order-not-found", "Order Not Found", `No order exists for ${command.orderId}.`, command.instance),
+        problem(
+          404,
+          "order-not-found",
+          "Order Not Found",
+          `No order exists for ${command.orderId}.`,
+          command.instance,
+        ),
       );
     }
 
     if (order.status === "cancelled") {
-      return persistSuccess(db, command.accountId, command.idempotencyKey, CANCEL_SCOPE, requestHash, 200, toResponse(order));
+      return persistSuccess(
+        db,
+        command.accountId,
+        command.idempotencyKey,
+        CANCEL_SCOPE,
+        requestHash,
+        200,
+        toResponse(order),
+      );
     }
 
     if (order.status !== "open") {
@@ -168,23 +222,45 @@ export async function cancelOrder(
 
     if (!saveAccount(db, account)) throw concurrentUpdate(command.instance);
     updateOrderStatus(db, order);
-    return persistSuccess(db, command.accountId, command.idempotencyKey, CANCEL_SCOPE, requestHash, 200, toResponse(order));
+    return persistSuccess(
+      db,
+      command.accountId,
+      command.idempotencyKey,
+      CANCEL_SCOPE,
+      requestHash,
+      200,
+      toResponse(order),
+    );
   });
 }
 
-export async function getOrder(db: DatabaseSync, accountId: string, orderId: string, instance: string): Promise<OrderOutcome> {
+export async function getOrder(
+  db: DatabaseSync,
+  accountId: string,
+  orderId: string,
+  instance: string,
+): Promise<OrderOutcome> {
   const order = loadOrder(db, orderId);
   if (!order || order.accountId !== accountId) {
     return {
       status: 404,
       replayed: false,
-      body: problem(404, "order-not-found", "Order Not Found", `No order exists for ${orderId}.`, instance),
+      body: problem(
+        404,
+        "order-not-found",
+        "Order Not Found",
+        `No order exists for ${orderId}.`,
+        instance,
+      ),
     };
   }
   return { status: 200, replayed: false, body: toResponse(order) };
 }
 
-function applyPlace(account: AccountRow, command: PlaceOrderCommand): ApplySuccess | ApplyFailure {
+function applyPlace(
+  account: AccountRow,
+  command: PlaceOrderCommand,
+): ApplySuccess | ApplyFailure {
   const quote = QUOTES_CENTS[command.symbol];
   if (!quote) {
     return {
@@ -202,11 +278,18 @@ function applyPlace(account: AccountRow, command: PlaceOrderCommand): ApplySucce
   if (command.type === "limit" && command.limitPriceCents == null) {
     return {
       ok: false,
-      problem: problem(400, "validation-error", "Validation Error", "Limit orders require a limit price.", command.instance),
+      problem: problem(
+        400,
+        "validation-error",
+        "Validation Error",
+        "Limit orders require a limit price.",
+        command.instance,
+      ),
     };
   }
 
-  const priceCents = command.type === "market" ? quote : command.limitPriceCents!;
+  const priceCents =
+    command.type === "market" ? quote : command.limitPriceCents!;
   const cost = notional(command.quantity, priceCents, command.instance);
   const now = new Date().toISOString();
   const order: OrderRow = {
@@ -229,14 +312,16 @@ function applyPlace(account: AccountRow, command: PlaceOrderCommand): ApplySucce
     account.cashCents -= cost;
     addShares(account, command.symbol, command.quantity, priceCents);
   } else if (command.side === "sell" && command.type === "market") {
-    if (!takeShares(account, command.symbol, command.quantity)) return insufficientShares(command);
+    if (!takeShares(account, command.symbol, command.quantity))
+      return insufficientShares(command);
     account.cashCents += cost;
   } else if (command.side === "buy" && command.type === "limit") {
     if (buyingPower(account) < cost) return insufficientFunds(command, cost);
     account.reservedCashCents += cost;
     order.reservedCashCents = cost;
   } else {
-    if (!reserveShares(account, command.symbol, command.quantity)) return insufficientShares(command);
+    if (!reserveShares(account, command.symbol, command.quantity))
+      return insufficientShares(command);
   }
 
   return { ok: true, account, order, response: toResponse(order) };
@@ -247,22 +332,41 @@ function releaseReservation(account: AccountRow, order: OrderRow): void {
     account.reservedCashCents -= order.reservedCashCents;
     if (account.reservedCashCents < 0) {
       throw new ProblemError(
-        problem(500, "internal-error", "Internal Server Error", "Reserved cash dropped below zero.", order.id),
+        problem(
+          500,
+          "internal-error",
+          "Internal Server Error",
+          "Reserved cash dropped below zero.",
+          order.id,
+        ),
       );
     }
     return;
   }
 
-  const position = account.positions.find((item) => item.symbol === order.symbol);
+  const position = account.positions.find(
+    (item) => item.symbol === order.symbol,
+  );
   if (!position || position.reservedQuantity < order.quantity) {
     throw new ProblemError(
-      problem(500, "internal-error", "Internal Server Error", "Reserved shares dropped below zero.", order.id),
+      problem(
+        500,
+        "internal-error",
+        "Internal Server Error",
+        "Reserved shares dropped below zero.",
+        order.id,
+      ),
     );
   }
   position.reservedQuantity -= order.quantity;
 }
 
-function addShares(account: AccountRow, symbol: string, quantity: number, priceCents: number): void {
+function addShares(
+  account: AccountRow,
+  symbol: string,
+  quantity: number,
+  priceCents: number,
+): void {
   const position = account.positions.find((item) => item.symbol === symbol);
   if (!position) {
     account.positions.push({
@@ -275,21 +379,32 @@ function addShares(account: AccountRow, symbol: string, quantity: number, priceC
   }
   const nextQuantity = position.quantity + quantity;
   position.avgCostCents = Math.round(
-    (position.quantity * position.avgCostCents + quantity * priceCents) / nextQuantity,
+    (position.quantity * position.avgCostCents + quantity * priceCents) /
+      nextQuantity,
   );
   position.quantity = nextQuantity;
 }
 
-function takeShares(account: AccountRow, symbol: string, quantity: number): boolean {
+function takeShares(
+  account: AccountRow,
+  symbol: string,
+  quantity: number,
+): boolean {
   const position = account.positions.find((item) => item.symbol === symbol);
-  if (!position || position.quantity - position.reservedQuantity < quantity) return false;
+  if (!position || position.quantity - position.reservedQuantity < quantity)
+    return false;
   position.quantity -= quantity;
   return true;
 }
 
-function reserveShares(account: AccountRow, symbol: string, quantity: number): boolean {
+function reserveShares(
+  account: AccountRow,
+  symbol: string,
+  quantity: number,
+): boolean {
   const position = account.positions.find((item) => item.symbol === symbol);
-  if (!position || position.quantity - position.reservedQuantity < quantity) return false;
+  if (!position || position.quantity - position.reservedQuantity < quantity)
+    return false;
   position.reservedQuantity += quantity;
   return true;
 }
@@ -298,17 +413,30 @@ function buyingPower(account: AccountRow): number {
   return account.cashCents - account.reservedCashCents;
 }
 
-function notional(quantity: number, priceCents: number, instance: string): number {
+function notional(
+  quantity: number,
+  priceCents: number,
+  instance: string,
+): number {
   const total = quantity * priceCents;
   if (!Number.isSafeInteger(total)) {
     throw new ProblemError(
-      problem(422, "invalid-notional", "Invalid Notional", "Order notional is outside the supported range.", instance),
+      problem(
+        422,
+        "invalid-notional",
+        "Invalid Notional",
+        "Order notional is outside the supported range.",
+        instance,
+      ),
     );
   }
   return total;
 }
 
-function insufficientFunds(command: PlaceOrderCommand, cost: number): ApplyFailure {
+function insufficientFunds(
+  command: PlaceOrderCommand,
+  cost: number,
+): ApplyFailure {
   return {
     ok: false,
     problem: problem(
@@ -420,10 +548,12 @@ export function toResponse(order: OrderRow): OrderResponse {
     side: order.side,
     type: order.type,
     quantity: order.quantity,
-    limitPrice: order.limitPriceCents == null ? null : money(order.limitPriceCents),
+    limitPrice:
+      order.limitPriceCents == null ? null : money(order.limitPriceCents),
     status: order.status,
     filledQuantity: order.filledQuantity,
-    averagePrice: order.averagePriceCents == null ? null : money(order.averagePriceCents),
+    averagePrice:
+      order.averagePriceCents == null ? null : money(order.averagePriceCents),
     reservedCash: money(order.reservedCashCents),
   };
 }
@@ -438,5 +568,7 @@ function money(cents: number): string {
 
 function hashPayload(payload: Record<string, unknown>): string {
   const keys = Object.keys(payload).sort();
-  return createHash("sha256").update(JSON.stringify(payload, keys)).digest("hex");
+  return createHash("sha256")
+    .update(JSON.stringify(payload, keys))
+    .digest("hex");
 }

@@ -25,6 +25,12 @@ export default defineConfig(({ mode }) => ({
   },
   test: {
     exclude: ["e2e/**", "**/node_modules/**", "**/dist/**"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "lcov"],
+      include: ["server/**/*.ts", "client/hooks/**/*.ts", "shared/**/*.ts"],
+      exclude: ["**/*.spec.ts", "**/*.spec.tsx"],
+    },
   },
 }));
 

@@ -40,7 +40,13 @@ export function createServer(options: ServerOptions = {}) {
     }
     sendProblem(
       res,
-      problem(404, "not-found", "Not Found", `No endpoint matches ${req.method} ${req.path}.`, req.originalUrl),
+      problem(
+        404,
+        "not-found",
+        "Not Found",
+        `No endpoint matches ${req.method} ${req.path}.`,
+        req.originalUrl,
+      ),
     );
   });
 
@@ -50,19 +56,34 @@ export function createServer(options: ServerOptions = {}) {
       return;
     }
     if (err instanceof ProblemError) {
-      sendProblem(res, { ...err.problem, instance: err.problem.instance ?? req.originalUrl });
+      sendProblem(res, {
+        ...err.problem,
+        instance: err.problem.instance ?? req.originalUrl,
+      });
       return;
     }
     if (err instanceof SyntaxError && "body" in err) {
       sendProblem(
         res,
-        problem(400, "invalid-json", "Invalid JSON", "Request body must be valid JSON.", req.originalUrl),
+        problem(
+          400,
+          "invalid-json",
+          "Invalid JSON",
+          "Request body must be valid JSON.",
+          req.originalUrl,
+        ),
       );
       return;
     }
     sendProblem(
       res,
-      problem(500, "internal-error", "Internal Server Error", "The request could not be processed.", req.originalUrl),
+      problem(
+        500,
+        "internal-error",
+        "Internal Server Error",
+        "The request could not be processed.",
+        req.originalUrl,
+      ),
     );
   };
   app.use(handleError);

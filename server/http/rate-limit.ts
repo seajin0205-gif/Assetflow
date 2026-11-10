@@ -11,21 +11,23 @@ type Bucket = {
  * present, otherwise the socket IP. Session auth should replace the header
  * before this is exposed beyond the demo account.
  */
-export function tradingRateLimit(
-  limit = 10,
-  windowMs = 1000,
-): RequestHandler {
+export function tradingRateLimit(limit = 10, windowMs = 1000): RequestHandler {
   const buckets = new Map<string, Bucket>();
 
   return (req, res, next) => {
     const key = clientKey(req);
     const now = Date.now();
     const bucket = buckets.get(key) ?? { timestamps: [] };
-    bucket.timestamps = bucket.timestamps.filter((stamp) => now - stamp < windowMs);
+    bucket.timestamps = bucket.timestamps.filter(
+      (stamp) => now - stamp < windowMs,
+    );
 
     if (bucket.timestamps.length >= limit) {
       const oldest = bucket.timestamps[0] ?? now;
-      const retryAfterSeconds = Math.max(1, Math.ceil((oldest + windowMs - now) / 1000));
+      const retryAfterSeconds = Math.max(
+        1,
+        Math.ceil((oldest + windowMs - now) / 1000),
+      );
       buckets.set(key, bucket);
       res.setHeader("Retry-After", String(retryAfterSeconds));
       sendProblem(

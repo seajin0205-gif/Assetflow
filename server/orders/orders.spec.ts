@@ -22,8 +22,18 @@ afterEach(async () => {
 describe("order API", () => {
   it("fills a market buy once and replays the same response for the same key", async () => {
     const { url, database } = await listen();
-    const first = await place(url, "order-key-001", { symbol: "NVDA", side: "buy", type: "market", quantity: 1 });
-    const second = await place(url, "order-key-001", { symbol: "NVDA", side: "buy", type: "market", quantity: 1 });
+    const first = await place(url, "order-key-001", {
+      symbol: "NVDA",
+      side: "buy",
+      type: "market",
+      quantity: 1,
+    });
+    const second = await place(url, "order-key-001", {
+      symbol: "NVDA",
+      side: "buy",
+      type: "market",
+      quantity: 1,
+    });
 
     expect(first.status).toBe(201);
     expect(first.body.status).toBe("filled");
@@ -32,12 +42,20 @@ describe("order API", () => {
     expect(second.replayed).toBe(true);
     expect(second.body).toEqual(first.body);
 
-    const account = database.prepare(`SELECT cash_cents FROM accounts WHERE id = 'demo'`).get() as { cash_cents: number };
-    const position = database.prepare(`SELECT quantity, avg_cost_cents FROM positions WHERE symbol = 'NVDA'`).get() as {
+    const account = database
+      .prepare(`SELECT cash_cents FROM accounts WHERE id = 'demo'`)
+      .get() as { cash_cents: number };
+    const position = database
+      .prepare(
+        `SELECT quantity, avg_cost_cents FROM positions WHERE symbol = 'NVDA'`,
+      )
+      .get() as {
       quantity: number;
       avg_cost_cents: number;
     };
-    const orders = database.prepare(`SELECT COUNT(*) AS count FROM orders`).get() as { count: number };
+    const orders = database
+      .prepare(`SELECT COUNT(*) AS count FROM orders`)
+      .get() as { count: number };
     expect(account.cash_cents).toBe(9_583_077 - 89240);
     expect(position.quantity).toBe(13);
     expect(position.avg_cost_cents).toBe(73372);
@@ -46,8 +64,18 @@ describe("order API", () => {
 
   it("rejects a reused key when the body differs", async () => {
     const { url } = await listen();
-    await place(url, "order-key-002", { symbol: "AAPL", side: "buy", type: "market", quantity: 1 });
-    const mismatch = await place(url, "order-key-002", { symbol: "AAPL", side: "buy", type: "market", quantity: 2 });
+    await place(url, "order-key-002", {
+      symbol: "AAPL",
+      side: "buy",
+      type: "market",
+      quantity: 1,
+    });
+    const mismatch = await place(url, "order-key-002", {
+      symbol: "AAPL",
+      side: "buy",
+      type: "market",
+      quantity: 2,
+    });
 
     expect(mismatch.status).toBe(409);
     expect(mismatch.contentType).toContain("application/problem+json");
@@ -65,12 +93,21 @@ describe("order API", () => {
     const response = await fetch(`${url}/api/orders`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-User-Id": "demo" },
-      body: JSON.stringify({ symbol: "NVDA", side: "buy", type: "market", quantity: 1 }),
+      body: JSON.stringify({
+        symbol: "NVDA",
+        side: "buy",
+        type: "market",
+        quantity: 1,
+      }),
     });
     const body = await response.json();
     expect(response.status).toBe(400);
-    expect(response.headers.get("content-type")).toContain("application/problem+json");
-    expect(body.type).toBe("https://assetflow.dev/problems/missing-idempotency-key");
+    expect(response.headers.get("content-type")).toContain(
+      "application/problem+json",
+    );
+    expect(body.type).toBe(
+      "https://assetflow.dev/problems/missing-idempotency-key",
+    );
     expect(body.title).toBe("Missing Idempotency Key");
     expect(body.status).toBe(400);
     expect(body.instance).toBe("/api/orders");
@@ -89,7 +126,11 @@ describe("order API", () => {
     expect(placed.body.status).toBe("open");
     expect(placed.body.reservedCash).toBe("200.00");
 
-    const reserved = database.prepare(`SELECT reserved_cash_cents, cash_cents FROM accounts WHERE id = 'demo'`).get() as {
+    const reserved = database
+      .prepare(
+        `SELECT reserved_cash_cents, cash_cents FROM accounts WHERE id = 'demo'`,
+      )
+      .get() as {
       reserved_cash_cents: number;
       cash_cents: number;
     };
@@ -101,9 +142,17 @@ describe("order API", () => {
     expect(cancelled.status).toBe(200);
     expect(cancelled.body.status).toBe("cancelled");
     expect(again.status).toBe(200);
-    expect(again.body).toMatchObject({ id: placed.body.id, status: "cancelled", reservedCash: "0.00" });
+    expect(again.body).toMatchObject({
+      id: placed.body.id,
+      status: "cancelled",
+      reservedCash: "0.00",
+    });
 
-    const after = database.prepare(`SELECT reserved_cash_cents, cash_cents FROM accounts WHERE id = 'demo'`).get() as {
+    const after = database
+      .prepare(
+        `SELECT reserved_cash_cents, cash_cents FROM accounts WHERE id = 'demo'`,
+      )
+      .get() as {
       reserved_cash_cents: number;
       cash_cents: number;
     };
@@ -113,26 +162,51 @@ describe("order API", () => {
 
   it("keeps a filled order and its cash debit when cancellation is rejected", async () => {
     const { url, database } = await listen();
-    const placed = await place(url, "filled-key-001", { symbol: "MSFT", side: "sell", type: "market", quantity: 1 });
+    const placed = await place(url, "filled-key-001", {
+      symbol: "MSFT",
+      side: "sell",
+      type: "market",
+      quantity: 1,
+    });
     const denied = await cancel(url, placed.body.id, "cancel-filled-001");
 
     expect(denied.status).toBe(409);
-    expect(denied.body.type).toBe("https://assetflow.dev/problems/order-not-cancellable");
-    const account = database.prepare(`SELECT cash_cents FROM accounts WHERE id = 'demo'`).get() as { cash_cents: number };
-    const position = database.prepare(`SELECT quantity FROM positions WHERE symbol = 'MSFT'`).get() as { quantity: number };
+    expect(denied.body.type).toBe(
+      "https://assetflow.dev/problems/order-not-cancellable",
+    );
+    const account = database
+      .prepare(`SELECT cash_cents FROM accounts WHERE id = 'demo'`)
+      .get() as { cash_cents: number };
+    const position = database
+      .prepare(`SELECT quantity FROM positions WHERE symbol = 'MSFT'`)
+      .get() as { quantity: number };
     expect(account.cash_cents).toBe(9_583_077 + 42815);
     expect(position.quantity).toBe(7);
   });
 
   it("rejects a sell larger than the available position", async () => {
     const { url, database } = await listen();
-    const denied = await place(url, "sell-key-001", { symbol: "NVDA", side: "sell", type: "market", quantity: 100 });
+    const denied = await place(url, "sell-key-001", {
+      symbol: "NVDA",
+      side: "sell",
+      type: "market",
+      quantity: 100,
+    });
     expect(denied.status).toBe(422);
-    expect(denied.body.type).toBe("https://assetflow.dev/problems/insufficient-shares");
-    const position = database.prepare(`SELECT quantity FROM positions WHERE symbol = 'NVDA'`).get() as { quantity: number };
+    expect(denied.body.type).toBe(
+      "https://assetflow.dev/problems/insufficient-shares",
+    );
+    const position = database
+      .prepare(`SELECT quantity FROM positions WHERE symbol = 'NVDA'`)
+      .get() as { quantity: number };
     expect(position.quantity).toBe(12);
 
-    const replay = await place(url, "sell-key-001", { symbol: "NVDA", side: "sell", type: "market", quantity: 100 });
+    const replay = await place(url, "sell-key-001", {
+      symbol: "NVDA",
+      side: "sell",
+      type: "market",
+      quantity: 100,
+    });
     expect(replay.status).toBe(422);
     expect(replay.replayed).toBe(true);
     expect(replay.body).toEqual(denied.body);
@@ -143,11 +217,18 @@ describe("order API", () => {
     const responses = [];
     for (let index = 0; index < 11; index += 1) {
       responses.push(
-        await place(url, "rate-key-001", { symbol: "AAPL", side: "buy", type: "market", quantity: 1 }),
+        await place(url, "rate-key-001", {
+          symbol: "AAPL",
+          side: "buy",
+          type: "market",
+          quantity: 1,
+        }),
       );
     }
 
-    expect(responses.slice(0, 10).every((response) => response.status === 201)).toBe(true);
+    expect(
+      responses.slice(0, 10).every((response) => response.status === 201),
+    ).toBe(true);
     expect(responses[10].status).toBe(429);
     expect(responses[10].contentType).toContain("application/problem+json");
     expect(responses[10].body).toMatchObject({
@@ -162,22 +243,20 @@ describe("order API", () => {
 describe("order ledger", () => {
   it("lets only one of two concurrent buys spend the last dollar of buying power", async () => {
     const database = createDatabase();
-    database.prepare(`UPDATE accounts SET cash_cents = ? WHERE id = 'demo'`).run(89240);
+    database
+      .prepare(`UPDATE accounts SET cash_cents = ? WHERE id = 'demo'`)
+      .run(89240);
     let release!: () => void;
     const gate = new Promise<void>((resolve) => {
       release = resolve;
     });
     let waiting = false;
-    const first = placeOrder(
-      database,
-      command("concurrent-a"),
-      {
-        afterAccountRead: async () => {
-          waiting = true;
-          await gate;
-        },
+    const first = placeOrder(database, command("concurrent-a"), {
+      afterAccountRead: async () => {
+        waiting = true;
+        await gate;
       },
-    );
+    });
     await waitFor(() => waiting);
     const second = placeOrder(database, command("concurrent-b"));
     release();
@@ -185,8 +264,12 @@ describe("order ledger", () => {
     const [left, right] = await Promise.all([first, second]);
     const statuses = [left.status, right.status].sort();
     expect(statuses).toEqual([201, 422]);
-    const cash = database.prepare(`SELECT cash_cents FROM accounts WHERE id = 'demo'`).get() as { cash_cents: number };
-    const orders = database.prepare(`SELECT COUNT(*) AS count FROM orders`).get() as { count: number };
+    const cash = database
+      .prepare(`SELECT cash_cents FROM accounts WHERE id = 'demo'`)
+      .get() as { cash_cents: number };
+    const orders = database
+      .prepare(`SELECT COUNT(*) AS count FROM orders`)
+      .get() as { count: number };
     expect(cash.cash_cents).toBe(0);
     expect(orders.count).toBe(1);
   });
@@ -213,8 +296,12 @@ describe("order ledger", () => {
     expect(right.status).toBe(201);
     expect(right.replayed).toBe(true);
     expect(right.body).toEqual(left.body);
-    const orders = database.prepare(`SELECT COUNT(*) AS count FROM orders`).get() as { count: number };
-    const position = database.prepare(`SELECT quantity FROM positions WHERE symbol = 'NVDA'`).get() as { quantity: number };
+    const orders = database
+      .prepare(`SELECT COUNT(*) AS count FROM orders`)
+      .get() as { count: number };
+    const position = database
+      .prepare(`SELECT quantity FROM positions WHERE symbol = 'NVDA'`)
+      .get() as { quantity: number };
     expect(orders.count).toBe(1);
     expect(position.quantity).toBe(13);
   });
@@ -229,7 +316,11 @@ describe("order ledger", () => {
       limitPriceCents: 90000,
     });
     expect(placed.status).toBe(201);
-    const reserved = database.prepare(`SELECT reserved_quantity, quantity FROM positions WHERE symbol = 'NVDA'`).get() as {
+    const reserved = database
+      .prepare(
+        `SELECT reserved_quantity, quantity FROM positions WHERE symbol = 'NVDA'`,
+      )
+      .get() as {
       reserved_quantity: number;
       quantity: number;
     };
@@ -251,7 +342,11 @@ describe("order ledger", () => {
       instance: "/api/orders/x",
     });
     expect(done.status).toBe(200);
-    const after = database.prepare(`SELECT reserved_quantity, quantity FROM positions WHERE symbol = 'NVDA'`).get() as {
+    const after = database
+      .prepare(
+        `SELECT reserved_quantity, quantity FROM positions WHERE symbol = 'NVDA'`,
+      )
+      .get() as {
       reserved_quantity: number;
       quantity: number;
     };
@@ -264,16 +359,24 @@ describe("order ledger", () => {
     await expect(
       placeOrder(database, command("version-key"), {
         afterAccountRead: () => {
-          database.prepare(`UPDATE accounts SET version = version + 1 WHERE id = 'demo'`).run();
+          database
+            .prepare(
+              `UPDATE accounts SET version = version + 1 WHERE id = 'demo'`,
+            )
+            .run();
         },
       }),
     ).rejects.toBeInstanceOf(ProblemError);
 
-    const account = database.prepare(`SELECT version, cash_cents FROM accounts WHERE id = 'demo'`).get() as {
+    const account = database
+      .prepare(`SELECT version, cash_cents FROM accounts WHERE id = 'demo'`)
+      .get() as {
       version: number;
       cash_cents: number;
     };
-    const orders = database.prepare(`SELECT COUNT(*) AS count FROM orders`).get() as { count: number };
+    const orders = database
+      .prepare(`SELECT COUNT(*) AS count FROM orders`)
+      .get() as { count: number };
     expect(account.version).toBe(0);
     expect(account.cash_cents).toBe(9_583_077);
     expect(orders.count).toBe(0);
@@ -298,7 +401,9 @@ async function listen() {
   const app = createServer({ database });
   const server = createHttpServer(app);
   servers.push(server);
-  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", () => resolve()));
+  await new Promise<void>((resolve) =>
+    server.listen(0, "127.0.0.1", () => resolve()),
+  );
   const address = server.address();
   if (!address || typeof address === "string") throw new Error("missing port");
   return { database, url: `http://127.0.0.1:${address.port}` };
@@ -307,7 +412,13 @@ async function listen() {
 async function place(
   url: string,
   key: string,
-  body: { symbol: string; side: string; type: string; quantity: number; limitPrice?: number },
+  body: {
+    symbol: string;
+    side: string;
+    type: string;
+    quantity: number;
+    limitPrice?: number;
+  },
 ) {
   const response = await fetch(`${url}/api/orders`, {
     method: "POST",

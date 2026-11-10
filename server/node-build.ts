@@ -4,7 +4,8 @@ import * as express from "express";
 import { problem, sendProblem } from "./http/problem";
 
 const app = createServer();
-const port = process.env.PORT || 3000;
+const port = Number(process.env.PORT) || 3000;
+const host = process.env.HOST || "0.0.0.0";
 
 // In production, serve the built SPA files
 const __dirname = import.meta.dirname;
@@ -14,12 +15,18 @@ const distPath = path.join(__dirname, "../spa");
 app.use(express.static(distPath));
 
 // Handle React Router - serve index.html for all non-API routes
-app.get("*", (req, res) => {
+app.get("/{*path}", (req, res) => {
   // Don't serve index.html for API routes
   if (req.path.startsWith("/api/") || req.path.startsWith("/health")) {
     sendProblem(
       res,
-      problem(404, "not-found", "Not Found", `No endpoint matches ${req.method} ${req.path}.`, req.path),
+      problem(
+        404,
+        "not-found",
+        "Not Found",
+        `No endpoint matches ${req.method} ${req.path}.`,
+        req.path,
+      ),
     );
     return;
   }
@@ -27,10 +34,8 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(distPath, "index.html"));
 });
 
-app.listen(port, () => {
-  console.log(`🚀 Fusion Starter server running on port ${port}`);
-  console.log(`📱 Frontend: http://localhost:${port}`);
-  console.log(`🔧 API: http://localhost:${port}/api`);
+app.listen(port, host, () => {
+  console.log(`Assetflow listening on http://${host}:${port}`);
 });
 
 // Graceful shutdown

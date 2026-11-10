@@ -11,10 +11,7 @@ type AccountSidebarProps = {
 export const AccountSidebar = forwardRef<HTMLDivElement, AccountSidebarProps>(
   function AccountSidebar({ chartTheme, isDark }, ref) {
     return (
-      <div
-        ref={ref}
-        className="flex w-full shrink-0 flex-col gap-6 lg:w-80"
-      >
+      <div ref={ref} className="flex w-full shrink-0 flex-col gap-6 lg:w-80">
         <div className="glass-panel animate-fade-in space-y-6 p-6">
           <div className="flex items-start justify-between gap-4">
             <h2 className="font-display text-xl font-bold leading-8 tracking-tight lg:text-2xl lg:leading-8">
@@ -41,7 +38,9 @@ export const AccountSidebar = forwardRef<HTMLDivElement, AccountSidebarProps>(
 
         <div className="glass-panel space-y-6 p-6">
           <div className="flex items-center justify-between">
-            <h3 className="font-display text-lg font-bold leading-6">Quick Filters</h3>
+            <h3 className="font-display text-lg font-bold leading-6">
+              Quick Filters
+            </h3>
             <button
               type="button"
               className="text-xs font-medium leading-4 text-primary hover:text-blue-700 dark:hover:text-cyan-300"
@@ -62,7 +61,9 @@ export const AccountSidebar = forwardRef<HTMLDivElement, AccountSidebarProps>(
                   defaultChecked={i === 0}
                   className="h-4 w-4"
                 />
-                <span className="text-sm leading-6 text-foreground/90">{label}</span>
+                <span className="text-sm leading-6 text-foreground/90">
+                  {label}
+                </span>
               </label>
             ))}
           </div>
