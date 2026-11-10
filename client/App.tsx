@@ -22,7 +22,8 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/trade" element={<Trade />} />
+            <Route path="/trade" element={<Trade locale="ko" />} />
+            <Route path="/en/trade" element={<Trade locale="en" />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

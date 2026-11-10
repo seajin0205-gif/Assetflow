@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowDownRight,
@@ -14,6 +14,7 @@ import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { getDashboardChartTheme } from "@/lib/dashboard-theme";
+import { tradeCopy, type TradeLocale } from "@/lib/trade-copy";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -114,16 +115,16 @@ const HOLDINGS = [
 ];
 
 const RECENT_ORDERS = [
-  { id: "ORD-2841", side: "buy" as const, symbol: "NVDA", qty: 5, price: 885.2, status: "체결" },
-  { id: "ORD-2839", side: "sell" as const, symbol: "AAPL", qty: 10, price: 199.1, status: "체결" },
-  { id: "ORD-2835", side: "buy" as const, symbol: "MSFT", qty: 3, price: 426.0, status: "대기" },
+  { id: "ORD-2841", side: "buy" as const, symbol: "NVDA", qty: 5, price: 885.2, status: "filled" as const },
+  { id: "ORD-2839", side: "sell" as const, symbol: "AAPL", qty: 10, price: 199.1, status: "filled" as const },
+  { id: "ORD-2835", side: "buy" as const, symbol: "MSFT", qty: 3, price: 426.0, status: "open" as const },
 ];
 
-const NAV_ITEMS: { id: MobileTab; label: string; icon: typeof BarChart3 }[] = [
-  { id: "chart", label: "차트", icon: BarChart3 },
-  { id: "book", label: "호가", icon: Layers },
-  { id: "order", label: "주문", icon: ListOrdered },
-  { id: "history", label: "내역", icon: Clock },
+const NAV_ITEMS: { id: MobileTab; icon: typeof BarChart3 }[] = [
+  { id: "chart", icon: BarChart3 },
+  { id: "book", icon: Layers },
+  { id: "order", icon: ListOrdered },
+  { id: "history", icon: Clock },
 ];
 
 function formatKrw(n: number) {
@@ -147,10 +148,19 @@ function formatUsdCompact(n: number) {
   return formatUsd(n);
 }
 
-export default function Trade() {
+export default function Trade({ locale = "ko" }: { locale?: TradeLocale }) {
+  const t = tradeCopy[locale];
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
   const chartTheme = getDashboardChartTheme(isDark);
+
+  useEffect(() => {
+    const previous = document.documentElement.lang;
+    document.documentElement.lang = locale === "ko" ? "ko" : "en";
+    return () => {
+      document.documentElement.lang = previous;
+    };
+  }, [locale]);
 
   const [tab, setTab] = useState<MobileTab>("order");
   const [symbolId, setSymbolId] = useState("NVDA");
@@ -181,24 +191,22 @@ export default function Trade() {
 
   const handleSubmit = () => {
     if (qtyNum <= 0) {
-      toast.error("수량을 입력해 주세요.");
+      toast.error(t.errQuantity);
       return;
     }
     if (side === "sell" && qtyNum > availableShares) {
-      toast.error(`보유 수량(${availableShares}주)을 초과할 수 없습니다.`);
+      toast.error(t.errShares(availableShares));
       return;
     }
     if (orderType === "limit" && (!limitPrice || Number(limitPrice) <= 0)) {
-      toast.error("지정가를 입력해 주세요.");
+      toast.error(t.errLimit);
       return;
     }
 
     toast.success(
-      side === "buy"
-        ? `${symbol.id} 매수 ${qtyNum}주 접수`
-        : `${symbol.id} 매도 ${qtyNum}주 접수`,
+      side === "buy" ? t.toastBuy(symbol.id, qtyNum) : t.toastSell(symbol.id, qtyNum),
       {
-        description: `${orderType === "market" ? "시장가" : "지정가"} · ${formatUsd(estimatedTotal)}`,
+        description: `${orderType === "market" ? t.market : t.limit} · ${formatUsd(estimatedTotal)}`,
       },
     );
   };
@@ -215,7 +223,7 @@ export default function Trade() {
             <Link
               to="/"
               className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground hover:bg-muted"
-              aria-label="대시보드"
+              aria-label={t.backToDashboard}
             >
               <ArrowLeft className="h-4 w-4" />
             </Link>
@@ -231,7 +239,35 @@ export default function Trade() {
                 ))}
               </SelectContent>
             </Select>
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              <nav aria-label={t.languageMenu} className="flex items-center gap-1">
+                <Link
+                  to="/trade"
+                  aria-current={locale === "ko" ? "page" : undefined}
+                  className={cn(
+                    "rounded-md px-2 py-1 text-xs font-semibold leading-4",
+                    locale === "ko"
+                      ? "bg-foreground text-background"
+                      : "text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  KO
+                </Link>
+                <Link
+                  to="/en/trade"
+                  aria-current={locale === "en" ? "page" : undefined}
+                  className={cn(
+                    "rounded-md px-2 py-1 text-xs font-semibold leading-4",
+                    locale === "en"
+                      ? "bg-foreground text-background"
+                      : "text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  EN
+                </Link>
+              </nav>
+              <ThemeToggle />
+            </div>
           </div>
 
           {/* Price strip */}
@@ -260,8 +296,10 @@ export default function Trade() {
             </div>
             <div className="mt-2 flex items-center gap-2 rounded-lg bg-muted/40 px-4 py-2 text-xs leading-4">
               <Wallet className="h-4 w-4 shrink-0 text-muted-foreground" />
-              <span className="text-muted-foreground">주문가능</span>
-              <span className="ml-auto font-semibold tabular-nums">{formatKrw(buyingPower)}</span>
+              <span className="text-muted-foreground">{t.buyingPower}</span>
+              <span className="ml-auto font-semibold tabular-nums">
+                {locale === "ko" ? formatKrw(buyingPower) : formatUsd(buyingPower / 1300)}
+              </span>
             </div>
           </div>
         </header>
@@ -324,7 +362,7 @@ export default function Trade() {
                         borderRadius: "8px",
                         fontSize: "12px",
                       }}
-                      formatter={(value: number) => [formatUsd(value), "가격"]}
+                      formatter={(value: number) => [formatUsd(value), t.price]}
                     />
                     <Area
                       type="monotone"
@@ -342,9 +380,9 @@ export default function Trade() {
           {tab === "book" && (
             <div className="glass-panel-sm p-4 text-xs leading-4">
               <div className="mb-4 grid grid-cols-3 text-center text-xs font-semibold uppercase leading-4 tracking-wide text-muted-foreground">
-                <span>호가</span>
-                <span>가격</span>
-                <span>잔량</span>
+                <span>{t.bookSide}</span>
+                <span>{t.bookPrice}</span>
+                <span>{t.bookSize}</span>
               </div>
               <div className="space-y-0">
                 {orderBook.asks.map((row) => (
@@ -357,7 +395,7 @@ export default function Trade() {
                       style={{ width: `${(row.size / maxAskSize) * 56}%` }}
                     />
                     <span className="relative z-10 pl-2 text-xs font-medium leading-4 trade-sell">
-                      매도
+                      {t.ask}
                     </span>
                     <span className="relative z-10 text-center font-semibold trade-sell">
                       {row.price.toFixed(2)}
@@ -384,7 +422,7 @@ export default function Trade() {
                       style={{ width: `${(row.size / maxBidSize) * 56}%` }}
                     />
                     <span className="relative z-10 pl-2 text-xs font-medium leading-4 trade-buy">
-                      매수
+                      {t.bid}
                     </span>
                     <span className="relative z-10 text-center font-semibold trade-buy">
                       {row.price.toFixed(2)}
@@ -412,7 +450,7 @@ export default function Trade() {
                       : "border-subtle text-muted-foreground",
                   )}
                 >
-                  매수
+                  {t.buy}
                 </button>
                 <button
                   type="button"
@@ -424,15 +462,15 @@ export default function Trade() {
                       : "border-subtle text-muted-foreground",
                   )}
                 >
-                  매도
+                  {t.sell}
                 </button>
               </div>
 
               <div className="flex gap-2">
                 {(
                   [
-                    { id: "limit" as const, label: "지정가" },
-                    { id: "market" as const, label: "시장가" },
+                    { id: "limit" as const, label: t.limit },
+                    { id: "market" as const, label: t.market },
                   ] as const
                 ).map((t) => (
                   <button
@@ -455,7 +493,7 @@ export default function Trade() {
                 {orderType === "limit" && (
                   <div className="space-y-2">
                     <Label htmlFor="limit-price" className="text-xs text-muted-foreground">
-                      주문 가격
+                      {t.orderPrice}
                     </Label>
                     <Input
                       id="limit-price"
@@ -472,7 +510,7 @@ export default function Trade() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="qty" className="text-xs leading-4 text-muted-foreground">
-                      수량
+                      {t.quantity}
                     </Label>
                     {side === "sell" && availableShares > 0 && (
                       <button
@@ -483,7 +521,7 @@ export default function Trade() {
                         )}
                         onClick={() => setQuantity(String(availableShares))}
                       >
-                        전량 {availableShares}주
+                        {t.sellAll(availableShares)}
                       </button>
                     )}
                   </div>
@@ -521,13 +559,13 @@ export default function Trade() {
 
                 <div className="space-y-2 rounded-lg bg-muted/40 px-4 py-4 text-sm leading-6">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">예상 금액</span>
+                    <span className="text-muted-foreground">{t.estimatedTotal}</span>
                     <span className="font-bold tabular-nums">{formatUsd(estimatedTotal)}</span>
                   </div>
                   {side === "sell" && (
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">보유</span>
-                      <span className="tabular-nums">{availableShares}주</span>
+                      <span className="text-muted-foreground">{t.held}</span>
+                      <span className="tabular-nums">{t.shares(availableShares)}</span>
                     </div>
                   )}
                 </div>
@@ -535,7 +573,7 @@ export default function Trade() {
 
               {/* Holdings quick pick */}
               <div>
-                <p className="section-label mb-2 px-0">보유 종목</p>
+                <p className="section-label mb-2 px-0">{t.holdings}</p>
                 <div className="flex gap-2 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                   {HOLDINGS.map((h) => (
                     <button
@@ -550,7 +588,7 @@ export default function Trade() {
                       )}
                     >
                       <p className="text-sm font-bold">{h.symbol}</p>
-                      <p className="text-xs leading-4 text-muted-foreground">{h.qty}주</p>
+                      <p className="text-xs leading-4 text-muted-foreground">{t.shares(h.qty)}</p>
                     </button>
                   ))}
                 </div>
@@ -560,7 +598,7 @@ export default function Trade() {
 
           {tab === "history" && (
             <div className="space-y-4">
-              <p className="section-label px-0">최근 주문</p>
+              <p className="section-label px-0">{t.recentOrders}</p>
               {RECENT_ORDERS.map((o) => (
                 <div
                   key={o.id}
@@ -568,11 +606,11 @@ export default function Trade() {
                 >
                   <span
                     className={cn(
-                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xs font-bold",
+                      "flex h-10 min-w-10 shrink-0 items-center justify-center rounded-full px-2 text-xs font-bold",
                       o.side === "buy" ? "trade-buy-muted" : "trade-sell-muted",
                     )}
                   >
-                    {o.side === "buy" ? "매수" : "매도"}
+                    {o.side === "buy" ? t.buy : t.sell}
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
@@ -580,17 +618,17 @@ export default function Trade() {
                       <span className="text-sm tabular-nums">{formatUsdCompact(o.price)}</span>
                     </div>
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>{o.qty}주 · {o.id}</span>
+                      <span>{t.shares(o.qty)} · {o.id}</span>
                       <span className="inline-flex items-center gap-1">
-                        {o.status === "대기" && <Clock className="h-4 w-4" />}
-                        {o.status}
+                        {o.status === "open" && <Clock className="h-4 w-4" />}
+                        {t.status[o.status]}
                       </span>
                     </div>
                   </div>
                 </div>
               ))}
 
-              <p className="section-label mt-4 px-0">보유 현황</p>
+              <p className="section-label mt-4 px-0">{t.positions}</p>
               {HOLDINGS.map((h) => (
                 <button
                   key={h.symbol}
@@ -604,7 +642,7 @@ export default function Trade() {
                   <div>
                     <p className="font-bold">{h.symbol}</p>
                     <p className="text-xs text-muted-foreground">
-                      {h.qty}주 · 평단 {formatUsd(h.avg)}
+                      {t.positionMeta(t.shares(h.qty), t.avgCost(formatUsd(h.avg)))}
                     </p>
                   </div>
                   <div className="text-right">
@@ -639,15 +677,15 @@ export default function Trade() {
               )}
               onClick={handleSubmit}
             >
-              {side === "buy" ? "매수 주문하기" : "매도 주문하기"}
+              {side === "buy" ? t.submitBuy : t.submitSell}
             </Button>
           </div>
         )}
 
         {/* Bottom navigation */}
-        <nav className="trade-mobile-nav" aria-label="거래 메뉴">
+        <nav className="trade-mobile-nav" aria-label={t.tradeMenu}>
           <div className="grid grid-cols-4 px-2 pt-2">
-            {NAV_ITEMS.map(({ id, label, icon: Icon }) => (
+            {NAV_ITEMS.map(({ id, icon: Icon }) => (
               <button
                 key={id}
                 type="button"
@@ -665,7 +703,7 @@ export default function Trade() {
                     tab === id && id !== "order" && "text-primary",
                   )}
                 />
-                {label}
+                {t.nav[id]}
               </button>
             ))}
           </div>

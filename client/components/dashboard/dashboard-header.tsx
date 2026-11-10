@@ -34,7 +34,7 @@ export function DashboardHeader() {
           <button type="button" className="btn-ghost hidden sm:inline-flex">
             Import
           </button>
-          <Link to="/trade" className="btn-primary">
+          <Link to="/en/trade" className="btn-primary">
             New trade
           </Link>
         </div>

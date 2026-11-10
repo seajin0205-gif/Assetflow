@@ -59,7 +59,7 @@ export function DashboardMobile() {
             </div>
             <div className="flex shrink-0 items-center gap-1">
               <Link
-                to="/trade"
+                to="/en/trade"
                 className="btn-primary px-3 py-2 text-xs leading-4"
               >
                 Trade
