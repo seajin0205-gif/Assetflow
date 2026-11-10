@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowDownRight,
@@ -142,6 +142,15 @@ function formatUsd(n: number) {
   }).format(n);
 }
 
+function orderProblemMessage(body: { type?: string; detail?: string }) {
+  const type = body.type ?? "";
+  if (type.endsWith("/insufficient-funds")) return "주문가능 금액을 초과했습니다.";
+  if (type.endsWith("/insufficient-shares")) return "보유 수량을 초과할 수 없습니다.";
+  if (type.endsWith("/rate-limited")) return "요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.";
+  if (type.endsWith("/invalid-symbol")) return "거래할 수 없는 종목입니다.";
+  return body.detail || "주문을 처리하지 못했습니다.";
+}
+
 function formatUsdCompact(n: number) {
   if (n >= 1000) return `$${(n / 1000).toFixed(1)}k`;
   return formatUsd(n);
@@ -158,6 +167,9 @@ export default function Trade() {
   const [orderType, setOrderType] = useState<"market" | "limit">("limit");
   const [quantity, setQuantity] = useState("10");
   const [limitPrice, setLimitPrice] = useState(SYMBOLS[0].price.toFixed(2));
+  const [submitting, setSubmitting] = useState(false);
+  const submittingRef = useRef(false);
+  const pendingOrder = useRef<{ fingerprint: string; key: string } | null>(null);
 
   const symbol = SYMBOLS.find((s) => s.id === symbolId) ?? SYMBOLS[0];
   const chartData = CHART_BY_SYMBOL[symbolId] ?? CHART_BY_SYMBOL.NVDA;
@@ -179,7 +191,8 @@ export default function Trade() {
     if (next) setLimitPrice(next.price.toFixed(2));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (submittingRef.current) return;
     if (qtyNum <= 0) {
       toast.error("수량을 입력해 주세요.");
       return;
@@ -193,14 +206,55 @@ export default function Trade() {
       return;
     }
 
-    toast.success(
-      side === "buy"
-        ? `${symbol.id} 매수 ${qtyNum}주 접수`
-        : `${symbol.id} 매도 ${qtyNum}주 접수`,
-      {
-        description: `${orderType === "market" ? "시장가" : "지정가"} · ${formatUsd(estimatedTotal)}`,
-      },
-    );
+    const fingerprint = JSON.stringify({
+      symbol: symbol.id,
+      side,
+      type: orderType,
+      quantity: qtyNum,
+      limitPrice: orderType === "limit" ? limitPrice : null,
+    });
+    if (pendingOrder.current?.fingerprint !== fingerprint) {
+      pendingOrder.current = { fingerprint, key: crypto.randomUUID() };
+    }
+
+    submittingRef.current = true;
+    setSubmitting(true);
+    try {
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Idempotency-Key": pendingOrder.current.key,
+          "X-User-Id": "demo",
+        },
+        body: JSON.stringify({
+          symbol: symbol.id,
+          side,
+          type: orderType,
+          quantity: qtyNum,
+          ...(orderType === "limit" ? { limitPrice: Number(limitPrice) } : {}),
+        }),
+      });
+      pendingOrder.current = null;
+      const payload = (await response.json()) as { type?: string; detail?: string };
+      if (!response.ok) {
+        toast.error(orderProblemMessage(payload));
+        return;
+      }
+      toast.success(
+        side === "buy"
+          ? `${symbol.id} 매수 ${qtyNum}주 접수`
+          : `${symbol.id} 매도 ${qtyNum}주 접수`,
+        {
+          description: `${orderType === "market" ? "시장가" : "지정가"} · ${formatUsd(estimatedTotal)}`,
+        },
+      );
+    } catch {
+      toast.error("주문을 처리하지 못했습니다.");
+    } finally {
+      submittingRef.current = false;
+      setSubmitting(false);
+    }
   };
 
   const maxAskSize = Math.max(...orderBook.asks.map((r) => r.size));
@@ -638,6 +692,7 @@ export default function Trade() {
                   : "shadow-primary/30",
               )}
               onClick={handleSubmit}
+              disabled={submitting}
             >
               {side === "buy" ? "매수 주문하기" : "매도 주문하기"}
             </Button>
