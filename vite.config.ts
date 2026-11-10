@@ -23,6 +23,9 @@ export default defineConfig(({ mode }) => ({
       "@shared": path.resolve(__dirname, "./shared"),
     },
   },
+  test: {
+    exclude: ["e2e/**", "**/node_modules/**", "**/dist/**"],
+  },
 }));
 
 function expressPlugin(): Plugin {
