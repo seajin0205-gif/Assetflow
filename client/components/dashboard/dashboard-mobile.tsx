@@ -9,6 +9,8 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import { LiveConnectionStatus } from "@/components/connection-status";
+import { LiveQuoteTape } from "@/components/dashboard/live-quote-tape";
 import { RevenueGrowthChart } from "@/components/dashboard/revenue-growth-chart";
 import { MarketBriefPanel } from "@/components/dashboard/market-brief-panel";
 import { MoodTracker } from "@/components/dashboard/mood-tracker";
@@ -75,8 +77,8 @@ export function DashboardMobile() {
             </div>
           </div>
 
-          <div className="border-t border-subtle px-4 pb-3 pt-3">
-            <div className="saas-input">
+          <div className="flex items-center gap-2 border-t border-subtle px-4 py-2">
+            <div className="saas-input min-w-0 flex-1">
               <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
               <input
                 type="text"
@@ -84,12 +86,14 @@ export function DashboardMobile() {
                 className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
               />
             </div>
+            <LiveConnectionStatus />
           </div>
         </header>
 
         <main className="flex-1 overflow-y-auto px-4 py-4 pb-24">
           {tab === "home" && (
             <div className="animate-fade-in space-y-4">
+              <LiveQuoteTape />
               {isRiskScoreLoading ? (
                 <RiskScoreCardSkeleton />
               ) : (
@@ -168,7 +172,8 @@ export function DashboardMobile() {
           )}
 
           {tab === "stocks" && (
-            <div className="animate-fade-in">
+            <div className="animate-fade-in space-y-4">
+              <LiveQuoteTape />
               <StockList />
             </div>
           )}

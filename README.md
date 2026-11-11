@@ -44,7 +44,7 @@ flowchart LR
 
 ## Key features
 
-- **Order book stream.** The trade ticket subscribes to a simulated book feed. Each tick replaces the five ask levels and five bid levels around the selected mid price, and the subscription stops when the ticket unmounts.
+- **Live quote stream.** A simulated socket ticks NVIDIA, Apple, Tesla, and Microsoft once a second. Rising prints flash green and falling prints flash red, the chart tip follows the last trade, and the header shows `WS Connected` with a moving latency reading. The trade ticket also subscribes to a simulated book feed that replaces the five ask levels and five bid levels around the selected mid price.
 - **Concurrency safety.** Order placement and cancellation run inside `BEGIN IMMEDIATE`. The account update matches the version read at the start of the transaction, so a stale write rolls back. Cash, reserved buying power, and reserved shares commit together. A repeated `Idempotency-Key` returns the original response and does not fill twice.
 - **Localized trade copy.** The portfolio dashboard is English. The trade ticket, including validation and insufficient-funds feedback, is Korean.
 - **Bounded trading traffic.** `/api/orders` accepts 10 requests per second for each `X-User-Id`, or for the client IP when that header is absent.

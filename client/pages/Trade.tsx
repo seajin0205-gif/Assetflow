@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowDownRight,
@@ -12,7 +12,11 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
+import { LiveConnectionStatus } from "@/components/connection-status";
+import { PriceFlash } from "@/components/price-flash";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useMarketFeed } from "@/hooks/use-market-feed";
+import type { LiveQuote } from "@/lib/market-feed";
 import { useOrderBook } from "@/hooks/use-order-book";
 import { getDashboardChartTheme } from "@/lib/dashboard-theme";
 import { cn } from "@/lib/utils";
@@ -36,71 +40,7 @@ import {
   YAxis,
 } from "recharts";
 
-type SymbolInfo = {
-  id: string;
-  name: string;
-  price: number;
-  change: number;
-  changePct: number;
-};
-
 type MobileTab = "chart" | "book" | "order" | "history";
-
-const SYMBOLS: SymbolInfo[] = [
-  { id: "NVDA", name: "NVIDIA", price: 892.4, change: 12.8, changePct: 1.46 },
-  { id: "AAPL", name: "Apple", price: 198.32, change: -1.24, changePct: -0.62 },
-  { id: "TSLA", name: "Tesla", price: 248.91, change: 5.12, changePct: 2.1 },
-  {
-    id: "MSFT",
-    name: "Microsoft",
-    price: 428.15,
-    change: 2.44,
-    changePct: 0.57,
-  },
-];
-
-const CHART_BY_SYMBOL: Record<string, { time: string; price: number }[]> = {
-  NVDA: [
-    { time: "09:30", price: 878 },
-    { time: "10:00", price: 881 },
-    { time: "10:30", price: 879 },
-    { time: "11:00", price: 885 },
-    { time: "11:30", price: 888 },
-    { time: "12:00", price: 886 },
-    { time: "12:30", price: 890 },
-    { time: "13:00", price: 892 },
-  ],
-  AAPL: [
-    { time: "09:30", price: 199.8 },
-    { time: "10:00", price: 199.2 },
-    { time: "10:30", price: 198.9 },
-    { time: "11:00", price: 198.5 },
-    { time: "11:30", price: 198.1 },
-    { time: "12:00", price: 198.4 },
-    { time: "12:30", price: 198.0 },
-    { time: "13:00", price: 198.32 },
-  ],
-  TSLA: [
-    { time: "09:30", price: 242 },
-    { time: "10:00", price: 244 },
-    { time: "10:30", price: 243 },
-    { time: "11:00", price: 246 },
-    { time: "11:30", price: 247 },
-    { time: "12:00", price: 245 },
-    { time: "12:30", price: 248 },
-    { time: "13:00", price: 248.91 },
-  ],
-  MSFT: [
-    { time: "09:30", price: 425 },
-    { time: "10:00", price: 426 },
-    { time: "10:30", price: 427 },
-    { time: "11:00", price: 426.5 },
-    { time: "11:30", price: 427.8 },
-    { time: "12:00", price: 427.2 },
-    { time: "12:30", price: 428 },
-    { time: "13:00", price: 428.15 },
-  ],
-};
 
 const HOLDINGS = [
   { symbol: "NVDA", qty: 12, avg: 720.5, value: 10708.8, pnl: 12.4 },
@@ -180,20 +120,32 @@ export default function Trade() {
   const isDark = resolvedTheme === "dark";
   const chartTheme = getDashboardChartTheme(isDark);
 
+  const market = useMarketFeed();
   const [tab, setTab] = useState<MobileTab>("order");
   const [symbolId, setSymbolId] = useState("NVDA");
   const [side, setSide] = useState<"buy" | "sell">("buy");
   const [orderType, setOrderType] = useState<"market" | "limit">("limit");
   const [quantity, setQuantity] = useState("10");
-  const [limitPrice, setLimitPrice] = useState(SYMBOLS[0].price.toFixed(2));
+  const [limitPrice, setLimitPrice] = useState(() =>
+    (market.quotes[0]?.price ?? 0).toFixed(2),
+  );
   const [submitting, setSubmitting] = useState(false);
   const submittingRef = useRef(false);
   const pendingOrder = useRef<{ fingerprint: string; key: string } | null>(
     null,
   );
 
-  const symbol = SYMBOLS.find((s) => s.id === symbolId) ?? SYMBOLS[0];
-  const chartData = CHART_BY_SYMBOL[symbolId] ?? CHART_BY_SYMBOL.NVDA;
+  const symbol = (market.quotes.find((s) => s.symbol === symbolId) ??
+    market.quotes[0]) as LiveQuote;
+  const chartData = market.charts[symbol.symbol];
+  const [chartFlash, setChartFlash] = useState<"up" | "down" | "flat">("flat");
+
+  useEffect(() => {
+    if (market.sequence === 0 || symbol.direction === "flat") return;
+    setChartFlash(symbol.direction);
+    const timer = window.setTimeout(() => setChartFlash("flat"), 800);
+    return () => window.clearTimeout(timer);
+  }, [market.sequence, symbol.direction, symbol.symbol]);
   const orderBook = useOrderBook(symbol.price);
 
   const qtyNum = Math.max(0, Number(quantity) || 0);
@@ -208,7 +160,7 @@ export default function Trade() {
 
   const handleSymbolChange = (id: string) => {
     setSymbolId(id);
-    const next = SYMBOLS.find((s) => s.id === id);
+    const next = market.quotes.find((s) => s.symbol === id);
     if (next) setLimitPrice(next.price.toFixed(2));
   };
 
@@ -228,7 +180,7 @@ export default function Trade() {
     }
 
     const fingerprint = JSON.stringify({
-      symbol: symbol.id,
+      symbol: symbol.symbol,
       side,
       type: orderType,
       quantity: qtyNum,
@@ -249,7 +201,7 @@ export default function Trade() {
           "X-User-Id": "demo",
         },
         body: JSON.stringify({
-          symbol: symbol.id,
+          symbol: symbol.symbol,
           side,
           type: orderType,
           quantity: qtyNum,
@@ -267,8 +219,8 @@ export default function Trade() {
       }
       toast.success(
         side === "buy"
-          ? `${symbol.id} 매수 ${qtyNum}주 접수`
-          : `${symbol.id} 매도 ${qtyNum}주 접수`,
+          ? `${symbol.symbol} 매수 ${qtyNum}주 접수`
+          : `${symbol.symbol} 매도 ${qtyNum}주 접수`,
         {
           description: `${orderType === "market" ? "시장가" : "지정가"} · ${formatUsd(estimatedTotal)}`,
         },
@@ -302,9 +254,9 @@ export default function Trade() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {SYMBOLS.map((s) => (
-                  <SelectItem key={s.id} value={s.id}>
-                    {s.id} · {s.name}
+                {market.quotes.map((s) => (
+                  <SelectItem key={s.symbol} value={s.symbol}>
+                    {s.symbol} · {s.name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -319,9 +271,12 @@ export default function Trade() {
                 <p className="text-xs leading-4 text-muted-foreground">
                   {symbol.name}
                 </p>
-                <p className="font-display text-2xl font-bold leading-8 tabular-nums">
+                <PriceFlash
+                  value={symbol.price}
+                  className="font-display text-2xl font-bold leading-8 tabular-nums"
+                >
                   {formatUsd(symbol.price)}
-                </p>
+                </PriceFlash>
               </div>
               <span
                 className={cn(
@@ -337,6 +292,9 @@ export default function Trade() {
                 {isUp ? "+" : ""}
                 {symbol.changePct.toFixed(2)}%
               </span>
+            </div>
+            <div className="mt-2">
+              <LiveConnectionStatus />
             </div>
             <div className="mt-2 flex items-center gap-2 rounded-lg bg-muted/40 px-4 py-2 text-xs leading-4">
               <Wallet className="h-4 w-4 shrink-0 text-muted-foreground" />
@@ -368,7 +326,15 @@ export default function Trade() {
                   </button>
                 ))}
               </div>
-              <div className="glass-panel-sm h-[52vh] min-h-72 p-4">
+              <div className="glass-panel-sm relative h-[52vh] min-h-72 p-4">
+                <span
+                  data-chart-flash={chartFlash}
+                  className={cn(
+                    "pointer-events-none absolute inset-0 rounded-xl",
+                    chartFlash === "up" && "chart-flash-up",
+                    chartFlash === "down" && "chart-flash-down",
+                  )}
+                />
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart
                     data={chartData}
@@ -426,6 +392,7 @@ export default function Trade() {
                       stroke={chartTheme.revenueStroke[0]?.color ?? "#3b82f6"}
                       strokeWidth={2}
                       fill="url(#tradeFill)"
+                      isAnimationActive={false}
                     />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -441,9 +408,9 @@ export default function Trade() {
                 <span>잔량</span>
               </div>
               <div className="space-y-0">
-                {orderBook.asks.map((row) => (
+                {orderBook.asks.map((row, index) => (
                   <div
-                    key={`ask-${row.price}`}
+                    key={`ask-${index}`}
                     className="relative grid grid-cols-3 items-center rounded py-2 tabular-nums"
                   >
                     <span
@@ -454,7 +421,9 @@ export default function Trade() {
                       매도
                     </span>
                     <span className="relative z-10 text-center font-semibold trade-sell">
-                      {row.price.toFixed(2)}
+                      <PriceFlash value={row.price}>
+                        {row.price.toFixed(2)}
+                      </PriceFlash>
                     </span>
                     <span className="relative z-10 pr-2 text-right text-muted-foreground">
                       {row.size}
@@ -463,14 +432,17 @@ export default function Trade() {
                 ))}
               </div>
               <div className="my-2 border-y border-subtle py-2 text-center">
-                <span className="font-display text-lg font-bold tabular-nums">
+                <PriceFlash
+                  value={symbol.price}
+                  className="font-display text-lg font-bold tabular-nums"
+                >
                   {formatUsd(symbol.price)}
-                </span>
+                </PriceFlash>
               </div>
               <div className="space-y-0">
-                {orderBook.bids.map((row) => (
+                {orderBook.bids.map((row, index) => (
                   <div
-                    key={`bid-${row.price}`}
+                    key={`bid-${index}`}
                     className="relative grid grid-cols-3 items-center rounded py-2 tabular-nums"
                   >
                     <span
@@ -481,7 +453,9 @@ export default function Trade() {
                       매수
                     </span>
                     <span className="relative z-10 text-center font-semibold trade-buy">
-                      {row.price.toFixed(2)}
+                      <PriceFlash value={row.price}>
+                        {row.price.toFixed(2)}
+                      </PriceFlash>
                     </span>
                     <span className="relative z-10 pr-2 text-right text-muted-foreground">
                       {row.size}

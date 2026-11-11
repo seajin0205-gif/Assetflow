@@ -79,6 +79,26 @@ describe("useOrderBook", () => {
     expect(result.current.bids[0]?.size).toBe(180);
   });
 
+  it("keeps resting sizes when the mid price moves", () => {
+    const ticks: Array<(tick: BookTick) => void> = [];
+    const subscribe = (onTick: (tick: BookTick) => void) => {
+      ticks.push(onTick);
+      return () => undefined;
+    };
+    const { result, rerender } = renderHook(
+      ({ mid }) => useOrderBook(mid, subscribe),
+      { initialProps: { mid: 100 } },
+    );
+
+    act(() => {
+      ticks[0]?.({ mid: 100, sizes: [11, 22, 33, 44, 55] });
+    });
+    rerender({ mid: 110 });
+
+    expect(result.current.bids[0]).toEqual({ price: 109.95, size: 11 });
+    expect(result.current.asks[0]?.size).toBe(55);
+  });
+
   it("rebuilds around the latest mid when the symbol price changes", () => {
     const subscribe = () => () => undefined;
     const { result, rerender } = renderHook(

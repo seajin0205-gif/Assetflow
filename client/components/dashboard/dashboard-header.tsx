@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Bell, Search, User } from "lucide-react";
+import { LiveConnectionStatus } from "@/components/connection-status";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export function DashboardHeader() {
@@ -31,6 +32,7 @@ export function DashboardHeader() {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-4">
+          <LiveConnectionStatus className="hidden md:inline-flex" />
           <button type="button" className="btn-ghost hidden sm:inline-flex">
             Import
           </button>

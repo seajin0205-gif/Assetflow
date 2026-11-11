@@ -2,6 +2,7 @@ import { useMemo, useRef } from "react";
 import { useTheme } from "next-themes";
 import { AccountSidebar } from "@/components/dashboard/account-sidebar";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { LiveQuoteTape } from "@/components/dashboard/live-quote-tape";
 import { DashboardMobile } from "@/components/dashboard/dashboard-mobile";
 import { MatchedColumn } from "@/components/dashboard/matched-column";
 import { RightSidebar } from "@/components/dashboard/right-sidebar";
@@ -30,6 +31,7 @@ export default function Index() {
   return (
     <div className="dashboard-shell min-h-screen text-foreground">
       <DashboardHeader />
+      <LiveQuoteTape />
 
       <main className="mx-auto flex max-w-dashboard flex-col gap-6 p-6 lg:flex-row lg:items-start lg:p-8">
         <AccountSidebar
