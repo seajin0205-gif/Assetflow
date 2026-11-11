@@ -119,7 +119,10 @@ export function MoodTracker() {
           ) : null}
         </p>
 
-        <button type="button" className="btn-primary self-center px-4 py-2 text-xs">
+        <button
+          type="button"
+          className="btn-primary self-center px-4 py-2 text-xs"
+        >
           Save mood
         </button>
       </div>

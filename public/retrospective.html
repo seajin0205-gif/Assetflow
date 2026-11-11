@@ -3,8 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f6f8fc" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#06080f" media="(prefers-color-scheme: dark)" />
+    <meta
+      name="theme-color"
+      content="#f6f8fc"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#06080f"
+      media="(prefers-color-scheme: dark)"
+    />
     <title>Assetflow — Retrospective</title>
     <link rel="icon" href="/logo.png" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -18,7 +26,8 @@
           var t = localStorage.getItem("theme");
           var dark =
             t === "dark" ||
-            (t !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+            (t !== "light" &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
           if (dark) document.documentElement.classList.add("dark");
         } catch (e) {}
       })();
@@ -100,8 +109,16 @@
         grid-template-rows: auto 1fr;
         background-color: hsl(var(--bg));
         background-image:
-          radial-gradient(ellipse 70% 50% at 50% 0%, hsl(var(--primary) / 0.06), transparent),
-          radial-gradient(ellipse 50% 40% at 100% 100%, hsl(var(--primary) / 0.03), transparent);
+          radial-gradient(
+            ellipse 70% 50% at 50% 0%,
+            hsl(var(--primary) / 0.06),
+            transparent
+          ),
+          radial-gradient(
+            ellipse 50% 40% at 100% 100%,
+            hsl(var(--primary) / 0.03),
+            transparent
+          );
       }
 
       .top-bar {
@@ -279,7 +296,12 @@
         inset-inline: 0;
         top: 0;
         height: 1px;
-        background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.35), transparent);
+        background: linear-gradient(
+          90deg,
+          transparent,
+          hsl(var(--primary) / 0.35),
+          transparent
+        );
         z-index: 1;
       }
 
@@ -342,8 +364,16 @@
         position: absolute;
         inset: 0;
         background:
-          radial-gradient(ellipse 72% 64% at 24% 44%, hsl(var(--primary) / 0.1), transparent),
-          radial-gradient(ellipse 56% 48% at 78% 58%, hsl(var(--destructive) / 0.06), transparent);
+          radial-gradient(
+            ellipse 72% 64% at 24% 44%,
+            hsl(var(--primary) / 0.1),
+            transparent
+          ),
+          radial-gradient(
+            ellipse 56% 48% at 78% 58%,
+            hsl(var(--destructive) / 0.06),
+            transparent
+          );
         pointer-events: none;
       }
 
@@ -354,7 +384,11 @@
           linear-gradient(hsl(var(--border) / 0.55) 1px, transparent 1px),
           linear-gradient(90deg, hsl(var(--border) / 0.55) 1px, transparent 1px);
         background-size: var(--space-3) var(--space-3);
-        mask-image: radial-gradient(ellipse 88% 78% at 50% 48%, black 16%, transparent 72%);
+        mask-image: radial-gradient(
+          ellipse 88% 78% at 50% 48%,
+          black 16%,
+          transparent 72%
+        );
         opacity: 0.45;
         pointer-events: none;
       }
@@ -721,17 +755,29 @@
       }
 
       .viz-pipeline__icon--figma {
-        background: linear-gradient(145deg, hsl(262 83% 58% / 0.1), hsl(var(--card)));
+        background: linear-gradient(
+          145deg,
+          hsl(262 83% 58% / 0.1),
+          hsl(var(--card))
+        );
         border-color: hsl(262 83% 58% / 0.28);
       }
 
       .viz-pipeline__icon--components {
-        background: linear-gradient(145deg, hsl(var(--primary) / 0.1), hsl(var(--card)));
+        background: linear-gradient(
+          145deg,
+          hsl(var(--primary) / 0.1),
+          hsl(var(--card))
+        );
         border-color: hsl(var(--primary) / 0.28);
       }
 
       .viz-pipeline__icon--dashboard {
-        background: linear-gradient(145deg, hsl(var(--success) / 0.1), hsl(var(--card)));
+        background: linear-gradient(
+          145deg,
+          hsl(var(--success) / 0.1),
+          hsl(var(--card))
+        );
         border-color: hsl(var(--success) / 0.28);
       }
 
@@ -791,7 +837,11 @@
         padding: var(--space-4) var(--space-5);
         border-radius: var(--space-3);
         border: 1px solid hsl(var(--border));
-        background: linear-gradient(165deg, hsl(var(--primary) / 0.05) 0%, hsl(var(--card)) 55%);
+        background: linear-gradient(
+          165deg,
+          hsl(var(--primary) / 0.05) 0%,
+          hsl(var(--card)) 55%
+        );
         width: 100%;
         position: relative;
         overflow: hidden;
@@ -805,7 +855,12 @@
         transform: translateX(-50%);
         width: 200px;
         height: 1px;
-        background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.45), transparent);
+        background: linear-gradient(
+          90deg,
+          transparent,
+          hsl(var(--primary) / 0.45),
+          transparent
+        );
       }
 
       .impact-eyebrow {
@@ -919,12 +974,26 @@
           <a href="/interactions.html" class="btn-link btn-ghost">Deck</a>
           <a href="/" class="btn-link">Live App</a>
           <button class="icon-btn" id="themeBtn" aria-label="테마 전환">
-            <svg class="moon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg
+              class="moon"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
               <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
             </svg>
-            <svg class="sun" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg
+              class="sun"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
               <circle cx="12" cy="12" r="5" />
-              <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2" />
+              <path
+                d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2"
+              />
             </svg>
           </button>
         </div>
@@ -933,231 +1002,412 @@
       <main class="canvas">
         <section class="hero-panel">
           <p class="hero-eyebrow">Retrospective</p>
-          <h1 class="hero-title display">복잡한 데이터를 이해 가능한 경험으로 재설계하다</h1>
+          <h1 class="hero-title display">
+            복잡한 데이터를 이해 가능한 경험으로 재설계하다
+          </h1>
           <p class="hero-lead">
-            금융 데이터의 복잡성을 줄이고, 사용자가 빠르게 판단하고 행동할 수 있는 대시보드 경험을
-            구현했습니다.
+            금융 데이터의 복잡성을 줄이고, 사용자가 빠르게 판단하고 행동할 수
+            있는 대시보드 경험을 구현했습니다.
           </p>
         </section>
 
         <div class="cards-stage">
-        <section class="cards-row" aria-label="Retrospective 과정">
-          <!-- Problem -->
-          <article class="retro-card">
-            <div class="retro-card__visual" aria-hidden="true">
-              <div class="viz-complex">
-                <div class="viz-complex__ambient"></div>
-                <div class="viz-complex__grid"></div>
+          <section class="cards-row" aria-label="Retrospective 과정">
+            <!-- Problem -->
+            <article class="retro-card">
+              <div class="retro-card__visual" aria-hidden="true">
+                <div class="viz-complex">
+                  <div class="viz-complex__ambient"></div>
+                  <div class="viz-complex__grid"></div>
 
-                <div class="viz-complex__canvas">
-                  <div class="viz-complex__spark viz-complex__spark--1" aria-hidden="true">
-                    <svg viewBox="0 0 40 32" fill="none" width="100%" height="100%">
-                      <rect x="4" y="20" width="4" height="8" rx="1" fill="hsl(var(--muted-fg) / 0.2)" />
-                      <rect x="12" y="14" width="4" height="14" rx="1" fill="hsl(var(--primary) / 0.25)" />
-                      <rect x="20" y="18" width="4" height="10" rx="1" fill="hsl(var(--muted-fg) / 0.15)" />
-                      <rect x="28" y="8" width="4" height="20" rx="1" fill="hsl(var(--destructive) / 0.2)" />
-                    </svg>
-                  </div>
-                  <div class="viz-complex__spark viz-complex__spark--2" aria-hidden="true">
-                    <svg viewBox="0 0 32 24" fill="none" width="100%" height="100%">
-                      <path d="M0 18 L8 12 L16 16 L24 6 L32 10" stroke="hsl(var(--warning) / 0.35)" stroke-width="1.5" stroke-linecap="round" />
-                    </svg>
-                  </div>
-
-                  <div class="viz-complex__layer viz-complex__layer--back"></div>
-                  <div class="viz-complex__layer viz-complex__layer--mid"></div>
-
-                  <div class="viz-complex__layer viz-complex__layer--front">
-                    <div class="viz-complex__toolbar">
-                      <span class="viz-complex__tab">1D</span>
-                      <span class="viz-complex__tab viz-complex__tab--active">1W</span>
-                      <span class="viz-complex__tab">1M</span>
-                      <span class="viz-complex__tab">YTD</span>
-                      <span class="viz-complex__tab viz-complex__tab--ghost"></span>
+                  <div class="viz-complex__canvas">
+                    <div
+                      class="viz-complex__spark viz-complex__spark--1"
+                      aria-hidden="true"
+                    >
+                      <svg
+                        viewBox="0 0 40 32"
+                        fill="none"
+                        width="100%"
+                        height="100%"
+                      >
+                        <rect
+                          x="4"
+                          y="20"
+                          width="4"
+                          height="8"
+                          rx="1"
+                          fill="hsl(var(--muted-fg) / 0.2)"
+                        />
+                        <rect
+                          x="12"
+                          y="14"
+                          width="4"
+                          height="14"
+                          rx="1"
+                          fill="hsl(var(--primary) / 0.25)"
+                        />
+                        <rect
+                          x="20"
+                          y="18"
+                          width="4"
+                          height="10"
+                          rx="1"
+                          fill="hsl(var(--muted-fg) / 0.15)"
+                        />
+                        <rect
+                          x="28"
+                          y="8"
+                          width="4"
+                          height="20"
+                          rx="1"
+                          fill="hsl(var(--destructive) / 0.2)"
+                        />
+                      </svg>
+                    </div>
+                    <div
+                      class="viz-complex__spark viz-complex__spark--2"
+                      aria-hidden="true"
+                    >
+                      <svg
+                        viewBox="0 0 32 24"
+                        fill="none"
+                        width="100%"
+                        height="100%"
+                      >
+                        <path
+                          d="M0 18 L8 12 L16 16 L24 6 L32 10"
+                          stroke="hsl(var(--warning) / 0.35)"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                        />
+                      </svg>
                     </div>
 
-                    <div class="viz-complex__chart-zone">
-                      <div class="viz-complex__charts" aria-hidden="true">
-                        <svg viewBox="52 8 96 64" fill="none" preserveAspectRatio="xMidYMid meet">
-                          <path
-                            d="M52 62 C72 28 88 52 100 38 S112 24 148 18"
-                            stroke="hsl(var(--destructive) / 0.5)"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                          />
-                          <path
-                            d="M52 18 C76 48 90 22 100 42 S110 58 148 54"
-                            stroke="hsl(var(--success) / 0.42)"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                          />
-                          <path
-                            d="M52 44 C68 30 84 54 100 36 S116 20 148 46"
-                            stroke="hsl(var(--warning) / 0.48)"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                          />
-                          <path
-                            d="M52 36 C80 56 92 24 100 40 S108 56 148 32"
-                            stroke="hsl(var(--primary) / 0.58)"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                          />
-                        </svg>
+                    <div
+                      class="viz-complex__layer viz-complex__layer--back"
+                    ></div>
+                    <div
+                      class="viz-complex__layer viz-complex__layer--mid"
+                    ></div>
+
+                    <div class="viz-complex__layer viz-complex__layer--front">
+                      <div class="viz-complex__toolbar">
+                        <span class="viz-complex__tab">1D</span>
+                        <span class="viz-complex__tab viz-complex__tab--active"
+                          >1W</span
+                        >
+                        <span class="viz-complex__tab">1M</span>
+                        <span class="viz-complex__tab">YTD</span>
+                        <span
+                          class="viz-complex__tab viz-complex__tab--ghost"
+                        ></span>
                       </div>
 
-                      <div class="viz-complex__crosshair" aria-hidden="true">
-                        <svg viewBox="52 8 96 64" fill="none" preserveAspectRatio="xMidYMid meet">
-                          <line x1="100" y1="8" x2="100" y2="72" stroke="hsl(var(--border))" stroke-width="1" stroke-dasharray="3 4" opacity="0.5" />
-                          <line x1="52" y1="40" x2="148" y2="40" stroke="hsl(var(--border))" stroke-width="1" stroke-dasharray="3 4" opacity="0.5" />
-                        </svg>
-                      </div>
+                      <div class="viz-complex__chart-zone">
+                        <div class="viz-complex__charts" aria-hidden="true">
+                          <svg
+                            viewBox="52 8 96 64"
+                            fill="none"
+                            preserveAspectRatio="xMidYMid meet"
+                          >
+                            <path
+                              d="M52 62 C72 28 88 52 100 38 S112 24 148 18"
+                              stroke="hsl(var(--destructive) / 0.5)"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                            />
+                            <path
+                              d="M52 18 C76 48 90 22 100 42 S110 58 148 54"
+                              stroke="hsl(var(--success) / 0.42)"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                            />
+                            <path
+                              d="M52 44 C68 30 84 54 100 36 S116 20 148 46"
+                              stroke="hsl(var(--warning) / 0.48)"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                            />
+                            <path
+                              d="M52 36 C80 56 92 24 100 40 S108 56 148 32"
+                              stroke="hsl(var(--primary) / 0.58)"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                            />
+                          </svg>
+                        </div>
 
-                      <span class="viz-complex__insight">+12.4%</span>
+                        <div class="viz-complex__crosshair" aria-hidden="true">
+                          <svg
+                            viewBox="52 8 96 64"
+                            fill="none"
+                            preserveAspectRatio="xMidYMid meet"
+                          >
+                            <line
+                              x1="100"
+                              y1="8"
+                              x2="100"
+                              y2="72"
+                              stroke="hsl(var(--border))"
+                              stroke-width="1"
+                              stroke-dasharray="3 4"
+                              opacity="0.5"
+                            />
+                            <line
+                              x1="52"
+                              y1="40"
+                              x2="148"
+                              y2="40"
+                              stroke="hsl(var(--border))"
+                              stroke-width="1"
+                              stroke-dasharray="3 4"
+                              opacity="0.5"
+                            />
+                          </svg>
+                        </div>
+
+                        <span class="viz-complex__insight">+12.4%</span>
+                      </div>
                     </div>
+
+                    <span class="viz-complex__kpi viz-complex__kpi--1"
+                      >$2.41M</span
+                    >
+                    <span class="viz-complex__kpi viz-complex__kpi--2"
+                      >-3.2%</span
+                    >
+                    <span class="viz-complex__kpi viz-complex__kpi--3"
+                      >+18.4%</span
+                    >
+                    <span class="viz-complex__kpi viz-complex__kpi--4">72</span>
+
+                    <span class="viz-complex__badge">12 alerts</span>
                   </div>
-
-                  <span class="viz-complex__kpi viz-complex__kpi--1">$2.41M</span>
-                  <span class="viz-complex__kpi viz-complex__kpi--2">-3.2%</span>
-                  <span class="viz-complex__kpi viz-complex__kpi--3">+18.4%</span>
-                  <span class="viz-complex__kpi viz-complex__kpi--4">72</span>
-
-                  <span class="viz-complex__badge">12 alerts</span>
                 </div>
               </div>
-            </div>
-            <div class="retro-card__body">
-              <span class="retro-card__num">01 — Problem</span>
-              <h2 class="retro-card__title">Complex Data</h2>
-              <p class="retro-card__desc">
-                수많은 금융 데이터와 복잡한 차트 구조로 인해 사용자가 핵심 정보를 빠르게 파악하기
-                어려운 문제를 발견했습니다.
-              </p>
-            </div>
-          </article>
+              <div class="retro-card__body">
+                <span class="retro-card__num">01 — Problem</span>
+                <h2 class="retro-card__title">Complex Data</h2>
+                <p class="retro-card__desc">
+                  수많은 금융 데이터와 복잡한 차트 구조로 인해 사용자가 핵심
+                  정보를 빠르게 파악하기 어려운 문제를 발견했습니다.
+                </p>
+              </div>
+            </article>
 
-          <!-- Solution -->
-          <article class="retro-card">
-            <div class="retro-card__visual" aria-hidden="true">
-              <div class="viz-solution">
-                <div class="viz-gauge">
-                  <svg class="viz-gauge__ring" viewBox="0 0 96 96">
-                    <circle cx="48" cy="48" r="40" fill="none" stroke="hsl(var(--border))" stroke-width="5" />
-                    <circle
-                      cx="48"
-                      cy="48"
-                      r="40"
+            <!-- Solution -->
+            <article class="retro-card">
+              <div class="retro-card__visual" aria-hidden="true">
+                <div class="viz-solution">
+                  <div class="viz-gauge">
+                    <svg class="viz-gauge__ring" viewBox="0 0 96 96">
+                      <circle
+                        cx="48"
+                        cy="48"
+                        r="40"
+                        fill="none"
+                        stroke="hsl(var(--border))"
+                        stroke-width="5"
+                      />
+                      <circle
+                        cx="48"
+                        cy="48"
+                        r="40"
+                        fill="none"
+                        stroke="hsl(var(--primary))"
+                        stroke-width="5"
+                        stroke-linecap="round"
+                        stroke-dasharray="188 251"
+                        transform="rotate(-90 48 48)"
+                      />
+                    </svg>
+                    <div class="viz-gauge__score">
+                      <span class="viz-gauge__value">72</span>
+                      <span class="viz-gauge__label">Risk</span>
+                    </div>
+                  </div>
+                  <div class="viz-chart-preview">
+                    <div class="viz-chart-preview__tabs">
+                      <span class="viz-chart-preview__tab">1W</span>
+                      <span
+                        class="viz-chart-preview__tab viz-chart-preview__tab--active"
+                        >1M</span
+                      >
+                      <span class="viz-chart-preview__tab">3M</span>
+                    </div>
+                    <svg viewBox="0 0 140 72" fill="none">
+                      <defs>
+                        <linearGradient
+                          id="chartGrad"
+                          x1="0"
+                          y1="0"
+                          x2="0"
+                          y2="1"
+                        >
+                          <stop
+                            offset="0%"
+                            stop-color="hsl(var(--primary))"
+                            stop-opacity="0.22"
+                          />
+                          <stop
+                            offset="100%"
+                            stop-color="hsl(var(--primary))"
+                            stop-opacity="0"
+                          />
+                        </linearGradient>
+                      </defs>
+                      <path
+                        d="M0 56 C20 48 30 52 50 32 S80 16 100 24 S120 8 140 16 L140 72 L0 72 Z"
+                        fill="url(#chartGrad)"
+                      />
+                      <path
+                        d="M0 56 C20 48 30 52 50 32 S80 16 100 24 S120 8 140 16"
+                        stroke="hsl(var(--primary))"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                      />
+                    </svg>
+                    <div class="viz-chart-preview__tooltip">+12.4%</div>
+                    <div class="viz-chart-preview__cursor"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="retro-card__body">
+                <span class="retro-card__num">02 — Solution</span>
+                <h2 class="retro-card__title">Design + Interaction</h2>
+                <p class="retro-card__desc">
+                  리스크 스코어링과 직관적인 데이터 시각화를 통해 중요한 정보를
+                  빠르게 인지할 수 있도록 UX 구조를 재설계했습니다.
+                </p>
+              </div>
+            </article>
+
+            <!-- Implementation -->
+            <article class="retro-card">
+              <div class="retro-card__visual" aria-hidden="true">
+                <div class="viz-pipeline">
+                  <div class="viz-pipeline__node">
+                    <div class="viz-pipeline__icon viz-pipeline__icon--figma">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <rect
+                          x="4"
+                          y="4"
+                          width="6"
+                          height="6"
+                          rx="2"
+                          fill="#A259FF"
+                        />
+                        <rect
+                          x="4"
+                          y="12"
+                          width="6"
+                          height="6"
+                          rx="2"
+                          fill="#0ACF83"
+                        />
+                        <rect
+                          x="12"
+                          y="4"
+                          width="6"
+                          height="6"
+                          rx="2"
+                          fill="#F24E1E"
+                        />
+                        <circle cx="15" cy="15" r="3" fill="#1ABCFE" />
+                      </svg>
+                    </div>
+                    <span class="viz-pipeline__label">Figma Design</span>
+                  </div>
+                  <div class="viz-pipeline__arrow">
+                    <svg
                       fill="none"
-                      stroke="hsl(var(--primary))"
-                      stroke-width="5"
-                      stroke-linecap="round"
-                      stroke-dasharray="188 251"
-                      transform="rotate(-90 48 48)"
-                    />
-                  </svg>
-                  <div class="viz-gauge__score">
-                    <span class="viz-gauge__value">72</span>
-                    <span class="viz-gauge__label">Risk</span>
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M5 12h14M13 6l6 6-6 6"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                    <span>tokens</span>
                   </div>
-                </div>
-                <div class="viz-chart-preview">
-                  <div class="viz-chart-preview__tabs">
-                    <span class="viz-chart-preview__tab">1W</span>
-                    <span class="viz-chart-preview__tab viz-chart-preview__tab--active">1M</span>
-                    <span class="viz-chart-preview__tab">3M</span>
+                  <div class="viz-pipeline__node">
+                    <div
+                      class="viz-pipeline__icon viz-pipeline__icon--components"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                      >
+                        <rect x="3" y="3" width="8" height="8" rx="2" />
+                        <rect x="13" y="3" width="8" height="8" rx="2" />
+                        <rect x="3" y="13" width="8" height="8" rx="2" />
+                        <rect x="13" y="13" width="8" height="8" rx="2" />
+                      </svg>
+                    </div>
+                    <span class="viz-pipeline__label">Component System</span>
                   </div>
-                  <svg viewBox="0 0 140 72" fill="none">
-                    <defs>
-                      <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="hsl(var(--primary))" stop-opacity="0.22" />
-                        <stop offset="100%" stop-color="hsl(var(--primary))" stop-opacity="0" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M0 56 C20 48 30 52 50 32 S80 16 100 24 S120 8 140 16 L140 72 L0 72 Z" fill="url(#chartGrad)" />
-                    <path d="M0 56 C20 48 30 52 50 32 S80 16 100 24 S120 8 140 16" stroke="hsl(var(--primary))" stroke-width="2" stroke-linecap="round" />
-                  </svg>
-                  <div class="viz-chart-preview__tooltip">+12.4%</div>
-                  <div class="viz-chart-preview__cursor"></div>
+                  <div class="viz-pipeline__arrow">
+                    <svg
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M5 12h14M13 6l6 6-6 6"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                    <span>ship</span>
+                  </div>
+                  <div class="viz-pipeline__node">
+                    <div
+                      class="viz-pipeline__icon viz-pipeline__icon--dashboard"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="hsl(var(--success))"
+                        stroke-width="1.5"
+                      >
+                        <rect x="3" y="4" width="18" height="14" rx="2" />
+                        <path
+                          d="M3 9h18M7 15h4M15 15h2"
+                          stroke-linecap="round"
+                        />
+                      </svg>
+                    </div>
+                    <span class="viz-pipeline__label"
+                      >Interactive Dashboard</span
+                    >
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="retro-card__body">
-              <span class="retro-card__num">02 — Solution</span>
-              <h2 class="retro-card__title">Design + Interaction</h2>
-              <p class="retro-card__desc">
-                리스크 스코어링과 직관적인 데이터 시각화를 통해 중요한 정보를 빠르게 인지할 수
-                있도록 UX 구조를 재설계했습니다.
-              </p>
-            </div>
-          </article>
-
-          <!-- Implementation -->
-          <article class="retro-card">
-            <div class="retro-card__visual" aria-hidden="true">
-              <div class="viz-pipeline">
-                <div class="viz-pipeline__node">
-                  <div class="viz-pipeline__icon viz-pipeline__icon--figma">
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <rect x="4" y="4" width="6" height="6" rx="2" fill="#A259FF" />
-                      <rect x="4" y="12" width="6" height="6" rx="2" fill="#0ACF83" />
-                      <rect x="12" y="4" width="6" height="6" rx="2" fill="#F24E1E" />
-                      <circle cx="15" cy="15" r="3" fill="#1ABCFE" />
-                    </svg>
-                  </div>
-                  <span class="viz-pipeline__label">Figma Design</span>
-                </div>
-                <div class="viz-pipeline__arrow">
-                  <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                    <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
-                  </svg>
-                  <span>tokens</span>
-                </div>
-                <div class="viz-pipeline__node">
-                  <div class="viz-pipeline__icon viz-pipeline__icon--components">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                      <rect x="3" y="3" width="8" height="8" rx="2" />
-                      <rect x="13" y="3" width="8" height="8" rx="2" />
-                      <rect x="3" y="13" width="8" height="8" rx="2" />
-                      <rect x="13" y="13" width="8" height="8" rx="2" />
-                    </svg>
-                  </div>
-                  <span class="viz-pipeline__label">Component System</span>
-                </div>
-                <div class="viz-pipeline__arrow">
-                  <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                    <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
-                  </svg>
-                  <span>ship</span>
-                </div>
-                <div class="viz-pipeline__node">
-                  <div class="viz-pipeline__icon viz-pipeline__icon--dashboard">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="hsl(var(--success))" stroke-width="1.5">
-                      <rect x="3" y="4" width="18" height="14" rx="2" />
-                      <path d="M3 9h18M7 15h4M15 15h2" stroke-linecap="round" />
-                    </svg>
-                  </div>
-                  <span class="viz-pipeline__label">Interactive Dashboard</span>
-                </div>
+              <div class="retro-card__body">
+                <span class="retro-card__num">03 — Implementation</span>
+                <h2 class="retro-card__title">From Design to Browser</h2>
+                <p class="retro-card__desc">
+                  Figma의 정적인 디자인을 넘어 차트 인터랙션, 마우스 좌표 추적,
+                  렌더링 최적화를 고려한 실제 브라우저 환경을 구현했습니다.
+                </p>
               </div>
-            </div>
-            <div class="retro-card__body">
-              <span class="retro-card__num">03 — Implementation</span>
-              <h2 class="retro-card__title">From Design to Browser</h2>
-              <p class="retro-card__desc">
-                Figma의 정적인 디자인을 넘어 차트 인터랙션, 마우스 좌표 추적, 렌더링 최적화를
-                고려한 실제 브라우저 환경을 구현했습니다.
-              </p>
-            </div>
-          </article>
-        </section>
+            </article>
+          </section>
         </div>
 
         <section class="impact-panel">
           <div class="impact-inner">
             <p class="impact-eyebrow">Key Takeaway</p>
             <blockquote class="impact-quote">
-              단순한 UI 구현을 넘어, 데이터 구조를 이해하고 사용자의 판단 흐름을 설계하는
-              디자인 엔지니어링 경험을 만들었습니다.
+              단순한 UI 구현을 넘어, 데이터 구조를 이해하고 사용자의 판단 흐름을
+              설계하는 디자인 엔지니어링 경험을 만들었습니다.
             </blockquote>
             <div class="impact-tags">
               <span class="impact-tag">#UXProblemSolving</span>
@@ -1166,7 +1416,9 @@
               <span class="impact-tag">#DesignEngineering</span>
             </div>
             <div class="impact-actions">
-              <a href="/portfolio.html" class="btn-link btn-primary">Case Study</a>
+              <a href="/portfolio.html" class="btn-link btn-primary"
+                >Case Study</a
+              >
               <a href="/" class="btn-link btn-ghost">Live App</a>
             </div>
           </div>
@@ -1181,12 +1433,14 @@
     </div>
 
     <script>
-      document.getElementById("themeBtn").addEventListener("click", function () {
-        var dark = document.documentElement.classList.toggle("dark");
-        try {
-          localStorage.setItem("theme", dark ? "dark" : "light");
-        } catch (e) {}
-      });
+      document
+        .getElementById("themeBtn")
+        .addEventListener("click", function () {
+          var dark = document.documentElement.classList.toggle("dark");
+          try {
+            localStorage.setItem("theme", dark ? "dark" : "light");
+          } catch (e) {}
+        });
     </script>
   </body>
 </html>

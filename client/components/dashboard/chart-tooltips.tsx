@@ -75,7 +75,9 @@ export function RevenueGrowthTooltip({
       className="chart-tooltip w-52 border-blue-200/80 dark:border-cyan-500/25"
       style={{ transform: `translate(${dx}px, ${dy}px)` }}
     >
-      <p className="mb-2 font-semibold text-foreground">{label ?? point.label}</p>
+      <p className="mb-2 font-semibold text-foreground">
+        {label ?? point.label}
+      </p>
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-6 text-muted-foreground">
           <span>Portfolio value</span>
@@ -116,7 +118,10 @@ export function RotaTooltip({ active, payload, label }: RotaTooltipProps) {
       <p className="mb-2 font-semibold text-foreground">{label}</p>
       <div className="space-y-2 text-muted-foreground">
         {payload.map((entry) => (
-          <div key={entry.dataKey} className="flex items-center justify-between gap-6">
+          <div
+            key={entry.dataKey}
+            className="flex items-center justify-between gap-6"
+          >
             <span className="flex items-center gap-2">
               <span
                 className="inline-block h-2 w-2 rounded-full"

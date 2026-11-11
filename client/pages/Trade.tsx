@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowDownRight,
@@ -13,6 +13,7 @@ import {
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useOrderBook } from "@/hooks/use-order-book";
 import { getDashboardChartTheme } from "@/lib/dashboard-theme";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -49,7 +50,13 @@ const SYMBOLS: SymbolInfo[] = [
   { id: "NVDA", name: "NVIDIA", price: 892.4, change: 12.8, changePct: 1.46 },
   { id: "AAPL", name: "Apple", price: 198.32, change: -1.24, changePct: -0.62 },
   { id: "TSLA", name: "Tesla", price: 248.91, change: 5.12, changePct: 2.1 },
-  { id: "MSFT", name: "Microsoft", price: 428.15, change: 2.44, changePct: 0.57 },
+  {
+    id: "MSFT",
+    name: "Microsoft",
+    price: 428.15,
+    change: 2.44,
+    changePct: 0.57,
+  },
 ];
 
 const CHART_BY_SYMBOL: Record<string, { time: string; price: number }[]> = {
@@ -95,18 +102,6 @@ const CHART_BY_SYMBOL: Record<string, { time: string; price: number }[]> = {
   ],
 };
 
-type OrderBookRow = { price: number; size: number };
-
-function buildOrderBook(mid: number): { asks: OrderBookRow[]; bids: OrderBookRow[] } {
-  const asks: OrderBookRow[] = [];
-  const bids: OrderBookRow[] = [];
-  for (let i = 1; i <= 5; i++) {
-    asks.push({ price: mid + i * 0.05, size: Math.round(120 + Math.random() * 400) });
-    bids.push({ price: mid - i * 0.05, size: Math.round(120 + Math.random() * 400) });
-  }
-  return { asks: asks.reverse(), bids };
-}
-
 const HOLDINGS = [
   { symbol: "NVDA", qty: 12, avg: 720.5, value: 10708.8, pnl: 12.4 },
   { symbol: "AAPL", qty: 40, avg: 182.1, value: 7932.8, pnl: -2.1 },
@@ -114,9 +109,30 @@ const HOLDINGS = [
 ];
 
 const RECENT_ORDERS = [
-  { id: "ORD-2841", side: "buy" as const, symbol: "NVDA", qty: 5, price: 885.2, status: "체결" },
-  { id: "ORD-2839", side: "sell" as const, symbol: "AAPL", qty: 10, price: 199.1, status: "체결" },
-  { id: "ORD-2835", side: "buy" as const, symbol: "MSFT", qty: 3, price: 426.0, status: "대기" },
+  {
+    id: "ORD-2841",
+    side: "buy" as const,
+    symbol: "NVDA",
+    qty: 5,
+    price: 885.2,
+    status: "체결",
+  },
+  {
+    id: "ORD-2839",
+    side: "sell" as const,
+    symbol: "AAPL",
+    qty: 10,
+    price: 199.1,
+    status: "체결",
+  },
+  {
+    id: "ORD-2835",
+    side: "buy" as const,
+    symbol: "MSFT",
+    qty: 3,
+    price: 426.0,
+    status: "대기",
+  },
 ];
 
 const NAV_ITEMS: { id: MobileTab; label: string; icon: typeof BarChart3 }[] = [
@@ -142,6 +158,18 @@ function formatUsd(n: number) {
   }).format(n);
 }
 
+function orderProblemMessage(body: { type?: string; detail?: string }) {
+  const type = body.type ?? "";
+  if (type.endsWith("/insufficient-funds"))
+    return "주문가능 금액을 초과했습니다.";
+  if (type.endsWith("/insufficient-shares"))
+    return "보유 수량을 초과할 수 없습니다.";
+  if (type.endsWith("/rate-limited"))
+    return "요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.";
+  if (type.endsWith("/invalid-symbol")) return "거래할 수 없는 종목입니다.";
+  return body.detail || "주문을 처리하지 못했습니다.";
+}
+
 function formatUsdCompact(n: number) {
   if (n >= 1000) return `$${(n / 1000).toFixed(1)}k`;
   return formatUsd(n);
@@ -158,10 +186,15 @@ export default function Trade() {
   const [orderType, setOrderType] = useState<"market" | "limit">("limit");
   const [quantity, setQuantity] = useState("10");
   const [limitPrice, setLimitPrice] = useState(SYMBOLS[0].price.toFixed(2));
+  const [submitting, setSubmitting] = useState(false);
+  const submittingRef = useRef(false);
+  const pendingOrder = useRef<{ fingerprint: string; key: string } | null>(
+    null,
+  );
 
   const symbol = SYMBOLS.find((s) => s.id === symbolId) ?? SYMBOLS[0];
   const chartData = CHART_BY_SYMBOL[symbolId] ?? CHART_BY_SYMBOL.NVDA;
-  const orderBook = useMemo(() => buildOrderBook(symbol.price), [symbolId, symbol.price]);
+  const orderBook = useOrderBook(symbol.price);
 
   const qtyNum = Math.max(0, Number(quantity) || 0);
   const priceNum =
@@ -179,7 +212,8 @@ export default function Trade() {
     if (next) setLimitPrice(next.price.toFixed(2));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (submittingRef.current) return;
     if (qtyNum <= 0) {
       toast.error("수량을 입력해 주세요.");
       return;
@@ -193,14 +227,58 @@ export default function Trade() {
       return;
     }
 
-    toast.success(
-      side === "buy"
-        ? `${symbol.id} 매수 ${qtyNum}주 접수`
-        : `${symbol.id} 매도 ${qtyNum}주 접수`,
-      {
-        description: `${orderType === "market" ? "시장가" : "지정가"} · ${formatUsd(estimatedTotal)}`,
-      },
-    );
+    const fingerprint = JSON.stringify({
+      symbol: symbol.id,
+      side,
+      type: orderType,
+      quantity: qtyNum,
+      limitPrice: orderType === "limit" ? limitPrice : null,
+    });
+    if (pendingOrder.current?.fingerprint !== fingerprint) {
+      pendingOrder.current = { fingerprint, key: crypto.randomUUID() };
+    }
+
+    submittingRef.current = true;
+    setSubmitting(true);
+    try {
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Idempotency-Key": pendingOrder.current.key,
+          "X-User-Id": "demo",
+        },
+        body: JSON.stringify({
+          symbol: symbol.id,
+          side,
+          type: orderType,
+          quantity: qtyNum,
+          ...(orderType === "limit" ? { limitPrice: Number(limitPrice) } : {}),
+        }),
+      });
+      pendingOrder.current = null;
+      const payload = (await response.json()) as {
+        type?: string;
+        detail?: string;
+      };
+      if (!response.ok) {
+        toast.error(orderProblemMessage(payload));
+        return;
+      }
+      toast.success(
+        side === "buy"
+          ? `${symbol.id} 매수 ${qtyNum}주 접수`
+          : `${symbol.id} 매도 ${qtyNum}주 접수`,
+        {
+          description: `${orderType === "market" ? "시장가" : "지정가"} · ${formatUsd(estimatedTotal)}`,
+        },
+      );
+    } catch {
+      toast.error("주문을 처리하지 못했습니다.");
+    } finally {
+      submittingRef.current = false;
+      setSubmitting(false);
+    }
   };
 
   const maxAskSize = Math.max(...orderBook.asks.map((r) => r.size));
@@ -238,7 +316,9 @@ export default function Trade() {
           <div className="border-t border-subtle px-6 pb-4 pt-4">
             <div className="flex items-end justify-between">
               <div>
-                <p className="text-xs leading-4 text-muted-foreground">{symbol.name}</p>
+                <p className="text-xs leading-4 text-muted-foreground">
+                  {symbol.name}
+                </p>
                 <p className="font-display text-2xl font-bold leading-8 tabular-nums">
                   {formatUsd(symbol.price)}
                 </p>
@@ -261,7 +341,9 @@ export default function Trade() {
             <div className="mt-2 flex items-center gap-2 rounded-lg bg-muted/40 px-4 py-2 text-xs leading-4">
               <Wallet className="h-4 w-4 shrink-0 text-muted-foreground" />
               <span className="text-muted-foreground">주문가능</span>
-              <span className="ml-auto font-semibold tabular-nums">{formatKrw(buyingPower)}</span>
+              <span className="ml-auto font-semibold tabular-nums">
+                {formatKrw(buyingPower)}
+              </span>
             </div>
           </div>
         </header>
@@ -288,9 +370,18 @@ export default function Trade() {
               </div>
               <div className="glass-panel-sm h-[52vh] min-h-72 p-4">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                  <AreaChart
+                    data={chartData}
+                    margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+                  >
                     <defs>
-                      <linearGradient id="tradeFill" x1="0" y1="0" x2="0" y2="1">
+                      <linearGradient
+                        id="tradeFill"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
                         {chartTheme.revenueGradient.map((g) => (
                           <stop
                             key={g.offset}
@@ -301,7 +392,10 @@ export default function Trade() {
                         ))}
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke={chartTheme.gridStroke} />
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke={chartTheme.gridStroke}
+                    />
                     <XAxis
                       dataKey="time"
                       tick={{ fill: chartTheme.tickSecondary, fontSize: 12 }}
@@ -454,7 +548,10 @@ export default function Trade() {
               <div className="glass-panel-sm space-y-4 p-4">
                 {orderType === "limit" && (
                   <div className="space-y-2">
-                    <Label htmlFor="limit-price" className="text-xs text-muted-foreground">
+                    <Label
+                      htmlFor="limit-price"
+                      className="text-xs text-muted-foreground"
+                    >
                       주문 가격
                     </Label>
                     <Input
@@ -471,7 +568,10 @@ export default function Trade() {
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="qty" className="text-xs leading-4 text-muted-foreground">
+                    <Label
+                      htmlFor="qty"
+                      className="text-xs leading-4 text-muted-foreground"
+                    >
                       수량
                     </Label>
                     {side === "sell" && availableShares > 0 && (
@@ -504,11 +604,17 @@ export default function Trade() {
                         className="rounded-lg border border-subtle bg-muted/40 py-2 text-xs font-semibold text-muted-foreground active:bg-muted/80"
                         onClick={() => {
                           if (side === "sell" && availableShares > 0) {
-                            setQuantity(String(Math.floor((availableShares * pct) / 100)));
-                          } else if (side === "buy" && priceNum > 0) {
-                            const maxQty = Math.floor(buyingPower / 1300 / priceNum);
                             setQuantity(
-                              String(Math.max(1, Math.floor((maxQty * pct) / 100))),
+                              String(Math.floor((availableShares * pct) / 100)),
+                            );
+                          } else if (side === "buy" && priceNum > 0) {
+                            const maxQty = Math.floor(
+                              buyingPower / 1300 / priceNum,
+                            );
+                            setQuantity(
+                              String(
+                                Math.max(1, Math.floor((maxQty * pct) / 100)),
+                              ),
                             );
                           }
                         }}
@@ -522,7 +628,9 @@ export default function Trade() {
                 <div className="space-y-2 rounded-lg bg-muted/40 px-4 py-4 text-sm leading-6">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">예상 금액</span>
-                    <span className="font-bold tabular-nums">{formatUsd(estimatedTotal)}</span>
+                    <span className="font-bold tabular-nums">
+                      {formatUsd(estimatedTotal)}
+                    </span>
                   </div>
                   {side === "sell" && (
                     <div className="flex justify-between">
@@ -550,7 +658,9 @@ export default function Trade() {
                       )}
                     >
                       <p className="text-sm font-bold">{h.symbol}</p>
-                      <p className="text-xs leading-4 text-muted-foreground">{h.qty}주</p>
+                      <p className="text-xs leading-4 text-muted-foreground">
+                        {h.qty}주
+                      </p>
                     </button>
                   ))}
                 </div>
@@ -577,10 +687,14 @@ export default function Trade() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
                       <span className="font-bold">{o.symbol}</span>
-                      <span className="text-sm tabular-nums">{formatUsdCompact(o.price)}</span>
+                      <span className="text-sm tabular-nums">
+                        {formatUsdCompact(o.price)}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>{o.qty}주 · {o.id}</span>
+                      <span>
+                        {o.qty}주 · {o.id}
+                      </span>
                       <span className="inline-flex items-center gap-1">
                         {o.status === "대기" && <Clock className="h-4 w-4" />}
                         {o.status}
@@ -608,7 +722,9 @@ export default function Trade() {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold tabular-nums">{formatUsd(h.value)}</p>
+                    <p className="text-sm font-semibold tabular-nums">
+                      {formatUsd(h.value)}
+                    </p>
                     <p
                       className={cn(
                         "text-xs font-semibold tabular-nums",
@@ -633,11 +749,10 @@ export default function Trade() {
               variant={side === "buy" ? "destructive" : "default"}
               className={cn(
                 "h-14 w-full rounded-xl text-base font-bold shadow-lg",
-                side === "buy"
-                  ? "shadow-destructive/30"
-                  : "shadow-primary/30",
+                side === "buy" ? "shadow-destructive/30" : "shadow-primary/30",
               )}
               onClick={handleSubmit}
+              disabled={submitting}
             >
               {side === "buy" ? "매수 주문하기" : "매도 주문하기"}
             </Button>
@@ -660,8 +775,14 @@ export default function Trade() {
                 <Icon
                   className={cn(
                     "h-4 w-4",
-                    tab === id && id === "order" && side === "buy" && "text-destructive",
-                    tab === id && id === "order" && side === "sell" && "text-primary",
+                    tab === id &&
+                      id === "order" &&
+                      side === "buy" &&
+                      "text-destructive",
+                    tab === id &&
+                      id === "order" &&
+                      side === "sell" &&
+                      "text-primary",
                     tab === id && id !== "order" && "text-primary",
                   )}
                 />

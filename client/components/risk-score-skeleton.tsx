@@ -81,7 +81,9 @@ type RiskScoreCardSkeletonProps = {
 };
 
 /** Full risk score summary card while data is loading. */
-export function RiskScoreCardSkeleton({ className }: RiskScoreCardSkeletonProps) {
+export function RiskScoreCardSkeleton({
+  className,
+}: RiskScoreCardSkeletonProps) {
   return (
     <div
       className={cn(
@@ -164,7 +166,10 @@ export function RiskFactorCardSkeleton({
       </div>
       {variant === "bars" ? (
         <div className="flex min-h-28 items-stretch gap-4 lg:min-h-32">
-          <RiskScoreChartSkeleton variant={variant} className="min-h-0 flex-1" />
+          <RiskScoreChartSkeleton
+            variant={variant}
+            className="min-h-0 flex-1"
+          />
           <div className="flex shrink-0 flex-col justify-center gap-2">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="flex items-center justify-between gap-4">

@@ -10,3 +10,34 @@
 export interface DemoResponse {
   message: string;
 }
+
+/** RFC 7807 Problem Details. */
+export interface ProblemDetails {
+  type: string;
+  title: string;
+  status: number;
+  detail: string;
+  instance?: string;
+}
+
+export interface OrderResponse {
+  id: string;
+  accountId: string;
+  symbol: string;
+  side: "buy" | "sell";
+  type: "market" | "limit";
+  quantity: number;
+  limitPrice: string | null;
+  status: "open" | "filled" | "cancelled";
+  filledQuantity: number;
+  averagePrice: string | null;
+  reservedCash: string;
+}
+
+export interface PlaceOrderRequest {
+  symbol: string;
+  side: "buy" | "sell";
+  type: "market" | "limit";
+  quantity: number;
+  limitPrice?: number;
+}

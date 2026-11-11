@@ -23,6 +23,15 @@ export default defineConfig(({ mode }) => ({
       "@shared": path.resolve(__dirname, "./shared"),
     },
   },
+  test: {
+    exclude: ["e2e/**", "**/node_modules/**", "**/dist/**"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "lcov"],
+      include: ["server/**/*.ts", "client/hooks/**/*.ts", "shared/**/*.ts"],
+      exclude: ["**/*.spec.ts", "**/*.spec.tsx"],
+    },
+  },
 }));
 
 function expressPlugin(): Plugin {

@@ -30,7 +30,9 @@ export function StockList() {
                 <Icon className={cn("h-4 w-4", stock.iconClass)} />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-medium leading-6">{stock.name}</div>
+                <div className="truncate text-sm font-medium leading-6">
+                  {stock.name}
+                </div>
                 <div className="truncate text-xs leading-4 text-muted-foreground">
                   {stock.ticker} · {stock.shares}
                 </div>

@@ -83,7 +83,11 @@ export function RiskFactorAnalysis({
         )}
       </div>
 
-      {isLoading ? <RotaChartSkeleton /> : <RotaChart chartTheme={chartTheme} isDark={isDark} />}
+      {isLoading ? (
+        <RotaChartSkeleton />
+      ) : (
+        <RotaChart chartTheme={chartTheme} isDark={isDark} />
+      )}
     </div>
   );
 }
@@ -211,7 +215,10 @@ function RotaChartSkeleton() {
           <Skeleton className="h-6 w-44 rounded-md lg:h-6 lg:w-52" />
           <Skeleton className="h-4 w-56 rounded-md" />
         </div>
-        <RiskScoreNumberSkeleton size="card" className="h-8 w-16 lg:h-8 lg:w-16" />
+        <RiskScoreNumberSkeleton
+          size="card"
+          className="h-8 w-16 lg:h-8 lg:w-16"
+        />
       </div>
       <div className="flex shrink-0 flex-wrap gap-2">
         <Skeleton className="h-8 w-16 rounded-lg" />

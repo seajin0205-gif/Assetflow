@@ -24,21 +24,21 @@ import { cn } from "@/lib/utils";
 
 type MobileTab = "home" | "risk" | "stocks" | "feed";
 
-const NAV_ITEMS: { id: MobileTab; label: string; icon: typeof LayoutDashboard }[] =
-  [
-    { id: "home", label: "Home", icon: LayoutDashboard },
-    { id: "risk", label: "Risk", icon: ShieldAlert },
-    { id: "stocks", label: "Stocks", icon: TrendingUp },
-    { id: "feed", label: "Feed", icon: Newspaper },
-  ];
+const NAV_ITEMS: {
+  id: MobileTab;
+  label: string;
+  icon: typeof LayoutDashboard;
+}[] = [
+  { id: "home", label: "Home", icon: LayoutDashboard },
+  { id: "risk", label: "Risk", icon: ShieldAlert },
+  { id: "stocks", label: "Stocks", icon: TrendingUp },
+  { id: "feed", label: "Feed", icon: Newspaper },
+];
 
 export function DashboardMobile() {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme !== "light";
-  const chartTheme = useMemo(
-    () => getDashboardChartTheme(isDark),
-    [isDark],
-  );
+  const chartTheme = useMemo(() => getDashboardChartTheme(isDark), [isDark]);
   const isRiskScoreLoading = useRiskScoreLoading();
   const [tab, setTab] = useState<MobileTab>("home");
 
@@ -106,11 +106,15 @@ export function DashboardMobile() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="glass-panel-sm flex flex-col gap-1 px-3 py-3">
                     <div className="section-label">Net worth</div>
-                    <div className="metric-value text-lg sm:text-xl">$1,262,480</div>
+                    <div className="metric-value text-lg sm:text-xl">
+                      $1,262,480
+                    </div>
                   </div>
                   <div className="glass-panel-sm flex flex-col gap-1 px-3 py-3">
                     <div className="section-label">Cash</div>
-                    <div className="metric-value text-lg sm:text-xl">$120,540</div>
+                    <div className="metric-value text-lg sm:text-xl">
+                      $120,540
+                    </div>
                   </div>
                 </div>
                 <RevenueGrowthChart chartTheme={chartTheme} isDark={isDark} />
@@ -118,7 +122,9 @@ export function DashboardMobile() {
 
               <div className="glass-panel space-y-4 p-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-display text-base font-bold">Quick filters</h3>
+                  <h3 className="font-display text-base font-bold">
+                    Quick filters
+                  </h3>
                   <button
                     type="button"
                     className="text-xs font-medium text-primary"
@@ -205,12 +211,7 @@ export function DashboardMobile() {
                   tab === id ? "text-foreground" : "text-muted-foreground",
                 )}
               >
-                <Icon
-                  className={cn(
-                    "h-4 w-4",
-                    tab === id && "text-primary",
-                  )}
-                />
+                <Icon className={cn("h-4 w-4", tab === id && "text-primary")} />
                 {label}
               </button>
             ))}
