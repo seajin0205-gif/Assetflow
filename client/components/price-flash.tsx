@@ -17,7 +17,7 @@ export function PriceFlash({ value, children, className }: PriceFlashProps) {
     previous.current = value;
     if (direction === "flat") return;
     setFlash(direction);
-    const timer = window.setTimeout(() => setFlash("flat"), 700);
+    const timer = window.setTimeout(() => setFlash("flat"), 450);
     return () => window.clearTimeout(timer);
   }, [value]);
 

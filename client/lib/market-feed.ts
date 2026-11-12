@@ -136,13 +136,16 @@ export function createMarketSnapshot(): MarketSnapshot {
   };
 }
 
-/** One simulated socket tick: nudge every quote and the last chart point. */
+/** One simulated socket check. Most symbols stay quiet; a print moves one price. */
 export function stepMarket(
   current: MarketSnapshot,
   random: () => number = Math.random,
 ): MarketSnapshot {
   const quotes = current.quotes.map((quote) => {
     const price = nextPrice(quote.price, random);
+    if (price === null) {
+      return { ...quote, direction: "flat" as const };
+    }
     const change = roundPrice(price - quote.open);
     return {
       ...quote,
@@ -172,7 +175,7 @@ export function stepMarket(
 }
 
 export function createSimulatedMarketFeed({
-  intervalMs = 1000,
+  intervalMs = 1500,
   random = Math.random,
   initial = createMarketSnapshot(),
 }: {
@@ -207,10 +210,11 @@ export function createSimulatedMarketFeed({
 
 export const liveMarketFeed = createSimulatedMarketFeed();
 
-function nextPrice(price: number, random: () => number): number {
-  const moved = roundPrice(price * (1 + (random() - 0.5) * 0.0008));
-  if (moved !== price) return Math.max(0.01, moved);
-  return Math.max(0.01, roundPrice(price + (random() < 0.5 ? -0.01 : 0.01)));
+function nextPrice(price: number, random: () => number): number | null {
+  if (random() >= 0.4) return null;
+  const moved = roundPrice(price * (1 + (random() - 0.5) * 0.0016));
+  if (moved === price) return null;
+  return Math.max(0.01, moved);
 }
 
 function nextLatency(current: number, random: () => number): number {

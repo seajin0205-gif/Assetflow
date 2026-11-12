@@ -11,9 +11,11 @@ afterEach(() => {
 describe("useMarketFeed", () => {
   it("applies socket ticks and ignores ticks after unmount", () => {
     vi.useFakeTimers();
+    const draws = [0.1, 0.95, 0.1, 0.95, 0.1, 0.95, 0.1, 0.95, 0.5];
+    let index = 0;
     const feed = createSimulatedMarketFeed({
       intervalMs: 1000,
-      random: () => 0.9,
+      random: () => draws[index++] ?? 0.5,
     });
     const { result, unmount } = renderHook(() => useMarketFeed(feed));
 

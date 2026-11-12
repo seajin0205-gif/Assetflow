@@ -15,27 +15,37 @@ describe("priceTickDirection", () => {
 });
 
 describe("stepMarket", () => {
-  it("raises every quote and moves only the latest chart point", () => {
+  it("prints only the symbols that draw a trade", () => {
+    const draws = [0.1, 0.95, 0.9, 0.1, 0.05, 0.9, 0.5];
+    let index = 0;
     const start = createMarketSnapshot();
-    const next = stepMarket(start, () => 0.9);
+    const next = stepMarket(start, () => draws[index++] ?? 0.5);
     const nvda = next.quotes[0];
 
-    expect(nvda?.symbol).toBe("NVDA");
+    expect(next.quotes.map((quote) => quote.direction)).toEqual([
+      "up",
+      "flat",
+      "down",
+      "flat",
+    ]);
     expect(nvda?.price).toBeGreaterThan(892.4);
-    expect(nvda?.direction).toBe("up");
+    expect(next.quotes[1]?.price).toBe(198.32);
     expect(next.charts.NVDA[0]?.price).toBe(878);
     expect(next.charts.NVDA[next.charts.NVDA.length - 1]?.price).toBe(
       nvda?.price,
     );
-    expect(next.quotes.map((quote) => quote.direction)).toEqual([
-      "up",
-      "up",
-      "up",
-      "up",
-    ]);
+    expect(next.charts.AAPL[next.charts.AAPL.length - 1]?.price).toBe(198.32);
     expect(next.status).toBe("connected");
-    expect(next.latencyMs).toBe(51);
     expect(next.sequence).toBe(1);
+  });
+
+  it("leaves every quote quiet when none of them print", () => {
+    const start = createMarketSnapshot();
+    const next = stepMarket(start, () => 0.9);
+
+    expect(next.quotes.every((quote) => quote.direction === "flat")).toBe(true);
+    expect(next.quotes[0]?.price).toBe(892.4);
+    expect(next.latencyMs).toBe(51);
   });
 
   it("prints a down tick and promotes a connecting session", () => {

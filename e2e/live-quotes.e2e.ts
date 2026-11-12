@@ -10,15 +10,21 @@ test("dashboard quotes tick and the connection pill shows latency", async ({
   await expect(status).toContainText("WS Connected");
   await expect(status).toContainText(/\d+ms/);
 
-  const quote = page.getByTestId("quote-NVDA");
-  const before = await quote.innerText();
-  await expect(quote).not.toHaveText(before, { timeout: 4000 });
-  const flash = quote.locator("[data-flash]");
-  await expect(flash).toHaveAttribute("data-flash", /up|down/);
-  const background = await flash.evaluate(
-    (element) => getComputedStyle(element).backgroundColor,
+  const background = await page.waitForFunction(
+    () => {
+      const element = document.querySelector(
+        "[data-testid='quote-NVDA'] [data-flash]",
+      );
+      const flash = element?.getAttribute("data-flash");
+      if (flash !== "up" && flash !== "down") return null;
+      return getComputedStyle(element as Element).backgroundColor;
+    },
+    null,
+    { timeout: 15000, polling: 50 },
   );
-  expect(background).not.toMatch(/rgba\(0,\s*0,\s*0,\s*0\)|^transparent$/);
+  expect(await background.jsonValue()).not.toMatch(
+    /rgba\(0,\s*0,\s*0,\s*0\)|^transparent$/,
+  );
 });
 
 test("trade ticket flashes the live price and chart", async ({ page }) => {
@@ -28,20 +34,29 @@ test("trade ticket flashes the live price and chart", async ({ page }) => {
   await expect(page.getByTestId("connection-status")).toContainText(
     "WS Connected",
   );
-  const price = page.locator("header [data-flash]").first();
-  const before = await price.innerText();
-  await expect(price).not.toHaveText(before, { timeout: 4000 });
-  await expect(price).toHaveAttribute("data-flash", /up|down/);
+  await page.waitForFunction(
+    () => {
+      const flash = document
+        .querySelector("header [data-flash]")
+        ?.getAttribute("data-flash");
+      return flash === "up" || flash === "down";
+    },
+    null,
+    { timeout: 15000, polling: 50 },
+  );
 
   await page.getByRole("button", { name: "차트" }).click();
-  const frame = page.locator("[data-chart-flash]");
-  await expect(frame).toHaveAttribute("data-chart-flash", /up|down/, {
-    timeout: 4000,
-  });
-  const shadow = await frame.evaluate(
-    (element) => getComputedStyle(element).boxShadow,
+  const shadow = await page.waitForFunction(
+    () => {
+      const frame = document.querySelector("[data-chart-flash]");
+      const flash = frame?.getAttribute("data-chart-flash");
+      if (flash !== "up" && flash !== "down") return null;
+      return getComputedStyle(frame as Element).boxShadow;
+    },
+    null,
+    { timeout: 15000, polling: 50 },
   );
-  expect(shadow).not.toBe("none");
+  expect(await shadow.jsonValue()).not.toBe("none");
 });
 
 test("mobile dashboard keeps the connection pill beside search", async ({

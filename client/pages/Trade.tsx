@@ -143,7 +143,7 @@ export default function Trade() {
   useEffect(() => {
     if (market.sequence === 0 || symbol.direction === "flat") return;
     setChartFlash(symbol.direction);
-    const timer = window.setTimeout(() => setChartFlash("flat"), 800);
+    const timer = window.setTimeout(() => setChartFlash("flat"), 450);
     return () => window.clearTimeout(timer);
   }, [market.sequence, symbol.direction, symbol.symbol]);
   const orderBook = useOrderBook(symbol.price);
