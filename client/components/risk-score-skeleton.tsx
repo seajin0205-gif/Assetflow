@@ -87,7 +87,7 @@ export function RiskScoreCardSkeleton({
   return (
     <div
       className={cn(
-        "glass-panel relative shrink-0 overflow-hidden px-6 py-6 lg:px-8 lg:py-8",
+        "glass-panel relative h-full overflow-hidden px-6 py-6 lg:px-8 lg:py-8",
         className,
       )}
       aria-busy="true"
@@ -161,7 +161,7 @@ export function RiskFactorCardSkeleton({
         <RiskScoreNumberSkeleton size="card" />
       </div>
       {variant === "bars" ? (
-        <div className="flex min-h-28 items-stretch gap-4 lg:min-h-32">
+        <div className="flex h-20 items-stretch gap-4">
           <RiskScoreChartSkeleton
             variant={variant}
             className="min-h-0 flex-1"
@@ -176,10 +176,7 @@ export function RiskFactorCardSkeleton({
           </div>
         </div>
       ) : (
-        <RiskScoreChartSkeleton
-          variant={variant}
-          className="min-h-28 lg:min-h-32"
-        />
+        <RiskScoreChartSkeleton variant={variant} className="h-20" />
       )}
     </div>
   );

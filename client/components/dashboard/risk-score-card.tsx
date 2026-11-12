@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 
 type RiskScoreCardProps = {
   isDark: boolean;
+  className?: string;
 };
 
 type RiskDriver = (typeof riskScoreDrivers)[number];
@@ -37,12 +38,17 @@ function DriverCell({ driver }: { driver: RiskDriver }) {
   );
 }
 
-export function RiskScoreCard({ isDark }: RiskScoreCardProps) {
+export function RiskScoreCard({ isDark, className }: RiskScoreCardProps) {
   const riskStatus = getRiskScoreStatus(RISK_SCORE_CURRENT);
   const riskStyles = riskScoreStatusStyles[riskStatus.tone];
 
   return (
-    <div className="glass-panel relative shrink-0 overflow-hidden px-6 py-6 lg:px-8 lg:py-8">
+    <div
+      className={cn(
+        "glass-panel relative h-full overflow-hidden px-6 py-6 lg:px-8 lg:py-8",
+        className,
+      )}
+    >
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-red-500/40 to-transparent"
         aria-hidden

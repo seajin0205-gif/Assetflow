@@ -1,15 +1,22 @@
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { useTheme } from "next-themes";
-import { AccountSidebar } from "@/components/dashboard/account-sidebar";
+import {
+  AccountSummary,
+  AlertsPanel,
+  QuickFilters,
+} from "@/components/dashboard/account-sidebar";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { LiveQuoteTape } from "@/components/dashboard/live-quote-tape";
 import { DashboardMobile } from "@/components/dashboard/dashboard-mobile";
-import { MatchedColumn } from "@/components/dashboard/matched-column";
-import { RightSidebar } from "@/components/dashboard/right-sidebar";
-import { RiskFactorAnalysis } from "@/components/dashboard/risk-factor-analysis";
+import { MarketBriefPanel } from "@/components/dashboard/market-brief-panel";
+import { MoodTracker } from "@/components/dashboard/mood-tracker";
+import {
+  ReturnOnAssetsCard,
+  RiskFactorPair,
+} from "@/components/dashboard/risk-factor-analysis";
 import { RiskScoreCard } from "@/components/dashboard/risk-score-card";
 import { RiskScoreCardSkeleton } from "@/components/risk-score-skeleton";
-import { useLeftColumnHeight } from "@/hooks/use-left-column-height";
+import { StockList } from "@/components/dashboard/stock-list";
 import { useIsDesktop } from "@/hooks/use-mobile";
 import { useRiskScoreLoading } from "@/hooks/use-risk-score-loading";
 import { getDashboardChartTheme } from "@/lib/dashboard-theme";
@@ -19,8 +26,6 @@ export default function Index() {
   const isDark = resolvedTheme !== "light";
   const chartTheme = useMemo(() => getDashboardChartTheme(isDark), [isDark]);
 
-  const leftSidebarRef = useRef<HTMLDivElement>(null);
-  const leftColumnHeight = useLeftColumnHeight(leftSidebarRef);
   const isRiskScoreLoading = useRiskScoreLoading();
   const isDesktop = useIsDesktop();
 
@@ -33,27 +38,38 @@ export default function Index() {
       <DashboardHeader />
       <LiveQuoteTape />
 
-      <main className="mx-auto flex max-w-dashboard flex-col gap-6 p-6 lg:flex-row lg:items-start lg:p-8">
-        <AccountSidebar
-          ref={leftSidebarRef}
+      <main className="mx-auto grid max-w-dashboard grid-cols-1 items-stretch gap-6 p-6 lg:grid-cols-[20rem_minmax(0,1fr)_20rem] lg:p-8">
+        <AccountSummary
+          chartTheme={chartTheme}
+          isDark={isDark}
+          className="h-full"
+        />
+        {isRiskScoreLoading ? (
+          <RiskScoreCardSkeleton className="h-full" />
+        ) : (
+          <RiskScoreCard isDark={isDark} className="h-full" />
+        )}
+        <StockList />
+
+        <QuickFilters />
+        <RiskFactorPair
+          isLoading={isRiskScoreLoading}
           chartTheme={chartTheme}
           isDark={isDark}
         />
+        <div className="relative min-h-0">
+          <div className="absolute inset-0">
+            <MarketBriefPanel />
+          </div>
+        </div>
 
-        <MatchedColumn height={leftColumnHeight} className="flex-1">
-          {isRiskScoreLoading ? (
-            <RiskScoreCardSkeleton />
-          ) : (
-            <RiskScoreCard isDark={isDark} />
-          )}
-          <RiskFactorAnalysis
-            isLoading={isRiskScoreLoading}
-            chartTheme={chartTheme}
-            isDark={isDark}
-          />
-        </MatchedColumn>
-
-        <RightSidebar columnHeight={leftColumnHeight} />
+        <AlertsPanel />
+        <ReturnOnAssetsCard
+          isLoading={isRiskScoreLoading}
+          chartTheme={chartTheme}
+          isDark={isDark}
+        />
+        <MoodTracker />
       </main>
     </div>
   );

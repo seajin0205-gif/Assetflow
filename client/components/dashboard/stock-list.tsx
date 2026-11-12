@@ -1,9 +1,14 @@
 import { stockHoldings } from "@/data/dashboard";
 import { cn } from "@/lib/utils";
 
-export function StockList() {
+export function StockList({ className }: { className?: string }) {
   return (
-    <div className="glass-panel flex shrink-0 flex-col space-y-4 px-6 py-6">
+    <div
+      className={cn(
+        "glass-panel flex h-full flex-col gap-4 px-6 py-6",
+        className,
+      )}
+    >
       <div className="space-y-2">
         <h2 className="font-display text-xl font-bold leading-8 tracking-tight lg:text-2xl lg:leading-8">
           My stocks
