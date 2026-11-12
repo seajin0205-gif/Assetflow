@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowDownRight,
@@ -138,14 +138,6 @@ export default function Trade() {
   const symbol = (market.quotes.find((s) => s.symbol === symbolId) ??
     market.quotes[0]) as LiveQuote;
   const chartData = market.charts[symbol.symbol];
-  const [chartFlash, setChartFlash] = useState<"up" | "down" | "flat">("flat");
-
-  useEffect(() => {
-    if (market.sequence === 0 || symbol.direction === "flat") return;
-    setChartFlash(symbol.direction);
-    const timer = window.setTimeout(() => setChartFlash("flat"), 450);
-    return () => window.clearTimeout(timer);
-  }, [market.sequence, symbol.direction, symbol.symbol]);
   const orderBook = useOrderBook(symbol.price);
 
   const qtyNum = Math.max(0, Number(quantity) || 0);
@@ -326,15 +318,7 @@ export default function Trade() {
                   </button>
                 ))}
               </div>
-              <div className="glass-panel-sm relative h-[52vh] min-h-72 p-4">
-                <span
-                  data-chart-flash={chartFlash}
-                  className={cn(
-                    "pointer-events-none absolute inset-0 rounded-xl",
-                    chartFlash === "up" && "chart-flash-up",
-                    chartFlash === "down" && "chart-flash-down",
-                  )}
-                />
+              <div className="glass-panel-sm h-[52vh] min-h-72 p-4">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart
                     data={chartData}

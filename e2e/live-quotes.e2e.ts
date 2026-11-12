@@ -46,17 +46,8 @@ test("trade ticket flashes the live price and chart", async ({ page }) => {
   );
 
   await page.getByRole("button", { name: "차트" }).click();
-  const shadow = await page.waitForFunction(
-    () => {
-      const frame = document.querySelector("[data-chart-flash]");
-      const flash = frame?.getAttribute("data-chart-flash");
-      if (flash !== "up" && flash !== "down") return null;
-      return getComputedStyle(frame as Element).boxShadow;
-    },
-    null,
-    { timeout: 15000, polling: 50 },
-  );
-  expect(await shadow.jsonValue()).not.toBe("none");
+  await expect(page.locator(".recharts-surface").first()).toBeVisible();
+  await expect(page.locator("[data-chart-flash]")).toHaveCount(0);
 });
 
 test("mobile dashboard keeps the connection pill beside search", async ({

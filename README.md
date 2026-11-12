@@ -44,7 +44,7 @@ flowchart LR
 
 ## Key features
 
-- **Live quote stream.** A simulated socket checks NVIDIA, Apple, Tesla, and Microsoft every 1.5 seconds, and most checks leave the price unchanged. A print that does move flashes green or red for a moment, the chart tip follows that print, and the header shows `WS Connected` with a moving latency reading. The trade ticket also subscribes to a simulated book feed that replaces the five ask levels and five bid levels around the selected mid price.
+- **Live quote stream.** A simulated socket checks NVIDIA, Apple, Tesla, and Microsoft every 1.5 seconds, and most checks leave the price unchanged. A print that does move tints that price green or red, then the color eases back to the default. The chart line follows the print, and the header shows `WS Connected` with a moving latency reading. The trade ticket also subscribes to a simulated book feed that replaces the five ask levels and five bid levels around the selected mid price.
 - **Concurrency safety.** Order placement and cancellation run inside `BEGIN IMMEDIATE`. The account update matches the version read at the start of the transaction, so a stale write rolls back. Cash, reserved buying power, and reserved shares commit together. A repeated `Idempotency-Key` returns the original response and does not fill twice.
 - **Localized trade copy.** The portfolio dashboard is English. The trade ticket, including validation and insufficient-funds feedback, is Korean.
 - **Bounded trading traffic.** `/api/orders` accepts 10 requests per second for each `X-User-Id`, or for the client IP when that header is absent.

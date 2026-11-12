@@ -17,7 +17,7 @@ export function PriceFlash({ value, children, className }: PriceFlashProps) {
     previous.current = value;
     if (direction === "flat") return;
     setFlash(direction);
-    const timer = window.setTimeout(() => setFlash("flat"), 450);
+    const timer = window.setTimeout(() => setFlash("flat"), 180);
     return () => window.clearTimeout(timer);
   }, [value]);
 
@@ -25,7 +25,7 @@ export function PriceFlash({ value, children, className }: PriceFlashProps) {
     <span
       data-flash={flash}
       className={cn(
-        "inline-block rounded-lg",
+        "price-tick inline-block",
         flash === "up" && "price-flash-up",
         flash === "down" && "price-flash-down",
         className,
