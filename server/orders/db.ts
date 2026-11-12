@@ -223,6 +223,24 @@ export function updateOrderStatus(
   ).run(order.status, order.reservedCashCents, order.id);
 }
 
+export function listOrders(
+  db: DatabaseSync,
+  accountId: string,
+  limit: number,
+): OrderRow[] {
+  const rows = db
+    .prepare(
+      `SELECT id, account_id, symbol, side, order_type, quantity, limit_price_cents,
+              status, filled_quantity, average_price_cents, reserved_cash_cents, created_at
+         FROM orders
+        WHERE account_id = ?
+        ORDER BY created_at DESC, rowid DESC
+        LIMIT ?`,
+    )
+    .all(accountId, limit) as OrderSqlRow[];
+  return rows.map(mapOrderRow);
+}
+
 export function loadOrder(db: DatabaseSync, orderId: string): OrderRow | null {
   const row = db
     .prepare(
@@ -231,24 +249,28 @@ export function loadOrder(db: DatabaseSync, orderId: string): OrderRow | null {
          FROM orders
         WHERE id = ?`,
     )
-    .get(orderId) as
-    | {
-        id: string;
-        account_id: string;
-        symbol: string;
-        side: "buy" | "sell";
-        order_type: "market" | "limit";
-        quantity: number;
-        limit_price_cents: number | null;
-        status: "open" | "filled" | "cancelled";
-        filled_quantity: number;
-        average_price_cents: number | null;
-        reserved_cash_cents: number;
-        created_at: string;
-      }
-    | undefined;
+    .get(orderId) as OrderSqlRow | undefined;
 
   if (!row) return null;
+  return mapOrderRow(row);
+}
+
+type OrderSqlRow = {
+  id: string;
+  account_id: string;
+  symbol: string;
+  side: "buy" | "sell";
+  order_type: "market" | "limit";
+  quantity: number;
+  limit_price_cents: number | null;
+  status: "open" | "filled" | "cancelled";
+  filled_quantity: number;
+  average_price_cents: number | null;
+  reserved_cash_cents: number;
+  created_at: string;
+};
+
+function mapOrderRow(row: OrderSqlRow): OrderRow {
   return {
     id: row.id,
     accountId: row.account_id,

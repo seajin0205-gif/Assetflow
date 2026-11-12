@@ -44,7 +44,7 @@ flowchart LR
 
 ## Key features
 
-- **Order book stream.** The trade ticket subscribes to a simulated book feed. Each tick replaces the five ask levels and five bid levels around the selected mid price, and the subscription stops when the ticket unmounts.
+- **Live quote stream.** The API publishes NVIDIA, Apple, Tesla, and Microsoft. A server-sent stream (`GET /api/quotes/stream`) checks those four names every 1.5 seconds, and most checks leave the price unchanged. A print that does move tints that price green or red, then the color eases back to the default. The chart line follows the print. The header shows `WS Connected` with a latency reading measured by `/api/ping`. Market orders fill at the same quote the stream is publishing. The trade ticket also subscribes to a simulated book feed that replaces the five ask levels and five bid levels around that mid price.
 - **Concurrency safety.** Order placement and cancellation run inside `BEGIN IMMEDIATE`. The account update matches the version read at the start of the transaction, so a stale write rolls back. Cash, reserved buying power, and reserved shares commit together. A repeated `Idempotency-Key` returns the original response and does not fill twice.
 - **Localized trade copy.** The portfolio dashboard is English. The trade ticket, including validation and insufficient-funds feedback, is Korean.
 - **Bounded trading traffic.** `/api/orders` accepts 10 requests per second for each `X-User-Id`, or for the client IP when that header is absent.
@@ -99,18 +99,21 @@ docker compose down
 
 Responses that fail use `Content-Type: application/problem+json` and the fields `type`, `title`, `status`, `detail`, and `instance`.
 
-| Method   | Path              | Purpose                                          |
-| -------- | ----------------- | ------------------------------------------------ |
-| `GET`    | `/api/ping`       | Liveness payload                                 |
-| `GET`    | `/api/demo`       | Sample JSON payload                              |
-| `POST`   | `/api/orders`     | Place a market or limit order                    |
-| `GET`    | `/api/orders/:id` | Read one order for the calling account           |
-| `DELETE` | `/api/orders/:id` | Cancel an open order and release its reservation |
+| Method   | Path                 | Purpose                                          |
+| -------- | -------------------- | ------------------------------------------------ |
+| `GET`    | `/api/ping`          | Liveness payload                                 |
+| `GET`    | `/api/demo`          | Sample JSON payload                              |
+| `GET`    | `/api/quotes`        | Current quote board for the four names           |
+| `GET`    | `/api/quotes/stream` | Server-sent events of that same board            |
+| `GET`    | `/api/account`       | Cash, reserved cash, buying power, and positions |
+| `POST`   | `/api/orders`        | Place a market or limit order                    |
+| `GET`    | `/api/orders`        | List the account's newest 20 orders              |
+| `GET`    | `/api/orders/:id`    | Read one order for the calling account           |
+| `DELETE` | `/api/orders/:id`    | Cancel an open order and release its reservation |
 
-`POST` and `DELETE` require:
+`GET /api/account`, `GET /api/orders`, `POST`, and `DELETE` require `X-User-Id`: 1–64 letters, numbers, underscores, or hyphens. The seeded account is `demo`.
 
-- `X-User-Id`: 1–64 letters, numbers, underscores, or hyphens. The seeded account is `demo`.
-- `Idempotency-Key`: 8–200 characters from `A-Z`, `a-z`, `0-9`, and `. _ : -`.
+`POST` and `DELETE` also require `Idempotency-Key`: 8–200 characters from `A-Z`, `a-z`, `0-9`, and `. _ : -`.
 
 Place-order body:
 
@@ -126,7 +129,9 @@ Place-order body:
 
 `symbol` is one of `NVDA`, `AAPL`, `TSLA`, and `MSFT`. `quantity` is a positive integer. `limitPrice` is required when `type` is `limit` and omitted when `type` is `market`. A successful create returns `201` and the order. The same key and body return that order again with `Idempotent-Replayed: true`. The same key with a different body returns `409`.
 
-Market orders fill at the server quote. Limit orders stay `open` and reserve cash for a buy or shares for a sell. Cancelling an open order releases that reservation. Cancelling a filled order returns `409`.
+Market orders fill at the quote currently published by `/api/quotes`. With no stream subscriber the board stays on its last print, which opens at NVDA `892.40`, AAPL `198.32`, TSLA `248.91`, and MSFT `428.15`. Limit orders stay `open` and reserve cash for a buy or shares for a sell. Cancelling an open order releases that reservation. Cancelling a filled order returns `409`.
+
+`GET /api/account` returns decimal dollar strings for `cash`, `reservedCash`, and `buyingPower` (`cash` minus reserved cash), plus each position's quantity, reserved quantity, and average cost. The Korean trade ticket converts buying power to KRW at 1,300 won per dollar and refreshes the account and the order list after a fill or a cancel.
 
 ## Tests and coverage
 
@@ -134,6 +139,7 @@ Market orders fill at the server quote. Limit orders stay `open` and reserve cas
 
 - `server/orders/order-placement.spec.ts` checks validation, buying power, share availability, idempotent replay, key mismatch, unknown accounts, and malformed JSON.
 - `server/orders/orders.spec.ts` checks the HTTP workflow, cancellation, concurrent buys, and the rate limit.
+- `server/orders/ledger.spec.ts` checks the account, the order list, and that a market fill uses the published quote.
 - `client/hooks/use-order-book.spec.tsx` checks the book ladder, tick updates, and unsubscribe.
 - `client/lib/utils.spec.ts` checks the class-name helper.
 

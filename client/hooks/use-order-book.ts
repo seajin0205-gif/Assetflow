@@ -77,12 +77,20 @@ export function useOrderBook(
   const [book, setBook] = useState(() => buildOrderBook(mid));
 
   useEffect(() => {
-    setBook(buildOrderBook(midRef.current));
+    setBook((current) =>
+      buildOrderBook(
+        midRef.current,
+        current.bids.map((level) => level.size),
+      ),
+    );
+  }, [mid]);
+
+  useEffect(() => {
     return subscribe(
       (tick) => setBook(buildOrderBook(tick.mid, tick.sizes)),
       () => midRef.current,
     );
-  }, [mid, subscribe]);
+  }, [subscribe]);
 
   return book;
 }

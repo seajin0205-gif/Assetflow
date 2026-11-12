@@ -2,6 +2,7 @@ import { createHash, randomUUID } from "node:crypto";
 import type { DatabaseSync } from "node:sqlite";
 import type { OrderResponse, ProblemDetails } from "@shared/api";
 import { ProblemError, problem } from "../http/problem";
+import { quoteCents } from "../quotes/engine";
 import {
   type AccountRow,
   type OrderRow,
@@ -17,13 +18,6 @@ import {
 
 export const PLACE_SCOPE = "POST /api/orders";
 export const CANCEL_SCOPE = "DELETE /api/orders/:id";
-
-const QUOTES_CENTS: Record<string, number> = {
-  NVDA: 89240,
-  AAPL: 19832,
-  TSLA: 24891,
-  MSFT: 42815,
-};
 
 export type PlaceOrderCommand = {
   accountId: string;
@@ -261,7 +255,7 @@ function applyPlace(
   account: AccountRow,
   command: PlaceOrderCommand,
 ): ApplySuccess | ApplyFailure {
-  const quote = QUOTES_CENTS[command.symbol];
+  const quote = quoteCents(command.symbol);
   if (!quote) {
     return {
       ok: false,
@@ -558,12 +552,16 @@ export function toResponse(order: OrderRow): OrderResponse {
   };
 }
 
-function money(cents: number): string {
+export function formatCents(cents: number): string {
   const sign = cents < 0 ? "-" : "";
   const absolute = Math.abs(cents);
   const whole = Math.trunc(absolute / 100);
   const fraction = String(absolute % 100).padStart(2, "0");
   return `${sign}${whole}.${fraction}`;
+}
+
+function money(cents: number): string {
+  return formatCents(cents);
 }
 
 function hashPayload(payload: Record<string, unknown>): string {

@@ -6,6 +6,10 @@ test.describe("trade order placement", () => {
   }) => {
     let submitted: Record<string, unknown> | null = null;
     await page.route("**/api/orders", async (route) => {
+      if (route.request().method() !== "POST") {
+        await route.continue();
+        return;
+      }
       submitted = route.request().postDataJSON() as Record<string, unknown>;
       const key = route.request().headers()["idempotency-key"];
       expect(key).toMatch(/^[A-Za-z0-9_.:-]{8,200}$/);
@@ -43,6 +47,10 @@ test.describe("trade order placement", () => {
     page,
   }) => {
     await page.route("**/api/orders", async (route) => {
+      if (route.request().method() !== "POST") {
+        await route.continue();
+        return;
+      }
       await fulfillOrder(route, 422, {
         type: "https://assetflow.dev/problems/insufficient-funds",
         title: "Insufficient Funds",

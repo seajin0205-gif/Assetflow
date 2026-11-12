@@ -34,6 +34,21 @@ export interface OrderResponse {
   reservedCash: string;
 }
 
+export interface AccountPosition {
+  symbol: string;
+  quantity: number;
+  reservedQuantity: number;
+  avgCost: string;
+}
+
+export interface AccountResponse {
+  accountId: string;
+  cash: string;
+  reservedCash: string;
+  buyingPower: string;
+  positions: AccountPosition[];
+}
+
 export interface PlaceOrderRequest {
   symbol: string;
   side: "buy" | "sell";

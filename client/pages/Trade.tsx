@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowDownRight,
@@ -12,7 +12,12 @@ import {
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
+import type { AccountResponse, OrderResponse } from "@shared/api";
+import { LiveConnectionStatus } from "@/components/connection-status";
+import { PriceFlash } from "@/components/price-flash";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useMarketFeed } from "@/hooks/use-market-feed";
+import type { LiveQuote } from "@/lib/market-feed";
 import { useOrderBook } from "@/hooks/use-order-book";
 import { getDashboardChartTheme } from "@/lib/dashboard-theme";
 import { cn } from "@/lib/utils";
@@ -36,104 +41,16 @@ import {
   YAxis,
 } from "recharts";
 
-type SymbolInfo = {
-  id: string;
-  name: string;
-  price: number;
-  change: number;
-  changePct: number;
-};
-
 type MobileTab = "chart" | "book" | "order" | "history";
 
-const SYMBOLS: SymbolInfo[] = [
-  { id: "NVDA", name: "NVIDIA", price: 892.4, change: 12.8, changePct: 1.46 },
-  { id: "AAPL", name: "Apple", price: 198.32, change: -1.24, changePct: -0.62 },
-  { id: "TSLA", name: "Tesla", price: 248.91, change: 5.12, changePct: 2.1 },
-  {
-    id: "MSFT",
-    name: "Microsoft",
-    price: 428.15,
-    change: 2.44,
-    changePct: 0.57,
-  },
-];
+const DEMO_ACCOUNT = "demo";
+const KRW_PER_USD = 1300;
 
-const CHART_BY_SYMBOL: Record<string, { time: string; price: number }[]> = {
-  NVDA: [
-    { time: "09:30", price: 878 },
-    { time: "10:00", price: 881 },
-    { time: "10:30", price: 879 },
-    { time: "11:00", price: 885 },
-    { time: "11:30", price: 888 },
-    { time: "12:00", price: 886 },
-    { time: "12:30", price: 890 },
-    { time: "13:00", price: 892 },
-  ],
-  AAPL: [
-    { time: "09:30", price: 199.8 },
-    { time: "10:00", price: 199.2 },
-    { time: "10:30", price: 198.9 },
-    { time: "11:00", price: 198.5 },
-    { time: "11:30", price: 198.1 },
-    { time: "12:00", price: 198.4 },
-    { time: "12:30", price: 198.0 },
-    { time: "13:00", price: 198.32 },
-  ],
-  TSLA: [
-    { time: "09:30", price: 242 },
-    { time: "10:00", price: 244 },
-    { time: "10:30", price: 243 },
-    { time: "11:00", price: 246 },
-    { time: "11:30", price: 247 },
-    { time: "12:00", price: 245 },
-    { time: "12:30", price: 248 },
-    { time: "13:00", price: 248.91 },
-  ],
-  MSFT: [
-    { time: "09:30", price: 425 },
-    { time: "10:00", price: 426 },
-    { time: "10:30", price: 427 },
-    { time: "11:00", price: 426.5 },
-    { time: "11:30", price: 427.8 },
-    { time: "12:00", price: 427.2 },
-    { time: "12:30", price: 428 },
-    { time: "13:00", price: 428.15 },
-  ],
-};
-
-const HOLDINGS = [
-  { symbol: "NVDA", qty: 12, avg: 720.5, value: 10708.8, pnl: 12.4 },
-  { symbol: "AAPL", qty: 40, avg: 182.1, value: 7932.8, pnl: -2.1 },
-  { symbol: "MSFT", qty: 8, avg: 410.0, value: 3425.2, pnl: 4.3 },
-];
-
-const RECENT_ORDERS = [
-  {
-    id: "ORD-2841",
-    side: "buy" as const,
-    symbol: "NVDA",
-    qty: 5,
-    price: 885.2,
-    status: "체결",
-  },
-  {
-    id: "ORD-2839",
-    side: "sell" as const,
-    symbol: "AAPL",
-    qty: 10,
-    price: 199.1,
-    status: "체결",
-  },
-  {
-    id: "ORD-2835",
-    side: "buy" as const,
-    symbol: "MSFT",
-    qty: 3,
-    price: 426.0,
-    status: "대기",
-  },
-];
+const ORDER_STATUS_LABEL = {
+  filled: "체결",
+  open: "대기",
+  cancelled: "취소",
+} as const;
 
 const NAV_ITEMS: { id: MobileTab; label: string; icon: typeof BarChart3 }[] = [
   { id: "chart", label: "차트", icon: BarChart3 },
@@ -170,6 +87,10 @@ function orderProblemMessage(body: { type?: string; detail?: string }) {
   return body.detail || "주문을 처리하지 못했습니다.";
 }
 
+function usdToKrw(usd: string) {
+  return Math.round(Number(usd) * KRW_PER_USD);
+}
+
 function formatUsdCompact(n: number) {
   if (n >= 1000) return `$${(n / 1000).toFixed(1)}k`;
   return formatUsd(n);
@@ -180,20 +101,26 @@ export default function Trade() {
   const isDark = resolvedTheme === "dark";
   const chartTheme = getDashboardChartTheme(isDark);
 
+  const market = useMarketFeed();
   const [tab, setTab] = useState<MobileTab>("order");
   const [symbolId, setSymbolId] = useState("NVDA");
   const [side, setSide] = useState<"buy" | "sell">("buy");
   const [orderType, setOrderType] = useState<"market" | "limit">("limit");
   const [quantity, setQuantity] = useState("10");
-  const [limitPrice, setLimitPrice] = useState(SYMBOLS[0].price.toFixed(2));
+  const [limitPrice, setLimitPrice] = useState(() =>
+    (market.quotes[0]?.price ?? 0).toFixed(2),
+  );
   const [submitting, setSubmitting] = useState(false);
+  const [account, setAccount] = useState<AccountResponse | null>(null);
+  const [orders, setOrders] = useState<OrderResponse[]>([]);
   const submittingRef = useRef(false);
   const pendingOrder = useRef<{ fingerprint: string; key: string } | null>(
     null,
   );
 
-  const symbol = SYMBOLS.find((s) => s.id === symbolId) ?? SYMBOLS[0];
-  const chartData = CHART_BY_SYMBOL[symbolId] ?? CHART_BY_SYMBOL.NVDA;
+  const symbol = (market.quotes.find((s) => s.symbol === symbolId) ??
+    market.quotes[0]) as LiveQuote;
+  const chartData = market.charts[symbol.symbol];
   const orderBook = useOrderBook(symbol.price);
 
   const qtyNum = Math.max(0, Number(quantity) || 0);
@@ -202,13 +129,51 @@ export default function Trade() {
       ? symbol.price
       : Math.max(0, Number(limitPrice) || symbol.price);
   const estimatedTotal = qtyNum * priceNum;
-  const buyingPower = 124_580_000;
-  const availableShares = HOLDINGS.find((h) => h.symbol === symbolId)?.qty ?? 0;
+  const buyingPower = account ? usdToKrw(account.buyingPower) : 0;
+  const holdings = (account?.positions ?? []).map((position) => {
+    const mark =
+      market.quotes.find((quote) => quote.symbol === position.symbol)?.price ??
+      Number(position.avgCost);
+    const avg = Number(position.avgCost);
+    const pnl = avg === 0 ? 0 : Math.round(((mark - avg) / avg) * 1000) / 10;
+    return {
+      symbol: position.symbol,
+      qty: position.quantity,
+      available: position.quantity - position.reservedQuantity,
+      avg,
+      value: position.quantity * mark,
+      pnl,
+    };
+  });
+  const availableShares =
+    holdings.find((holding) => holding.symbol === symbolId)?.available ?? 0;
   const isUp = symbol.change >= 0;
+
+  const loadLedger = useCallback(async () => {
+    try {
+      const headers = { "X-User-Id": DEMO_ACCOUNT };
+      const [accountResponse, orderResponse] = await Promise.all([
+        fetch("/api/account", { headers }),
+        fetch("/api/orders", { headers }),
+      ]);
+      if (accountResponse.ok) {
+        setAccount((await accountResponse.json()) as AccountResponse);
+      }
+      if (orderResponse.ok) {
+        setOrders((await orderResponse.json()) as OrderResponse[]);
+      }
+    } catch {
+      // Keep the last account and order list when the read fails.
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadLedger();
+  }, [loadLedger]);
 
   const handleSymbolChange = (id: string) => {
     setSymbolId(id);
-    const next = SYMBOLS.find((s) => s.id === id);
+    const next = market.quotes.find((s) => s.symbol === id);
     if (next) setLimitPrice(next.price.toFixed(2));
   };
 
@@ -228,7 +193,7 @@ export default function Trade() {
     }
 
     const fingerprint = JSON.stringify({
-      symbol: symbol.id,
+      symbol: symbol.symbol,
       side,
       type: orderType,
       quantity: qtyNum,
@@ -249,7 +214,7 @@ export default function Trade() {
           "X-User-Id": "demo",
         },
         body: JSON.stringify({
-          symbol: symbol.id,
+          symbol: symbol.symbol,
           side,
           type: orderType,
           quantity: qtyNum,
@@ -267,17 +232,42 @@ export default function Trade() {
       }
       toast.success(
         side === "buy"
-          ? `${symbol.id} 매수 ${qtyNum}주 접수`
-          : `${symbol.id} 매도 ${qtyNum}주 접수`,
+          ? `${symbol.symbol} 매수 ${qtyNum}주 접수`
+          : `${symbol.symbol} 매도 ${qtyNum}주 접수`,
         {
           description: `${orderType === "market" ? "시장가" : "지정가"} · ${formatUsd(estimatedTotal)}`,
         },
       );
+      await loadLedger();
     } catch {
       toast.error("주문을 처리하지 못했습니다.");
     } finally {
       submittingRef.current = false;
       setSubmitting(false);
+    }
+  };
+
+  const cancelOrder = async (orderId: string) => {
+    try {
+      const response = await fetch(`/api/orders/${orderId}`, {
+        method: "DELETE",
+        headers: {
+          "Idempotency-Key": crypto.randomUUID(),
+          "X-User-Id": DEMO_ACCOUNT,
+        },
+      });
+      const payload = (await response.json()) as {
+        type?: string;
+        detail?: string;
+      };
+      if (!response.ok) {
+        toast.error(orderProblemMessage(payload));
+        return;
+      }
+      toast.success("주문을 취소했습니다.");
+      await loadLedger();
+    } catch {
+      toast.error("주문을 취소하지 못했습니다.");
     }
   };
 
@@ -302,9 +292,9 @@ export default function Trade() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {SYMBOLS.map((s) => (
-                  <SelectItem key={s.id} value={s.id}>
-                    {s.id} · {s.name}
+                {market.quotes.map((s) => (
+                  <SelectItem key={s.symbol} value={s.symbol}>
+                    {s.symbol} · {s.name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -319,9 +309,12 @@ export default function Trade() {
                 <p className="text-xs leading-4 text-muted-foreground">
                   {symbol.name}
                 </p>
-                <p className="font-display text-2xl font-bold leading-8 tabular-nums">
+                <PriceFlash
+                  value={symbol.price}
+                  className="font-display text-2xl font-bold leading-8 tabular-nums"
+                >
                   {formatUsd(symbol.price)}
-                </p>
+                </PriceFlash>
               </div>
               <span
                 className={cn(
@@ -338,11 +331,17 @@ export default function Trade() {
                 {symbol.changePct.toFixed(2)}%
               </span>
             </div>
+            <div className="mt-2">
+              <LiveConnectionStatus />
+            </div>
             <div className="mt-2 flex items-center gap-2 rounded-lg bg-muted/40 px-4 py-2 text-xs leading-4">
               <Wallet className="h-4 w-4 shrink-0 text-muted-foreground" />
               <span className="text-muted-foreground">주문가능</span>
-              <span className="ml-auto font-semibold tabular-nums">
-                {formatKrw(buyingPower)}
+              <span
+                className="ml-auto font-semibold tabular-nums"
+                data-testid="buying-power"
+              >
+                {account ? formatKrw(buyingPower) : "—"}
               </span>
             </div>
           </div>
@@ -426,6 +425,7 @@ export default function Trade() {
                       stroke={chartTheme.revenueStroke[0]?.color ?? "#3b82f6"}
                       strokeWidth={2}
                       fill="url(#tradeFill)"
+                      isAnimationActive={false}
                     />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -441,9 +441,9 @@ export default function Trade() {
                 <span>잔량</span>
               </div>
               <div className="space-y-0">
-                {orderBook.asks.map((row) => (
+                {orderBook.asks.map((row, index) => (
                   <div
-                    key={`ask-${row.price}`}
+                    key={`ask-${index}`}
                     className="relative grid grid-cols-3 items-center rounded py-2 tabular-nums"
                   >
                     <span
@@ -454,7 +454,9 @@ export default function Trade() {
                       매도
                     </span>
                     <span className="relative z-10 text-center font-semibold trade-sell">
-                      {row.price.toFixed(2)}
+                      <PriceFlash value={row.price}>
+                        {row.price.toFixed(2)}
+                      </PriceFlash>
                     </span>
                     <span className="relative z-10 pr-2 text-right text-muted-foreground">
                       {row.size}
@@ -463,14 +465,17 @@ export default function Trade() {
                 ))}
               </div>
               <div className="my-2 border-y border-subtle py-2 text-center">
-                <span className="font-display text-lg font-bold tabular-nums">
+                <PriceFlash
+                  value={symbol.price}
+                  className="font-display text-lg font-bold tabular-nums"
+                >
                   {formatUsd(symbol.price)}
-                </span>
+                </PriceFlash>
               </div>
               <div className="space-y-0">
-                {orderBook.bids.map((row) => (
+                {orderBook.bids.map((row, index) => (
                   <div
-                    key={`bid-${row.price}`}
+                    key={`bid-${index}`}
                     className="relative grid grid-cols-3 items-center rounded py-2 tabular-nums"
                   >
                     <span
@@ -481,7 +486,9 @@ export default function Trade() {
                       매수
                     </span>
                     <span className="relative z-10 text-center font-semibold trade-buy">
-                      {row.price.toFixed(2)}
+                      <PriceFlash value={row.price}>
+                        {row.price.toFixed(2)}
+                      </PriceFlash>
                     </span>
                     <span className="relative z-10 pr-2 text-right text-muted-foreground">
                       {row.size}
@@ -645,7 +652,7 @@ export default function Trade() {
               <div>
                 <p className="section-label mb-2 px-0">보유 종목</p>
                 <div className="flex gap-2 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                  {HOLDINGS.map((h) => (
+                  {holdings.map((h) => (
                     <button
                       key={h.symbol}
                       type="button"
@@ -671,41 +678,65 @@ export default function Trade() {
           {tab === "history" && (
             <div className="space-y-4">
               <p className="section-label px-0">최근 주문</p>
-              {RECENT_ORDERS.map((o) => (
-                <div
-                  key={o.id}
-                  className="glass-panel-sm flex items-center gap-4 p-4"
-                >
-                  <span
-                    className={cn(
-                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xs font-bold",
-                      o.side === "buy" ? "trade-buy-muted" : "trade-sell-muted",
-                    )}
+              {orders.length === 0 && (
+                <p className="text-sm text-muted-foreground">
+                  최근 주문이 없습니다.
+                </p>
+              )}
+              {orders.map((order) => {
+                const price = Number(
+                  order.averagePrice ?? order.limitPrice ?? 0,
+                );
+                const statusLabel = ORDER_STATUS_LABEL[order.status];
+                return (
+                  <div
+                    key={order.id}
+                    className="glass-panel-sm flex items-center gap-4 p-4"
                   >
-                    {o.side === "buy" ? "매수" : "매도"}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-bold">{o.symbol}</span>
-                      <span className="text-sm tabular-nums">
-                        {formatUsdCompact(o.price)}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>
-                        {o.qty}주 · {o.id}
-                      </span>
-                      <span className="inline-flex items-center gap-1">
-                        {o.status === "대기" && <Clock className="h-4 w-4" />}
-                        {o.status}
-                      </span>
+                    <span
+                      className={cn(
+                        "flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xs font-bold",
+                        order.side === "buy"
+                          ? "trade-buy-muted"
+                          : "trade-sell-muted",
+                      )}
+                    >
+                      {order.side === "buy" ? "매수" : "매도"}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-bold">{order.symbol}</span>
+                        <span className="text-sm tabular-nums">
+                          {price > 0 ? formatUsdCompact(price) : "—"}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span>
+                          {order.quantity}주 · {order.id.slice(0, 8)}
+                        </span>
+                        <span className="inline-flex items-center gap-2">
+                          {order.status === "open" && (
+                            <Clock className="h-4 w-4" />
+                          )}
+                          {statusLabel}
+                          {order.status === "open" && (
+                            <button
+                              type="button"
+                              className="font-semibold text-foreground"
+                              onClick={() => void cancelOrder(order.id)}
+                            >
+                              취소
+                            </button>
+                          )}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
 
               <p className="section-label mt-4 px-0">보유 현황</p>
-              {HOLDINGS.map((h) => (
+              {holdings.map((h) => (
                 <button
                   key={h.symbol}
                   type="button"
