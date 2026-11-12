@@ -1,18 +1,24 @@
 import { useEffect, useState } from "react";
+import { subscribeQuoteStream } from "@/lib/quote-stream";
 import {
-  liveMarketFeed,
+  createMarketSnapshot,
   type MarketFeed,
   type MarketSnapshot,
 } from "@/lib/market-feed";
 
-export function useMarketFeed(
-  feed: MarketFeed = liveMarketFeed,
-): MarketSnapshot {
-  const [snapshot, setSnapshot] = useState(() => feed.getSnapshot());
+export function useMarketFeed(feed?: MarketFeed): MarketSnapshot {
+  const [snapshot, setSnapshot] = useState<MarketSnapshot>(() =>
+    feed
+      ? feed.getSnapshot()
+      : { ...createMarketSnapshot(), status: "connecting", latencyMs: 0 },
+  );
 
   useEffect(() => {
-    setSnapshot(feed.getSnapshot());
-    return feed.subscribe(setSnapshot);
+    if (feed) {
+      setSnapshot(feed.getSnapshot());
+      return feed.subscribe(setSnapshot);
+    }
+    return subscribeQuoteStream(setSnapshot);
   }, [feed]);
 
   return snapshot;

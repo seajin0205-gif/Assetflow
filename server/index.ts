@@ -7,7 +7,8 @@ import { handleDemo } from "./routes/demo";
 import { ProblemError, problem, sendProblem } from "./http/problem";
 import { tradingRateLimit } from "./http/rate-limit";
 import { getSharedDatabase } from "./orders/db";
-import { createOrderRouter } from "./orders/routes";
+import { createAccountRouter, createOrderRouter } from "./orders/routes";
+import { createQuoteRouter } from "./quotes/routes";
 
 export type ServerOptions = {
   database?: DatabaseSync;
@@ -30,6 +31,8 @@ export function createServer(options: ServerOptions = {}) {
 
   app.get("/api/demo", handleDemo);
 
+  app.use("/api/quotes", createQuoteRouter());
+  app.use("/api/account", createAccountRouter(database));
   app.use("/api/orders", tradingRateLimit());
   app.use("/api/orders", createOrderRouter(database));
 

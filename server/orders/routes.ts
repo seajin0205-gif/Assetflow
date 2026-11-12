@@ -2,12 +2,19 @@ import { Router } from "express";
 import type { Request, RequestHandler } from "express";
 import type { DatabaseSync } from "node:sqlite";
 import { z } from "zod";
-import type { OrderResponse, ProblemDetails } from "@shared/api";
+import type {
+  AccountResponse,
+  OrderResponse,
+  ProblemDetails,
+} from "@shared/api";
 import { ProblemError, problem, sendProblem } from "../http/problem";
+import { loadAccount, listOrders } from "./db";
 import {
   cancelOrder,
+  formatCents,
   getOrder,
   placeOrder,
+  toResponse,
   type OrderOutcome,
 } from "./order-service";
 
@@ -76,6 +83,20 @@ export function createOrderRouter(db: DatabaseSync): Router {
   );
 
   router.get(
+    "/",
+    asyncHandler(async (req, res) => {
+      const instance = req.originalUrl;
+      const accountId = readAccountId(req, instance);
+      if (!loadAccount(db, accountId)) {
+        sendProblem(res, missingAccount(accountId, instance));
+        return;
+      }
+      const orders = listOrders(db, accountId, 20).map(toResponse);
+      res.json(orders);
+    }),
+  );
+
+  router.get(
     "/:id",
     asyncHandler(async (req, res) => {
       const instance = req.originalUrl;
@@ -104,6 +125,48 @@ export function createOrderRouter(db: DatabaseSync): Router {
   );
 
   return router;
+}
+
+export function createAccountRouter(db: DatabaseSync): Router {
+  const router = Router();
+
+  router.get(
+    "/",
+    asyncHandler(async (req, res) => {
+      const instance = req.originalUrl;
+      const accountId = readAccountId(req, instance);
+      const account = loadAccount(db, accountId);
+      if (!account) {
+        sendProblem(res, missingAccount(accountId, instance));
+        return;
+      }
+      const body: AccountResponse = {
+        accountId: account.id,
+        cash: formatCents(account.cashCents),
+        reservedCash: formatCents(account.reservedCashCents),
+        buyingPower: formatCents(account.cashCents - account.reservedCashCents),
+        positions: account.positions.map((position) => ({
+          symbol: position.symbol,
+          quantity: position.quantity,
+          reservedQuantity: position.reservedQuantity,
+          avgCost: formatCents(position.avgCostCents),
+        })),
+      };
+      res.json(body);
+    }),
+  );
+
+  return router;
+}
+
+function missingAccount(accountId: string, instance: string): ProblemDetails {
+  return problem(
+    404,
+    "account-not-found",
+    "Account Not Found",
+    `No account exists for ${accountId}.`,
+    instance,
+  );
 }
 
 function sendOutcome(
