@@ -50,17 +50,38 @@ export function RiskFactorAnalysis({
   isDark,
 }: RiskFactorAnalysisProps) {
   return (
-    <div className="glass-panel flex flex-col gap-6 overflow-hidden p-4 lg:min-h-0 lg:flex-1 lg:gap-8 lg:p-8">
-      <div className="shrink-0 space-y-4">
-        <h3 className="font-display text-2xl font-bold tracking-tight lg:text-3xl">
+    <div className="flex flex-col gap-6">
+      <RiskFactorPair
+        isLoading={isLoading}
+        chartTheme={chartTheme}
+        isDark={isDark}
+      />
+      <ReturnOnAssetsCard
+        isLoading={isLoading}
+        chartTheme={chartTheme}
+        isDark={isDark}
+      />
+    </div>
+  );
+}
+
+export function RiskFactorPair({
+  isLoading,
+  chartTheme,
+  isDark,
+}: RiskFactorAnalysisProps) {
+  return (
+    <div className="glass-panel flex flex-col gap-4 p-6">
+      <div className="space-y-2">
+        <h3 className="font-display text-2xl font-bold leading-8 tracking-tight">
           Risk Factor Analysis
         </h3>
-        <p className="max-w-2xl text-sm text-muted-foreground lg:text-base">
+        <p className="text-sm leading-6 text-muted-foreground">
           Breakdown of exposures by systematic factors and concentration
         </p>
       </div>
 
-      <div className="flex shrink-0 gap-4">
+      <div className="flex gap-4">
         <button type="button" className="btn-ghost text-sm">
           Export
         </button>
@@ -69,7 +90,7 @@ export function RiskFactorAnalysis({
         </button>
       </div>
 
-      <div className="grid shrink-0 grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {isLoading ? (
           <>
             <RiskFactorCardSkeleton variant="area" />
@@ -82,13 +103,21 @@ export function RiskFactorAnalysis({
           </>
         )}
       </div>
-
-      {isLoading ? (
-        <RotaChartSkeleton />
-      ) : (
-        <RotaChart chartTheme={chartTheme} isDark={isDark} />
-      )}
     </div>
+  );
+}
+
+export function ReturnOnAssetsCard({
+  isLoading,
+  chartTheme,
+  isDark,
+  className,
+}: RiskFactorAnalysisProps & { className?: string }) {
+  if (isLoading) {
+    return <RotaChartSkeleton className={className} />;
+  }
+  return (
+    <RotaChart chartTheme={chartTheme} isDark={isDark} className={className} />
   );
 }
 
@@ -100,16 +129,16 @@ function EquityBetaCard({
   isDark: boolean;
 }) {
   return (
-    <div className="glass-panel-sm flex flex-col gap-4 p-4 lg:p-6">
+    <div className="glass-panel-sm flex h-full flex-col gap-2 p-4">
       <div className="flex items-baseline justify-between gap-2">
-        <h4 className="font-display text-base font-semibold leading-6 text-foreground/90 lg:text-lg lg:leading-6">
+        <h4 className="whitespace-nowrap font-display text-base font-semibold leading-6 text-foreground/90">
           Equity beta
         </h4>
-        <div className="font-display text-2xl font-bold tabular-nums lg:text-3xl">
+        <div className="font-display text-2xl font-bold leading-8 tabular-nums">
           {latestEquityBeta.toFixed(2)}
         </div>
       </div>
-      <div className="h-36 overflow-hidden rounded-lg lg:min-h-32 lg:h-auto lg:flex-1">
+      <div className="h-20 overflow-hidden rounded-lg">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             key={isDark ? "equity-dark" : "equity-light"}
@@ -141,17 +170,17 @@ function EquityBetaCard({
 
 function FxExposureCard({ isDark }: { isDark: boolean }) {
   return (
-    <div className="glass-panel-sm fx-card-accent flex flex-col gap-4 p-4 lg:p-6">
+    <div className="glass-panel-sm fx-card-accent flex h-full flex-col gap-2 p-4">
       <div className="flex items-baseline justify-between gap-2">
-        <h4 className="font-display text-base font-semibold leading-6 text-foreground/90 lg:text-lg lg:leading-6">
+        <h4 className="whitespace-nowrap font-display text-base font-semibold leading-6 text-foreground/90">
           FX exposure
         </h4>
-        <div className="font-display text-2xl font-bold tabular-nums lg:text-3xl">
+        <div className="font-display text-2xl font-bold leading-8 tabular-nums">
           {totalFxExposure.toFixed(1)}%
         </div>
       </div>
-      <div className="flex flex-col gap-4 lg:min-h-32 lg:flex-row lg:items-center lg:gap-4">
-        <div className="mx-auto aspect-square h-36 w-36 shrink-0 lg:mx-0 lg:h-full lg:max-h-32 lg:min-h-22 lg:min-w-0 lg:flex-1 lg:self-center">
+      <div className="flex items-center gap-4">
+        <div className="h-20 w-20 shrink-0">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart
               key={isDark ? "fx-dark" : "fx-light"}
@@ -179,7 +208,7 @@ function FxExposureCard({ isDark }: { isDark: boolean }) {
             </PieChart>
           </ResponsiveContainer>
         </div>
-        <ul className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs leading-4 sm:flex sm:shrink-0 sm:flex-col sm:justify-center lg:gap-2 lg:text-sm lg:leading-6">
+        <ul className="grid min-w-0 flex-1 grid-cols-2 gap-x-4 gap-y-2 text-xs leading-4 sm:grid-cols-1">
           {fxExposureData.map((entry, i) => (
             <li
               key={entry.currency}
@@ -203,10 +232,13 @@ function FxExposureCard({ isDark }: { isDark: boolean }) {
   );
 }
 
-function RotaChartSkeleton() {
+function RotaChartSkeleton({ className }: { className?: string }) {
   return (
     <div
-      className="glass-panel-sm flex min-h-0 flex-1 flex-col gap-4 p-4 lg:p-6"
+      className={cn(
+        "glass-panel flex h-full min-h-0 flex-col gap-4 p-6",
+        className,
+      )}
       aria-busy="true"
       aria-label="Loading return on total assets"
     >
@@ -225,10 +257,7 @@ function RotaChartSkeleton() {
         <Skeleton className="h-8 w-20 rounded-lg" />
         <Skeleton className="h-8 w-20 rounded-lg" />
       </div>
-      <RiskScoreChartSkeleton
-        variant="bars"
-        className="min-h-32 flex-1 lg:min-h-32"
-      />
+      <RiskScoreChartSkeleton variant="bars" className="min-h-32 flex-1" />
     </div>
   );
 }
@@ -236,12 +265,19 @@ function RotaChartSkeleton() {
 function RotaChart({
   chartTheme,
   isDark,
+  className,
 }: {
   chartTheme: DashboardChartTheme;
   isDark: boolean;
+  className?: string;
 }) {
   return (
-    <div className="glass-panel-sm flex flex-col gap-4 p-4 lg:min-h-0 lg:flex-1 lg:p-6">
+    <div
+      className={cn(
+        "glass-panel flex h-full min-h-0 flex-col gap-4 p-6",
+        className,
+      )}
+    >
       <div className="flex shrink-0 flex-wrap items-start justify-between gap-4">
         <div>
           <h4 className="text-base font-semibold leading-6 lg:text-lg lg:leading-6">
@@ -280,7 +316,7 @@ function RotaChart({
         </span>
       </div>
 
-      <div className="h-44 overflow-hidden rounded-lg lg:min-h-32 lg:flex-1">
+      <div className="min-h-32 flex-1 overflow-hidden rounded-lg">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             key={isDark ? "rota-dark" : "rota-light"}

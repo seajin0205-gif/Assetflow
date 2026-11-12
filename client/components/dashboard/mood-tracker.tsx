@@ -49,11 +49,16 @@ function MoodOption({
   );
 }
 
-export function MoodTracker() {
+export function MoodTracker({ className }: { className?: string }) {
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
 
   return (
-    <div className="glass-panel relative shrink-0 overflow-hidden border-blue-500/15 p-4 dark:border-blue-500/10">
+    <div
+      className={cn(
+        "glass-panel relative h-full overflow-hidden border-blue-500/15 p-4 dark:border-blue-500/10",
+        className,
+      )}
+    >
       <div
         className="pointer-events-none absolute inset-0 rounded-2xl mood-panel-glow"
         aria-hidden

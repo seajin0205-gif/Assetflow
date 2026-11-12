@@ -87,7 +87,7 @@ export function RiskScoreCardSkeleton({
   return (
     <div
       className={cn(
-        "glass-panel relative shrink-0 overflow-hidden px-6 py-6 lg:px-8 lg:py-8",
+        "glass-panel relative h-full overflow-hidden px-6 py-6 lg:px-8 lg:py-8",
         className,
       )}
       aria-busy="true"
@@ -99,44 +99,40 @@ export function RiskScoreCardSkeleton({
       />
 
       <div className="flex flex-col gap-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4">
           <div className="space-y-2">
             <h4 className="font-display text-2xl font-bold leading-8 lg:text-3xl lg:leading-10">
               Risk score
             </h4>
-            <Skeleton className="h-4 w-56 rounded-md" />
+            <Skeleton className="h-4 w-56 max-w-full rounded-md" />
+            <Skeleton className="h-4 w-40 rounded-md" />
           </div>
-
-          <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-            <div className="flex flex-col items-end gap-2">
-              <Skeleton className="h-8 w-24 rounded-lg" />
-              <Skeleton className="h-4 w-40 rounded-md" />
-            </div>
+          <div className="flex flex-col items-end gap-2">
+            <Skeleton className="h-8 w-24 rounded-lg" />
             <RiskScoreNumberSkeleton size="hero" />
           </div>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_144px] lg:items-center lg:gap-6">
-          <div className="space-y-2">
-            <Skeleton className="h-2 w-full rounded-full" />
-            <div className="flex justify-between">
-              <Skeleton className="h-4 w-8 rounded-md" />
-              <Skeleton className="h-4 w-16 rounded-md" />
-              <Skeleton className="h-4 w-8 rounded-md" />
-            </div>
+        <div className="space-y-2">
+          <Skeleton className="h-2 w-full rounded-full" />
+          <div className="grid grid-cols-3 gap-2">
+            <Skeleton className="mx-auto h-4 w-8 rounded-md" />
+            <Skeleton className="mx-auto h-4 w-16 rounded-md" />
+            <Skeleton className="mx-auto h-4 w-8 rounded-md" />
           </div>
-          <RiskScoreChartSkeleton variant="area" className="h-16" />
         </div>
 
-        <div className="grid gap-2 border-t border-subtle pt-4 lg:grid-cols-[minmax(0,1fr)_144px] lg:items-center lg:gap-6">
-          <div className="flex flex-wrap items-center gap-2">
-            <Skeleton className="h-4 w-16 rounded-md" />
-            <Skeleton className="h-8 w-32 rounded-lg" />
-            <Skeleton className="h-8 w-32 rounded-lg" />
-            <Skeleton className="h-8 w-24 rounded-lg" />
+        <RiskScoreChartSkeleton variant="area" className="h-16" />
+
+        <div className="space-y-2 border-t border-subtle pt-4">
+          <div className="flex items-center justify-between gap-4">
+            <Skeleton className="h-4 w-24 rounded-md" />
+            <Skeleton className="h-4 w-28 rounded-md" />
           </div>
-          <div className="flex justify-end">
-            <Skeleton className="h-4 w-32 rounded-md" />
+          <div className="grid grid-cols-3 gap-2">
+            <Skeleton className="h-14 rounded-lg" />
+            <Skeleton className="h-14 rounded-lg" />
+            <Skeleton className="h-14 rounded-lg" />
           </div>
         </div>
       </div>
@@ -165,7 +161,7 @@ export function RiskFactorCardSkeleton({
         <RiskScoreNumberSkeleton size="card" />
       </div>
       {variant === "bars" ? (
-        <div className="flex min-h-28 items-stretch gap-4 lg:min-h-32">
+        <div className="flex h-20 items-stretch gap-4">
           <RiskScoreChartSkeleton
             variant={variant}
             className="min-h-0 flex-1"
@@ -180,10 +176,7 @@ export function RiskFactorCardSkeleton({
           </div>
         </div>
       ) : (
-        <RiskScoreChartSkeleton
-          variant={variant}
-          className="min-h-28 lg:min-h-32"
-        />
+        <RiskScoreChartSkeleton variant={variant} className="h-20" />
       )}
     </div>
   );

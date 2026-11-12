@@ -1,8 +1,14 @@
 import { marketNewsItems } from "@/data/dashboard";
+import { cn } from "@/lib/utils";
 
-export function MarketBriefPanel() {
+export function MarketBriefPanel({ className }: { className?: string }) {
   return (
-    <div className="glass-panel flex min-h-0 flex-1 flex-col p-4">
+    <div
+      className={cn(
+        "glass-panel flex h-full min-h-0 flex-col overflow-hidden p-4",
+        className,
+      )}
+    >
       <p className="section-label mb-2 shrink-0">Market brief</p>
       <div className="panel-scroll panel-inset min-h-0 flex-1 overflow-y-auto py-2 pl-2 pr-4">
         <div className="space-y-2">
