@@ -281,7 +281,7 @@ export default function Portfolio() {
         <section id="product" className="scroll-mt-24 px-6 pb-16 lg:px-8">
           <div className="mx-auto max-w-dashboard overflow-hidden rounded-[32px] bg-gradient-to-b from-white via-[#e7eefc] to-[#c7d7f5] px-6 py-16 shadow-[0_32px_80px_-32px_rgba(30,64,175,0.45)] lg:px-16 lg:py-24">
             <div className="text-center">
-              <h2 className="inline-block bg-gradient-to-r from-blue-900 via-blue-600 to-blue-400 bg-clip-text font-display text-6xl font-extrabold leading-none tracking-tight text-transparent lg:text-[96px] lg:leading-[96px]">
+              <h2 className="inline-block bg-gradient-to-b from-blue-900 via-blue-600 to-blue-400 bg-clip-text font-display text-6xl font-extrabold leading-none tracking-tight text-transparent lg:text-[96px] lg:leading-[96px]">
                 Assetflow
               </h2>
               <p className="mt-4 text-xs font-semibold uppercase leading-4 tracking-widest text-slate-500">
