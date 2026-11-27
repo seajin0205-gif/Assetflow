@@ -204,7 +204,7 @@ export default function Portfolio() {
             <img
               src="/imac-front.png"
               alt="Front view of an iMac showing the Assetflow dashboard"
-              className="mx-auto mt-8 w-full max-w-6xl"
+              className="mx-auto mt-8 w-full"
             />
             <div className="mt-8 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
               <p className="max-w-md text-sm leading-6 text-slate-600">
