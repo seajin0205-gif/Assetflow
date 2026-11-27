@@ -25,21 +25,86 @@ const PROBLEMS = [
   },
 ] as const;
 
-const STORIES = [
+const CASES = [
   {
     index: "01",
-    title: "The year, then the day",
-    body: "The first number is the year-to-date return. A period changes the chart. A point on the line is there only when you ask for it.",
+    kicker: "Dashboard chart",
+    title: "Show the year first.",
+    emphasis: "The rest of the chart can wait.",
+    problem:
+      "Return, period, and every point arrive at once. The first screen has no headline.",
+    decision: "Open on one number. Change the period, and the line follows.",
+    outcome:
+      "Year-to-date is the summary. The exact day appears only when you scrub to it.",
+    steps: [
+      {
+        title: "Start with the year",
+        body: "Year-to-date is the only number on arrival. A period narrows the comparison.",
+      },
+      {
+        title: "The line follows",
+        body: "A new period redraws the return and the shape together.",
+      },
+      {
+        title: "Touch a day",
+        body: "Scrub a point and that day’s value and return appear at once.",
+      },
+    ],
+    visual: "chart",
   },
   {
     index: "02",
-    title: "The order answers back",
-    body: "Buy is red and sell is blue. Size, holdings, and price are checked in that order, then a toast names the ticker, the shares, and the amount.",
+    kicker: "Trade order",
+    title: "An order should answer.",
+    emphasis: "Check it, then say what happened.",
+    problem:
+      "After the tap, it is unclear whether the order went through. A bad input does not say what to fix.",
+    decision:
+      "Check before submit. Failure and success each get their own toast, right away.",
+    outcome:
+      "An error names the cause. A success shows the ticker, the size, and the amount.",
+    steps: [
+      {
+        title: "Side and size",
+        body: "Pick buy or sell, then the quantity. An empty field keeps the button quiet.",
+      },
+      {
+        title: "Three checks",
+        body: "Quantity, holdings, then limit price. A miss names the cause.",
+      },
+      {
+        title: "It landed",
+        body: "Success puts the ticker, the size, and the amount in one toast.",
+      },
+    ],
+    visual: "order",
   },
   {
     index: "03",
-    title: "The mood stays on the chart",
-    body: "Five moods. The one you tap glows, and a marker lands on the risk chart so the feeling is still there later.",
+    kicker: "Mood tracker",
+    title: "A mood should stay",
+    emphasis: "on the risk chart.",
+    problem:
+      "There is no place to record how the market felt. Later, the risk chart has no context.",
+    decision:
+      "Five moods answer the moment you tap, and the chart marker stays in step.",
+    outcome:
+      "One tap records the feeling. The chart can be read back to that moment.",
+    steps: [
+      {
+        title: "Five moods",
+        body: "A tap lights the emoji with a ring, a glow, and a slight scale.",
+      },
+      {
+        title: "The label follows",
+        body: "The feeling and the risk note appear under the row at the same moment.",
+      },
+      {
+        title: "A marker on the chart",
+        body: "The mood becomes a point on the risk chart, so the context stays.",
+      },
+    ],
+    visual: "mood",
   },
 ] as const;
 
@@ -240,22 +305,73 @@ export default function Portfolio() {
           <h2 className="max-w-xl font-display text-3xl font-bold leading-10 tracking-tight">
             Three moments, from the chart to the order
           </h2>
-          <div className="mt-8 grid gap-8 lg:grid-cols-3">
-            {STORIES.map((story) => (
+          <p className="mt-4 max-w-xl text-sm leading-6 text-slate-500">
+            A problem, a decision, then something a person can use. Chart,
+            order, and mood, in that order.
+          </p>
+          <div className="mt-8 flex flex-col gap-8">
+            {CASES.map((item) => (
               <article
-                key={story.index}
-                className="flex flex-col justify-between rounded-3xl bg-white p-8 shadow-[0_16px_40px_-24px_rgba(15,23,42,0.35)]"
+                key={item.index}
+                className="rounded-[32px] bg-white p-8 shadow-[0_16px_40px_-24px_rgba(15,23,42,0.35)] lg:p-16"
               >
-                <div>
-                  <p className="font-display text-4xl font-extrabold leading-none text-blue-100">
-                    {story.index}
-                  </p>
-                  <h3 className="mt-8 font-display text-xl font-bold leading-8">
-                    {story.title}
-                  </h3>
-                  <p className="mt-4 text-sm leading-6 text-slate-500">
-                    {story.body}
-                  </p>
+                <div
+                  className={cn(
+                    "grid items-center gap-8 lg:grid-cols-2",
+                    item.index === "02" && "lg:[&>*:first-child]:order-2",
+                  )}
+                >
+                  <div>
+                    <p className="text-xs font-semibold uppercase leading-4 tracking-widest text-blue-600">
+                      Case {item.index} · {item.kicker}
+                    </p>
+                    <h3 className="mt-4 font-display text-3xl font-bold leading-10 tracking-tight">
+                      {item.title}{" "}
+                      <span className="text-blue-600">{item.emphasis}</span>
+                    </h3>
+                    <dl className="mt-8 grid gap-8 sm:grid-cols-3">
+                      <div>
+                        <dt className="text-xs font-semibold uppercase leading-4 tracking-widest text-slate-400">
+                          Problem
+                        </dt>
+                        <dd className="mt-2 text-sm leading-6 text-slate-600">
+                          {item.problem}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="text-xs font-semibold uppercase leading-4 tracking-widest text-slate-400">
+                          Decision
+                        </dt>
+                        <dd className="mt-2 text-sm leading-6 text-slate-600">
+                          {item.decision}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="text-xs font-semibold uppercase leading-4 tracking-widest text-slate-400">
+                          Outcome
+                        </dt>
+                        <dd className="mt-2 text-sm leading-6 text-slate-600">
+                          {item.outcome}
+                        </dd>
+                      </div>
+                    </dl>
+                    <ol className="mt-8 grid gap-4">
+                      {item.steps.map((step, stepIndex) => (
+                        <li key={step.title} className="flex gap-4">
+                          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-blue-50 font-display text-xs font-bold text-blue-700">
+                            0{stepIndex + 1}
+                          </span>
+                          <p className="text-sm leading-6 text-slate-600">
+                            <span className="font-semibold text-slate-900">
+                              {step.title}.
+                            </span>{" "}
+                            {step.body}
+                          </p>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                  <CaseScreen kind={item.visual} />
                 </div>
               </article>
             ))}
@@ -383,6 +499,120 @@ function ProblemIcon({ name }: { name: "scatter" | "chart" | "shield" }) {
           />
         </svg>
       )}
+    </div>
+  );
+}
+
+function CaseScreen({ kind }: { kind: "chart" | "order" | "mood" }) {
+  return (
+    <div className="grid min-h-[320px] place-items-center rounded-[32px] bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-8">
+      {kind === "chart" && <ChartScreen />}
+      {kind === "order" && <OrderScreen />}
+      {kind === "mood" && <MoodScreen />}
+    </div>
+  );
+}
+
+function ChartScreen() {
+  return (
+    <div className="w-full max-w-sm rounded-3xl bg-white p-8 shadow-2xl">
+      <p className="text-xs font-semibold uppercase leading-4 tracking-widest text-slate-400">
+        Portfolio performance
+      </p>
+      <p className="mt-2 font-display text-3xl font-bold leading-10 text-slate-950">
+        +11.9%
+      </p>
+      <p className="text-xs leading-4 text-slate-500">Year to date</p>
+      <svg viewBox="0 0 280 96" className="mt-8 h-24 w-full" aria-hidden>
+        <path
+          d="M0 78 C40 70 70 64 110 48 C150 32 190 36 230 22 L280 12"
+          fill="none"
+          stroke="#2563eb"
+          strokeWidth="3"
+          strokeLinecap="round"
+        />
+        <circle cx="176" cy="34" r="6" fill="#2563eb" stroke="#fff" strokeWidth="2" />
+      </svg>
+      <div className="mt-4 rounded-2xl bg-slate-950 px-4 py-3 text-white">
+        <p className="text-xs font-semibold leading-4">Sep 2025</p>
+        <p className="mt-2 flex justify-between text-xs leading-4 text-slate-300">
+          <span>Value</span>
+          <span className="text-white">$2.41M</span>
+        </p>
+        <p className="mt-2 flex justify-between text-xs leading-4 text-slate-300">
+          <span>Return</span>
+          <span className="text-emerald-300">+18.4%</span>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function OrderScreen() {
+  return (
+    <div className="w-full max-w-[240px] rounded-[32px] border-8 border-slate-950 bg-slate-950 p-4 shadow-2xl">
+      <div className="rounded-[24px] bg-[#0b1220] p-4 text-white">
+        <p className="text-center font-display text-sm font-bold leading-6">
+          NVDA
+        </p>
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <span className="grid h-8 place-items-center rounded-lg bg-rose-500 text-xs font-semibold">
+            Buy
+          </span>
+          <span className="grid h-8 place-items-center rounded-lg bg-white/10 text-xs font-semibold text-sky-300">
+            Sell
+          </span>
+        </div>
+        <div className="mt-4 flex h-8 items-center justify-between rounded-lg bg-white/10 px-4 text-xs">
+          <span className="text-slate-400">Qty</span>
+          <span>10</span>
+        </div>
+        <div className="mt-4 grid h-8 place-items-center rounded-lg bg-blue-500 text-xs font-semibold">
+          Place order
+        </div>
+        <div className="mt-4 rounded-2xl bg-white px-4 py-3 text-slate-950">
+          <p className="text-xs font-semibold leading-4">NVDA buy · 10 shares</p>
+          <p className="mt-2 text-xs leading-4 text-slate-500">Limit · $8,924.00</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MoodScreen() {
+  const moods = ["😰", "😟", "😐", "😌", "😎"];
+  return (
+    <div className="w-full max-w-sm rounded-3xl bg-white p-8 shadow-2xl">
+      <p className="text-xs font-semibold uppercase leading-4 tracking-widest text-slate-400">
+        How are you feeling?
+      </p>
+      <div className="mt-8 grid grid-cols-5 gap-2">
+        {moods.map((mood, index) => (
+          <span
+            key={mood}
+            className={cn(
+              "grid h-12 place-items-center rounded-2xl text-xl",
+              index === 4
+                ? "bg-blue-600 shadow-[0_8px_24px_-8px_rgba(37,99,235,0.8)]"
+                : "bg-slate-100",
+            )}
+          >
+            {mood}
+          </span>
+        ))}
+      </div>
+      <p className="mt-4 text-sm font-semibold leading-6 text-blue-700">
+        Confident. Risk appetite is up.
+      </p>
+      <svg viewBox="0 0 280 72" className="mt-8 h-16 w-full" aria-hidden>
+        <path
+          d="M0 56 C50 48 90 40 140 32 C190 22 230 18 280 12"
+          fill="none"
+          stroke="#94a3b8"
+          strokeWidth="2"
+        />
+        <circle cx="168" cy="28" r="6" fill="#2563eb" stroke="#fff" strokeWidth="2" />
+      </svg>
     </div>
   );
 }
