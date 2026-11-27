@@ -108,6 +108,22 @@ const CASES = [
   },
 ] as const;
 
+const PHONE_GRID = [
+  { key: "stocks-a", src: "/portfolio-phones/stocks.jpg", alt: "My stocks", top: "4%", left: "-6%", rotate: -14, width: 168 },
+  { key: "book-a", src: "/portfolio-phones/book.jpg", alt: "Order book", top: "-8%", left: "14%", rotate: 8, width: 160 },
+  { key: "chart-a", src: "/portfolio-phones/chart.jpg", alt: "Price chart", top: "-10%", left: "34%", rotate: -8, width: 168 },
+  { key: "buy-a", src: "/portfolio-phones/order-buy.jpg", alt: "Buy order", top: "-6%", left: "56%", rotate: 10, width: 168 },
+  { key: "stocks-b", src: "/portfolio-phones/stocks.jpg", alt: "", top: "2%", left: "78%", rotate: -12, width: 152 },
+  { key: "home", src: "/portfolio-phones/home.jpg", alt: "Risk score on the phone", top: "28%", left: "6%", rotate: 7, width: 184 },
+  { key: "feed", src: "/portfolio-phones/feed.jpg", alt: "Mood and alerts", top: "30%", left: "32%", rotate: -5, width: 192 },
+  { key: "risk", src: "/portfolio-phones/risk.jpg", alt: "Risk factor analysis", top: "24%", left: "58%", rotate: 8, width: 184 },
+  { key: "sell-a", src: "/portfolio-phones/order-sell.jpg", alt: "Sell order", top: "32%", left: "84%", rotate: 14, width: 160 },
+  { key: "buy-b", src: "/portfolio-phones/order-buy.jpg", alt: "", top: "64%", left: "-4%", rotate: -10, width: 168 },
+  { key: "chart-b", src: "/portfolio-phones/chart.jpg", alt: "", top: "66%", left: "22%", rotate: 6, width: 160 },
+  { key: "book-b", src: "/portfolio-phones/book.jpg", alt: "", top: "68%", left: "46%", rotate: -8, width: 168 },
+  { key: "sell-b", src: "/portfolio-phones/order-sell.jpg", alt: "", top: "62%", left: "72%", rotate: 12, width: 176 },
+] as const;
+
 export default function Portfolio() {
   const { resolvedTheme } = useTheme();
   const frameKey = resolvedTheme ?? "dark";
@@ -159,6 +175,12 @@ export default function Portfolio() {
               className="btn-ghost h-8 bg-white/70 px-4 text-xs"
             >
               Interactions
+            </a>
+            <a
+              href="#screens"
+              className="btn-ghost h-8 bg-white/70 px-4 text-xs"
+            >
+              Screens
             </a>
             <a
               href="/retrospective.html"
@@ -424,6 +446,29 @@ export default function Portfolio() {
           </div>
         </section>
 
+        <section id="screens" className="scroll-mt-24 mx-auto max-w-dashboard px-6 pb-16 lg:px-8">
+          <h2 className="max-w-xl font-display text-3xl font-bold leading-10 tracking-tight">
+            The same product, across the phone
+          </h2>
+          <p className="mt-4 max-w-xl text-sm leading-6 text-slate-500">
+            Risk, stocks, the chart, and the order. Buy stays red. Sell stays
+            blue.
+          </p>
+          <div className="relative mt-8 h-[640px] overflow-hidden rounded-[32px] bg-[#070b16] shadow-[0_32px_80px_-32px_rgba(7,11,22,0.8)] lg:h-[760px]">
+            <div
+              className="pointer-events-none absolute inset-0"
+              aria-hidden
+              style={{
+                background:
+                  "radial-gradient(ellipse 50% 40% at 50% 40%, rgba(37,99,235,0.18), transparent 70%)",
+              }}
+            />
+            {PHONE_GRID.map((phone) => (
+              <TiltedPhone key={phone.key} {...phone} />
+            ))}
+          </div>
+        </section>
+
         <section className="mx-auto max-w-dashboard px-6 pb-24 lg:px-8">
           <div className="flex flex-col items-start justify-between gap-8 rounded-[32px] bg-slate-950 px-8 py-16 text-white lg:flex-row lg:items-center lg:px-16">
             <div className="max-w-xl">
@@ -613,6 +658,39 @@ function MoodScreen() {
         />
         <circle cx="168" cy="28" r="6" fill="#2563eb" stroke="#fff" strokeWidth="2" />
       </svg>
+    </div>
+  );
+}
+
+function TiltedPhone({
+  src,
+  alt,
+  top,
+  left,
+  rotate,
+  width,
+}: {
+  src: string;
+  alt: string;
+  top: string;
+  left: string;
+  rotate: number;
+  width: number;
+}) {
+  return (
+    <div
+      className="absolute"
+      style={{ top, left, width, transform: `rotate(${rotate}deg)` }}
+    >
+      <div className="rounded-[28px] bg-gradient-to-b from-[#f4f6f8] to-[#b7bdc6] p-2 shadow-[0_28px_48px_-20px_rgba(0,0,0,0.75)]">
+        <div className="overflow-hidden rounded-[20px] bg-[#070b16]">
+          <img
+            src={src}
+            alt={alt}
+            className="block aspect-[390/844] w-full object-cover object-top"
+          />
+        </div>
+      </div>
     </div>
   );
 }
