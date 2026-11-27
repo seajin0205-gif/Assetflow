@@ -677,18 +677,84 @@ function TiltedPhone({
   rotate: number;
   width: number;
 }) {
+  const tiltY = rotate >= 0 ? 28 : -28;
+  const depth = 16;
+
   return (
     <div
       className="absolute"
-      style={{ top, left, width, transform: `rotate(${rotate}deg)` }}
+      style={{ top, left, width, perspective: "720px" }}
     >
-      <div className="rounded-[28px] bg-gradient-to-b from-[#f4f6f8] to-[#b7bdc6] p-2 shadow-[0_28px_48px_-20px_rgba(0,0,0,0.75)]">
-        <div className="overflow-hidden rounded-[20px] bg-[#070b16]">
-          <img
-            src={src}
-            alt={alt}
-            className="block aspect-[390/844] w-full object-cover object-top"
-          />
+      <div
+        className="relative"
+        style={{
+          transformStyle: "preserve-3d",
+          transform: `rotateX(14deg) rotateY(${tiltY}deg) rotateZ(${rotate}deg)`,
+        }}
+      >
+        <div
+          aria-hidden
+          className="absolute inset-0 rounded-[32px] bg-[#2a2e34]"
+          style={{
+            transform: `translateZ(-${depth}px)`,
+            boxShadow: "0 36px 40px rgba(0,0,0,0.55)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="absolute bottom-0 left-8 right-8"
+          style={{
+            height: depth,
+            transformOrigin: "bottom center",
+            transform: `rotateX(-90deg) translateY(${depth}px)`,
+            background:
+              "linear-gradient(90deg, #6a7078 0%, #c5cad1 45%, #8d939b 100%)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="absolute left-8 right-8 top-0"
+          style={{
+            height: depth,
+            transformOrigin: "top center",
+            transform: "rotateX(90deg)",
+            background:
+              "linear-gradient(90deg, #9aa1aa 0%, #f2f4f7 50%, #b7bdc6 100%)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="absolute bottom-8 left-0 top-8"
+          style={{
+            width: depth,
+            transformOrigin: "left center",
+            transform: "rotateY(-90deg)",
+            background:
+              "linear-gradient(180deg, #f7f8fa 0%, #9aa1aa 18%, #5e646c 50%, #c8ced6 100%)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="absolute bottom-8 right-0 top-8"
+          style={{
+            width: depth,
+            transformOrigin: "right center",
+            transform: "rotateY(90deg)",
+            background:
+              "linear-gradient(180deg, #eef1f4 0%, #8b919a 22%, #4e545c 55%, #b7bec6 100%)",
+          }}
+        />
+        <div
+          className="relative overflow-hidden rounded-[32px] bg-[#111418] p-2"
+          style={{ transform: "translateZ(0px)" }}
+        >
+          <div className="overflow-hidden rounded-[24px] bg-[#070b16]">
+            <img
+              src={src}
+              alt={alt}
+              className="block aspect-[390/844] w-full object-cover object-top"
+            />
+          </div>
         </div>
       </div>
     </div>
