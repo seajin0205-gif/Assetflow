@@ -1,6 +1,5 @@
 import { useEffect, type ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { ArrowUpRight } from "lucide-react";
 import { ScaledFrame } from "@/components/portfolio/scaled-frame";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
@@ -203,9 +202,9 @@ export default function Portfolio() {
               </p>
             </div>
             <img
-              src="/imac-dashboard.png"
-              alt="iMac showing the live Assetflow dashboard"
-              className="mx-auto mt-8 w-full max-w-5xl drop-shadow-[0_32px_48px_rgba(15,23,42,0.25)]"
+              src="/imac-front.png"
+              alt="Front view of an iMac showing the Assetflow dashboard"
+              className="mx-auto mt-8 w-full max-w-5xl"
             />
             <div className="mt-8 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
               <p className="max-w-md text-sm leading-6 text-slate-600">
@@ -231,30 +230,6 @@ export default function Portfolio() {
                 </div>
               </dl>
             </div>
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-dashboard px-6 pb-16 lg:px-8">
-          <div className="mb-8 flex items-end justify-between gap-4">
-            <h2 className="font-display text-3xl font-bold leading-10 tracking-tight">
-              The live dashboard
-            </h2>
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-blue-700"
-            >
-              Open it
-              <ArrowUpRight className="h-4 w-4" />
-            </Link>
-          </div>
-          <div className="overflow-hidden rounded-[32px] bg-slate-950 shadow-[0_32px_64px_-32px_rgba(15,23,42,0.6)]">
-            <ScaledFrame
-              key={`desktop-${frameKey}`}
-              src="/?embed=1"
-              title="Assetflow desktop dashboard"
-              width={1440}
-              height={980}
-            />
           </div>
         </section>
 
