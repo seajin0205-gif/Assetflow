@@ -1,5 +1,6 @@
 import { useEffect, type ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { BackendCaseStudy } from "@/components/portfolio/backend-case-study";
 import { ScaledFrame } from "@/components/portfolio/scaled-frame";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
@@ -181,6 +182,12 @@ export default function Portfolio() {
               className="btn-ghost h-8 bg-white/70 px-4 text-xs"
             >
               Screens
+            </a>
+            <a
+              href="#backend"
+              className="btn-ghost h-8 bg-white/70 px-4 text-xs"
+            >
+              Backend
             </a>
             <a
               href="/retrospective.html"
@@ -468,6 +475,8 @@ export default function Portfolio() {
             ))}
           </div>
         </section>
+
+        <BackendCaseStudy />
 
         <section className="mx-auto max-w-dashboard px-6 pb-24 lg:px-8">
           <div className="flex flex-col items-start justify-between gap-8 rounded-[32px] bg-slate-950 px-8 py-16 text-white lg:flex-row lg:items-center lg:px-16">
