@@ -677,84 +677,29 @@ function TiltedPhone({
   rotate: number;
   width: number;
 }) {
-  const tiltY = rotate >= 0 ? 28 : -28;
-  const depth = 16;
-
   return (
     <div
       className="absolute"
-      style={{ top, left, width, perspective: "720px" }}
+      style={{ top, left, width, transform: `rotate(${rotate}deg)` }}
     >
       <div
-        className="relative"
+        className="rounded-[32px] p-2"
         style={{
-          transformStyle: "preserve-3d",
-          transform: `rotateX(14deg) rotateY(${tiltY}deg) rotateZ(${rotate}deg)`,
+          background:
+            "linear-gradient(145deg, #f5f6f8 0%, #cfd3d8 24%, #8f959d 52%, #e6e9ed 100%)",
+          boxShadow:
+            "0 24px 32px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.8)",
         }}
       >
-        <div
-          aria-hidden
-          className="absolute inset-0 rounded-[32px] bg-[#2a2e34]"
-          style={{
-            transform: `translateZ(-${depth}px)`,
-            boxShadow: "0 36px 40px rgba(0,0,0,0.55)",
-          }}
-        />
-        <div
-          aria-hidden
-          className="absolute bottom-0 left-8 right-8"
-          style={{
-            height: depth,
-            transformOrigin: "bottom center",
-            transform: `rotateX(-90deg) translateY(${depth}px)`,
-            background:
-              "linear-gradient(90deg, #6a7078 0%, #c5cad1 45%, #8d939b 100%)",
-          }}
-        />
-        <div
-          aria-hidden
-          className="absolute left-8 right-8 top-0"
-          style={{
-            height: depth,
-            transformOrigin: "top center",
-            transform: "rotateX(90deg)",
-            background:
-              "linear-gradient(90deg, #9aa1aa 0%, #f2f4f7 50%, #b7bdc6 100%)",
-          }}
-        />
-        <div
-          aria-hidden
-          className="absolute bottom-8 left-0 top-8"
-          style={{
-            width: depth,
-            transformOrigin: "left center",
-            transform: "rotateY(-90deg)",
-            background:
-              "linear-gradient(180deg, #f7f8fa 0%, #9aa1aa 18%, #5e646c 50%, #c8ced6 100%)",
-          }}
-        />
-        <div
-          aria-hidden
-          className="absolute bottom-8 right-0 top-8"
-          style={{
-            width: depth,
-            transformOrigin: "right center",
-            transform: "rotateY(90deg)",
-            background:
-              "linear-gradient(180deg, #eef1f4 0%, #8b919a 22%, #4e545c 55%, #b7bec6 100%)",
-          }}
-        />
-        <div
-          className="relative overflow-hidden rounded-[32px] bg-[#111418] p-2"
-          style={{ transform: "translateZ(0px)" }}
-        >
-          <div className="overflow-hidden rounded-[24px] bg-[#070b16]">
-            <img
-              src={src}
-              alt={alt}
-              className="block aspect-[390/844] w-full object-cover object-top"
-            />
+        <div className="overflow-hidden rounded-[24px] bg-black">
+          <div className="flex h-6 items-end justify-center" aria-hidden>
+            <div className="h-4 w-[38%] rounded-b-2xl bg-[#0b0d12]" />
           </div>
+          <img
+            src={src}
+            alt={alt}
+            className="block aspect-[390/844] w-full object-cover object-top"
+          />
         </div>
       </div>
     </div>
@@ -773,11 +718,20 @@ function Phone({
   return (
     <figure className="mx-auto w-full max-w-[280px]">
       <div
-        className={cn(
-          "overflow-hidden rounded-[32px] border-8 border-slate-900 bg-slate-900 shadow-2xl",
-        )}
+        className="rounded-[40px] p-2"
+        style={{
+          background:
+            "linear-gradient(160deg, #f7f8fa 0%, #d5d8de 30%, #9aa0a8 62%, #e8ebef 100%)",
+          boxShadow:
+            "0 24px 40px rgba(15,23,42,0.28), inset 0 1px 0 rgba(255,255,255,0.85)",
+        }}
       >
-        {children}
+        <div className="overflow-hidden rounded-[32px] bg-black">
+          <div className="flex h-8 items-end justify-center pb-1" aria-hidden>
+            <div className="h-4 w-24 rounded-full bg-[#0b0d12]" />
+          </div>
+          {children}
+        </div>
       </div>
       <figcaption className="mt-4 text-center text-white">
         <p className="font-display text-sm font-bold leading-6">{title}</p>
