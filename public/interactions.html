@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -1113,6 +1113,11 @@
           display: none;
         }
       }
+
+      .eng-notes,
+      .impl-bar {
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -1122,19 +1127,19 @@
         <span>Assetflow</span>
       </a>
       <div class="top-actions">
-        <nav class="pill-nav" aria-label="슬라이드">
-          <a href="#slide-0" class="active" data-slide="0">소개</a>
-          <a href="#slide-1" data-slide="1">차트</a>
-          <a href="#slide-2" data-slide="2">주문</a>
-          <a href="#slide-3" data-slide="3">무드</a>
+        <nav class="pill-nav" aria-label="Slides">
+          <a href="#slide-0" class="active" data-slide="0">Intro</a>
+          <a href="#slide-1" data-slide="1">Chart</a>
+          <a href="#slide-2" data-slide="2">Order</a>
+          <a href="#slide-3" data-slide="3">Mood</a>
         </nav>
-        <a href="/portfolio.html" class="btn-link btn-ghost">Portfolio</a>
+        <a href="/portfolio" class="btn-link btn-ghost">Portfolio</a>
         <a href="/retrospective.html" class="btn-link btn-ghost">Retrospective</a>
         <a href="/trade" class="btn-link">Live App</a>
       </div>
     </div>
 
-    <div class="progress" id="progress" aria-label="슬라이드 진행">
+    <div class="progress" id="progress" aria-label="Slide progress">
       <button type="button" class="active" data-slide="0" aria-label="1"></button>
       <button type="button" data-slide="1" aria-label="2"></button>
       <button type="button" data-slide="2" aria-label="3"></button>
@@ -1152,31 +1157,31 @@
               <em>interaction engineering</em>
             </h1>
             <p class="cover-lead">
-              UI를 예쁘게 만드는 것이 아니라,
-              <strong>사용자 문제 → 인터랙션 결정 → 구현 가능한 결과</strong>를
-              한 흐름으로 설계합니다.
+              The work is not a prettier screen.
+              <strong>A problem, a decision, then something a person can use</strong>
+              — designed as one flow.
             </p>
 
-            <div class="framework" aria-label="분석 프레임워크">
+            <div class="framework" aria-label="Framework">
               <div class="framework-step">
                 <span class="framework-label">Problem</span>
                 <div class="framework-body">
-                  <strong>사용자가 겪는 마찰</strong>
-                  <span>복잡한 금융 데이터, 불확실한 주문 결과, 감정 기록의 맥락 부재</span>
+                  <strong>Where it snags</strong>
+                  <span>Dense market data, an order that never confirms, a mood with nowhere to live</span>
                 </div>
               </div>
               <div class="framework-step">
                 <span class="framework-label">Decision</span>
                 <div class="framework-body">
-                  <strong>왜 이 인터랙션인가</strong>
-                  <span>점진적 노출, 즉각적 피드백, 상태 동기화 — 각 문제에 맞는 패턴 선택</span>
+                  <strong>Why this interaction</strong>
+                  <span>Show less first, answer at once, keep state in sync</span>
                 </div>
               </div>
               <div class="framework-step">
                 <span class="framework-label">Outcome</span>
                 <div class="framework-body">
-                  <strong>측정 가능한 경험 개선</strong>
-                  <span>인지 부하 감소, 오류 복구 시간 단축, 리스크 차트와 감정 데이터 연결</span>
+                  <strong>What gets easier</strong>
+                  <span>Less to parse, a faster recovery, mood tied to the risk chart</span>
                 </div>
               </div>
             </div>
@@ -1195,27 +1200,27 @@
                 <span class="cover-case-num">01</span>
                 <div>
                   <h3>Progressive Chart Disclosure</h3>
-                  <p>기간 탭과 호버 툴팁으로 데이터 탐색 부담을 단계적으로 분산</p>
+                  <p>A period tab and a hover tip, so the chart opens one layer at a time</p>
                 </div>
               </div>
               <div class="cover-case">
                 <span class="cover-case-num">02</span>
                 <div>
                   <h3>Order Validation Feedback</h3>
-                  <p>3단 검증 후 Sonner 토스트로 주문 결과를 명확히 전달</p>
+                  <p>Three checks, then a toast that says the order landed</p>
                 </div>
               </div>
               <div class="cover-case">
                 <span class="cover-case-num">03</span>
                 <div>
                   <h3>Sentiment State Sync</h3>
-                  <p>5단계 무드 선택이 리스크 차트 마커와 UI 상태로 동기화</p>
+                  <p>Five moods, synced to a marker on the risk chart</p>
                 </div>
               </div>
             </div>
           </aside>
         </div>
-        <div class="cover-hint">스크롤하여 탐색 →</div>
+        <div class="cover-hint">Scroll to explore →</div>
       </section>
 
       <!-- Case 01: Chart -->
@@ -1224,8 +1229,8 @@
           <header class="case-header">
             <span class="case-eyebrow mono">Case 01 · Dashboard Chart</span>
             <h2 class="case-purpose display">
-              복잡한 투자 데이터를 빠르게 이해하도록
-              <strong>점진적 정보 노출</strong> 적용
+              Show the year first.
+              <strong>The rest of the chart can wait.</strong>
             </h2>
           </header>
 
@@ -1233,29 +1238,28 @@
             <div class="pdo-cell">
               <span class="pdo-label">User Problem</span>
               <p>
-                수익·기간·상세 수치가 동시에 보이면 첫 화면에서 핵심을 읽기 어렵고,
-                모바일에서는 차트 탐색 부담이 큽니다.
+                Return, period, and every point at once. The first screen has
+                no headline, and the phone has nowhere to look.
               </p>
             </div>
             <div class="pdo-cell">
               <span class="pdo-label">Interaction Decision</span>
               <p>
-                초기에는 핵심 지표만 노출하고, 기간 선택 시 차트 데이터를 동기화해
-                탐색 부담을 줄였습니다.
+                Open on one number. Change the period, and the line follows.
               </p>
             </div>
             <div class="pdo-cell">
               <span class="pdo-label">Expected Outcome</span>
               <p>
-                첫 화면은 YTD 한 숫자로 요약되고, 관심 시점의 정확한 수치는
-                필요할 때만 확인합니다.
+                Year-to-date is the summary. The exact day appears only when
+                you scrub to it.
               </p>
             </div>
           </div>
 
-          <div class="case-showcase" aria-label="인터랙션 흐름">
+          <div class="case-showcase" aria-label="Interaction">
             <div class="showcase-visual">
-              <span class="showcase-label">핵심 화면</span>
+              <span class="showcase-label">On screen</span>
               <div class="phone" style="--phone-w: 168px; --phone-h: 336px">
                 <div class="phone-notch"></div>
                 <div class="phone-screen" style="position:relative">
@@ -1281,22 +1285,22 @@
               <div class="flow-step">
                 <span class="flow-num">01</span>
                 <div class="flow-body">
-                  <strong>Context — 기간 탭으로 탐색 범위 축소</strong>
-                  <p>진입 시 YTD 수익률만 보여주고, 기간 탭으로 비교 맥락을 먼저 좁힙니다.</p>
+                  <strong>Context — start with the year</strong>
+                  <p>Year-to-date is the only number on arrival. A period narrows the comparison.</p>
                 </div>
               </div>
               <div class="flow-step">
                 <span class="flow-num">02</span>
                 <div class="flow-body">
-                  <strong>Update — 차트 데이터 동기화</strong>
-                  <p>기간을 바꾸면 수익률과 차트 형태가 함께 갱신되어 한 흐름으로 읽힙니다.</p>
+                  <strong>Update — the line follows</strong>
+                  <p>A new period redraws the return and the shape together.</p>
                 </div>
               </div>
               <div class="flow-step">
                 <span class="flow-num">03</span>
                 <div class="flow-body">
-                  <strong>Explore — Hover / Touch로 상세 정보 확인</strong>
-                  <p>관심 시점을 스크럽하면 해당 날짜의 가치와 수익률을 즉시 확인합니다.</p>
+                  <strong>Explore — hover or touch a day</strong>
+                  <p>Scrub a point and that day’s value and return appear at once.</p>
                 </div>
               </div>
             </div>
@@ -1344,8 +1348,8 @@
           <header class="case-header">
             <span class="case-eyebrow mono">Case 02 · Trade Order</span>
             <h2 class="case-purpose display">
-              주문 불확실성을 줄이기 위해
-              <strong>검증-피드백 루프</strong>를 설계
+              An order should answer.
+              <strong>Check it, then say what happened.</strong>
             </h2>
           </header>
 
@@ -1353,29 +1357,29 @@
             <div class="pdo-cell">
               <span class="pdo-label">User Problem</span>
               <p>
-                주문 후 접수 여부를 알기 어렵고, 입력 오류 시
-                어디를 고쳐야 하는지 즉시 파악하기 힘듭니다.
+                After the tap, it is unclear whether the order went through.
+                A bad input does not say what to fix.
               </p>
             </div>
             <div class="pdo-cell">
               <span class="pdo-label">Interaction Decision</span>
               <p>
-                제출 전 검증을 단계화하고, 실패·성공을 각각 다른 토스트로
-                즉시 전달해 불확실성을 줄였습니다.
+                Check before submit. Failure and success each get their own
+                toast, right away.
               </p>
             </div>
             <div class="pdo-cell">
               <span class="pdo-label">Expected Outcome</span>
               <p>
-                오류는 원인 메시지로 바로 복구하고, 성공 시
-                종목·수량·금액을 한눈에 확인합니다.
+                An error names the cause. A success shows the ticker, the
+                size, and the amount.
               </p>
             </div>
           </div>
 
-          <div class="case-showcase" aria-label="인터랙션 흐름">
+          <div class="case-showcase" aria-label="Interaction">
             <div class="showcase-visual">
-              <span class="showcase-label">핵심 화면</span>
+              <span class="showcase-label">On screen</span>
               <div class="phone" style="--phone-w: 168px; --phone-h: 336px">
                 <div class="phone-notch"></div>
                 <div class="phone-screen dark-ui" style="position:relative">
@@ -1384,25 +1388,25 @@
                     <div class="ui-symbol">NVDA</div>
                   </div>
                   <div class="ui-tabs">
-                    <div class="ui-tab">차트</div>
-                    <div class="ui-tab">호가</div>
-                    <div class="ui-tab on">주문</div>
-                    <div class="ui-tab">내역</div>
+                    <div class="ui-tab">Chart</div>
+                    <div class="ui-tab">Book</div>
+                    <div class="ui-tab on">Order</div>
+                    <div class="ui-tab">History</div>
                   </div>
                   <div class="ui-buy-sell">
-                    <div class="ui-bs-btn buy">매수</div>
-                    <div class="ui-bs-btn sell">매도</div>
+                    <div class="ui-bs-btn buy">Buy</div>
+                    <div class="ui-bs-btn sell">Sell</div>
                   </div>
                   <div class="ui-input-row">
-                    <div class="ui-input-label">수량</div>
+                    <div class="ui-input-label">Qty</div>
                     <div class="ui-input">10</div>
                   </div>
-                  <div class="ui-submit">주문하기</div>
+                  <div class="ui-submit">Place order</div>
                   <div class="mini-toast">
                     <div class="mini-toast-icon ok">✓</div>
                     <div class="mini-toast-text">
-                      <strong>NVDA 매수 10주 접수</strong>
-                      <span>지정가 · $8,924.00</span>
+                      <strong>NVDA buy · 10 shares</strong>
+                      <span>Limit · $8,924.00</span>
                     </div>
                   </div>
                 </div>
@@ -1412,22 +1416,22 @@
               <div class="flow-step">
                 <span class="flow-num">01</span>
                 <div class="flow-body">
-                  <strong>Input — 매수·매도와 수량 입력</strong>
-                  <p>거래 방향과 수량을 먼저 정하고, 미입력 시 CTA를 비활성화해 실수 클릭을 줄입니다.</p>
+                  <strong>Input — side and size</strong>
+                  <p>Pick buy or sell, then the quantity. An empty field keeps the button quiet.</p>
                 </div>
               </div>
               <div class="flow-step">
                 <span class="flow-num">02</span>
                 <div class="flow-body">
-                  <strong>Validate — 3단 검증 후 즉각 피드백</strong>
-                  <p>수량·보유량·지정가를 순서대로 검증하고, 실패 시 짧은 에러 토스트로 원인을 알립니다.</p>
+                  <strong>Validate — three checks</strong>
+                  <p>Quantity, holdings, then limit price. A miss gets a short toast that names the cause.</p>
                 </div>
               </div>
               <div class="flow-step">
                 <span class="flow-num">03</span>
                 <div class="flow-body">
-                  <strong>Confirm — 접수 완료 확인</strong>
-                  <p>성공 시 종목·수량·예상 금액을 한 토스트에 정리해 접수 결과를 명확히 전달합니다.</p>
+                  <strong>Confirm — it landed</strong>
+                  <p>Success puts the ticker, the size, and the amount in one toast.</p>
                 </div>
               </div>
             </div>
@@ -1475,8 +1479,8 @@
           <header class="case-header">
             <span class="case-eyebrow mono">Case 03 · Mood Tracker</span>
             <h2 class="case-purpose display">
-              감정 데이터를 리스크 분석과 연결하는
-              <strong>상태 동기화 인터랙션</strong>
+              A mood should stay
+              <strong>on the risk chart.</strong>
             </h2>
           </header>
 
@@ -1484,29 +1488,29 @@
             <div class="pdo-cell">
               <span class="pdo-label">User Problem</span>
               <p>
-                투자 결정 당시의 시장 심리를 기록할 방법이 없어,
-                이후 리스크 차트에서 맥락이 사라집니다.
+                There is no place to record how the market felt. Later, the
+                risk chart has no context.
               </p>
             </div>
             <div class="pdo-cell">
               <span class="pdo-label">Interaction Decision</span>
               <p>
-                5단계 무드 선택에 즉각적인 선택 피드백을 주고,
-                리스크 차트 마커와 UI 상태를 동기화했습니다.
+                Five moods answer the moment you tap, and the chart marker
+                stays in step with the selection.
               </p>
             </div>
             <div class="pdo-cell">
               <span class="pdo-label">Expected Outcome</span>
               <p>
-                한 번의 탭으로 감정이 기록되고,
-                차트에서 당시 심리를 역추적할 수 있습니다.
+                One tap records the feeling. The chart can be read back to
+                that moment.
               </p>
             </div>
           </div>
 
-          <div class="case-showcase" aria-label="인터랙션 흐름">
+          <div class="case-showcase" aria-label="Interaction">
             <div class="showcase-visual">
-              <span class="showcase-label">핵심 화면</span>
+              <span class="showcase-label">On screen</span>
               <div class="phone" style="--phone-w: 168px; --phone-h: 336px">
                 <div class="phone-notch"></div>
                 <div class="phone-screen">
@@ -1539,22 +1543,22 @@
               <div class="flow-step">
                 <span class="flow-num">01</span>
                 <div class="flow-body">
-                  <strong>Select — 5단계 무드 선택</strong>
-                  <p>이모지 버튼을 탭하면 ring·glow·scale로 선택 상태를 즉시 표시합니다.</p>
+                  <strong>Select — five moods</strong>
+                  <p>A tap lights the emoji with a ring, a glow, and a slight scale.</p>
                 </div>
               </div>
               <div class="flow-step">
                 <span class="flow-num">02</span>
                 <div class="flow-body">
-                  <strong>Feedback — 감정 라벨 즉시 반영</strong>
-                  <p>선택과 동시에 하단에 감정 라벨과 리스크 성향 카피가 나타납니다.</p>
+                  <strong>Feedback — the label follows</strong>
+                  <p>The feeling and the risk note appear under the row at the same moment.</p>
                 </div>
               </div>
               <div class="flow-step">
                 <span class="flow-num">03</span>
                 <div class="flow-body">
-                  <strong>Sync — 리스크 차트 마커 연동</strong>
-                  <p>기록된 감정이 차트 마커로 표시되어 이후 맥락을 역추적할 수 있습니다.</p>
+                  <strong>Sync — a marker on the chart</strong>
+                  <p>The mood becomes a point on the risk chart, so the context stays.</p>
                 </div>
               </div>
             </div>
