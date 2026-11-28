@@ -612,7 +612,7 @@ function StepFlow({
       aria-label={label}
       className={
         fill
-          ? "grid grid-cols-1 gap-4 lg:grid-cols-4"
+          ? "flex flex-col items-stretch gap-4 lg:flex-row lg:items-center lg:justify-center"
           : "flex flex-col gap-4 md:flex-row md:flex-wrap md:items-center"
       }
     >
@@ -628,7 +628,7 @@ function StepFlow({
           <span
             className={
               fill
-                ? "flex h-full w-full items-center gap-4 rounded-2xl bg-[#eef3fb] px-4 py-4"
+                ? "flex w-full items-center gap-4 rounded-2xl bg-[#eef3fb] px-4 py-4 lg:w-auto"
                 : "flex w-full items-center gap-4 rounded-2xl bg-[#eef3fb] px-4 py-4 md:w-auto"
             }
           >
