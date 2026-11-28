@@ -245,7 +245,6 @@ export function BackendCaseStudy() {
           <div className="mt-8">
             <StepFlow
               label="Designed cancel flow"
-              fill
               steps={[
                 "Cancel Request",
                 "Order Validation",
@@ -601,37 +600,18 @@ function ProtectCard({ title, body }: { title: string; body: string }) {
 function StepFlow({
   steps,
   label,
-  fill = false,
 }: {
   steps: readonly string[];
   label: string;
-  fill?: boolean;
 }) {
   return (
     <ol
       aria-label={label}
-      className={
-        fill
-          ? "flex flex-col items-stretch gap-4 lg:flex-row lg:items-center lg:justify-center"
-          : "flex flex-col gap-4 md:flex-row md:flex-wrap md:items-center"
-      }
+      className="flex flex-col gap-4 md:flex-row md:flex-wrap md:items-center"
     >
       {steps.map((step, index) => (
-        <li
-          key={step}
-          className={
-            fill
-              ? "min-w-0"
-              : "flex flex-col items-center gap-4 md:flex-row"
-          }
-        >
-          <span
-            className={
-              fill
-                ? "flex w-full items-center gap-4 rounded-2xl bg-[#eef3fb] px-4 py-4 lg:w-auto"
-                : "flex w-full items-center gap-4 rounded-2xl bg-[#eef3fb] px-4 py-4 md:w-auto"
-            }
-          >
+        <li key={step} className="flex flex-col items-center gap-4 md:flex-row">
+          <span className="flex w-full items-center gap-4 rounded-2xl bg-[#eef3fb] px-4 py-4 md:w-auto">
             <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white font-display text-xs font-bold text-blue-700">
               0{index + 1}
             </span>
@@ -639,7 +619,7 @@ function StepFlow({
               {step}
             </span>
           </span>
-          {!fill && index < steps.length - 1 && (
+          {index < steps.length - 1 && (
             <>
               <ChevronDown
                 className="h-4 w-4 text-blue-500 md:hidden"
