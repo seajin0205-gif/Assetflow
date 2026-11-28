@@ -281,28 +281,7 @@ export function BackendCaseStudy() {
           body="The design uses a simulated market data engine for prices and chart points. It is not a stock-exchange feed."
           state={backendStatus.quotes}
         />
-        <div className="mt-8 rounded-[32px] bg-white p-8 shadow-[0_16px_40px_-24px_rgba(15,23,42,0.35)] lg:p-16">
-          <p className="text-xs font-semibold uppercase leading-4 tracking-widest text-blue-600">
-            Simulated market data
-          </p>
-          <div className="mt-8">
-            <StepFlow
-              label="Designed quote path"
-              steps={[
-                "Market Simulation Engine",
-                "Price Update",
-                "SSE Stream",
-                "Client Dashboard",
-              ]}
-            />
-          </div>
-          <ul className="mt-16 grid gap-8 md:grid-cols-2">
-            <Bullet>Prices move inside the server every 1.5 seconds.</Bullet>
-            <Bullet>Clients subscribe through Server-Sent Events.</Bullet>
-            <Bullet>The timer stops when nobody is subscribed.</Bullet>
-            <Bullet>A market order fills at that same simulated quote.</Bullet>
-          </ul>
-        </div>
+        <SimulatedMarket />
       </section>
 
       <section
@@ -447,6 +426,85 @@ export function BackendCaseStudy() {
         </div>
       </section>
     </>
+  );
+}
+
+const SIMULATED_QUOTES = [
+  { symbol: "NVDA", price: "892.40", change: "+1.46%", up: true },
+  { symbol: "AAPL", price: "198.32", change: "−0.62%", up: false },
+  { symbol: "TSLA", price: "248.91", change: "+2.10%", up: true },
+  { symbol: "MSFT", price: "428.15", change: "+0.57%", up: true },
+] as const;
+
+const MARKET_BEATS = [
+  { title: "1.5s", body: "The server moves the price." },
+  { title: "Stream", body: "The dashboard subscribes." },
+  { title: "Quiet", body: "No listeners, the timer stops." },
+  { title: "Fill", body: "A market order uses this quote." },
+] as const;
+
+function SimulatedMarket() {
+  return (
+    <div className="mt-8 overflow-hidden rounded-[32px] bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 p-8 text-white shadow-[0_32px_80px_-32px_rgba(30,64,175,0.45)] lg:p-16">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <p className="text-xs font-semibold uppercase leading-4 tracking-widest text-blue-200">
+          Simulated market data
+        </p>
+        <span className="inline-flex h-8 items-center rounded-full bg-white/10 px-4 text-xs font-semibold leading-4 text-blue-100">
+          Not an exchange
+        </span>
+      </div>
+      <div className="mt-8 grid items-end gap-8 lg:grid-cols-2">
+        <div>
+          <p className="text-sm font-semibold leading-6 text-blue-100">NVDA</p>
+          <p className="mt-2 font-display text-6xl font-extrabold leading-none tracking-tight">
+            892.40
+          </p>
+          <p className="mt-4 text-sm font-semibold leading-6 text-emerald-300">
+            +12.80 · +1.46%
+          </p>
+        </div>
+        <svg viewBox="0 0 280 96" className="h-24 w-full" aria-hidden>
+          <path
+            d="M0 72 C36 68 52 40 88 44 C124 48 140 24 176 28 C212 32 236 16 280 8"
+            fill="none"
+            stroke="#93c5fd"
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+          <circle cx="280" cy="8" r="5" fill="#60a5fa" />
+        </svg>
+      </div>
+      <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {SIMULATED_QUOTES.map((quote) => (
+          <div key={quote.symbol} className="rounded-2xl bg-white/10 px-4 py-4">
+            <p className="text-xs font-semibold leading-4 text-blue-100">
+              {quote.symbol}
+            </p>
+            <p className="mt-2 font-display text-xl font-bold leading-8">
+              {quote.price}
+            </p>
+            <p
+              className={
+                quote.up
+                  ? "mt-2 text-xs font-semibold leading-4 text-emerald-300"
+                  : "mt-2 text-xs font-semibold leading-4 text-rose-300"
+              }
+            >
+              {quote.change}
+            </p>
+          </div>
+        ))}
+      </div>
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {MARKET_BEATS.map((beat) => (
+          <div key={beat.title}>
+            <p className="font-display text-lg font-bold leading-6">{beat.title}</p>
+            <p className="mt-2 text-sm leading-6 text-blue-100">{beat.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
