@@ -146,9 +146,9 @@ export function BackendCaseStudy() {
           </p>
           <StateBadge state={designedCapabilities() ? "design" : "live"} />
         </div>
-        <h2 className="mt-4 max-w-3xl font-display text-4xl font-extrabold leading-none tracking-tight text-slate-950 lg:text-6xl">
+        <h2 className="mt-4 max-w-4xl font-display text-4xl font-extrabold leading-[1.25] tracking-tight text-slate-950 lg:text-6xl lg:leading-[80px]">
           Beyond the interface.
-          <span className="mt-2 block bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">
+          <span className="mt-2 block bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text pb-2 text-transparent lg:pb-4">
             Building the engine behind every transaction.
           </span>
         </h2>
