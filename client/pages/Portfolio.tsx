@@ -695,9 +695,9 @@ function TiltedPhone({
         className="rounded-[32px] p-2"
         style={{
           background:
-            "linear-gradient(145deg, #f5f6f8 0%, #cfd3d8 24%, #8f959d 52%, #e6e9ed 100%)",
+            "linear-gradient(145deg, #3a404a 0%, #1a1e26 46%, #0c0e12 100%)",
           boxShadow:
-            "0 24px 32px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.8)",
+            "0 24px 32px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.08)",
         }}
       >
         <div className="overflow-hidden rounded-[24px] bg-black">
@@ -730,9 +730,9 @@ function Phone({
         className="rounded-[40px] p-2"
         style={{
           background:
-            "linear-gradient(160deg, #f7f8fa 0%, #d5d8de 30%, #9aa0a8 62%, #e8ebef 100%)",
+            "linear-gradient(160deg, #3a404a 0%, #1a1e26 42%, #0c0e12 100%)",
           boxShadow:
-            "0 24px 40px rgba(15,23,42,0.28), inset 0 1px 0 rgba(255,255,255,0.85)",
+            "0 24px 40px rgba(15,23,42,0.28), inset 0 0 0 1px rgba(255,255,255,0.1)",
         }}
       >
         <div className="overflow-hidden rounded-[32px] bg-black">
